@@ -1,0 +1,348 @@
+\documentclass[a4paper,11pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{graphicx}
+
+\renewcommand{\thesection}{\arabic{section}}
+\newcommand{\algo}[1]{\textsc{#1}}
+
+\newtheorem{exercice}{Exercice}
+\newtheorem{solution}{Solution}
+
+\title{Algorithmes d'approximation: Retranscription des exercices}
+\author{Julien Delplanque}
+\begin{document}
+\maketitle
+\newpage
+
+\section{Note}
+Ce document est issus des notes d'exercices de plusieurs étudiants de Master 1
+prises lors de l'année académique $2015$ - $2016$.
+
+\section{TP 1}
+\begin{exercice}
+Les deux graphes n'ont pas été redessiné ici, voir les notes manuscrites...\\
+
+\noindent Écrivez $P_2$ sous la forme primale d'un problème d'optimisation
+linéaire en nombres entiers.
+\end{exercice}
+
+\begin{solution}
+$\min(\sum\limits_j{w_jx_j})$ où $1 \le j \le 12$, $x_i \in \{0,1\} \forall i$
+t.q
+$$
+x_i =
+\begin{cases}
+1 & \text{si } S_i \in I\\
+0 & \text{sinon}
+\end{cases}
+$$
+et $w=(6,10,8,6,5,9,4)$\\
+s.l.c\\
+$$
+\begin{array}{ccccccc}
+    &   & x_1 & + & x_4 & \ge & 1\\
+    &   & x_2 & + & x_4 & \ge & 1\\
+    &   & x_3 & + & x_4 & \ge & 1\\
+x_1 & + & x_4 & + & x_5 & \ge & 1\\
+x_2 & + & x_4 & + & x_5 & \ge & 1\\
+    &   & x_3 & + & x_4 & \ge & 1\\
+    &   & x_1 & + & x_5 & \ge & 1\\
+x_2 & + & x_5 & + & x_6 & \ge & 1\\
+    &   & x_3 & + & x_6 & \ge & 1\\
+    &   & x_1 & + & x_7 & \ge & 1\\
+x_2 & + & x_6 & + & x_7 & \ge & 1\\
+    &   & x_7 & + & x_3 & \ge & 1
+\end{array}
+$$
+
+$Z_{\text{LP}}^* = 22$ avec
+$x^*(\frac{1}{2},0,\frac{1}{2},1,\frac{1}{2},\frac{1}{2},\frac{1}{2})$
+\end{solution}
+
+\begin{exercice}
+Écrivez sa forme dual et sa relaxation linéaire.
+\end{exercice}
+
+\begin{solution}
+$\max(\sum\limits_i{y_i})$ où $1 \le i \le 12$ et
+$y_i \in \mathbb{N}$ (si relaxé: $y_i \in \mathbb{R}$) $y_i \ge 0, \forall i$\\
+s.l.c\\
+$$
+\begin{array}{ccccccccccccc}
+    &   &     &   & y_1 & + & y_4 & + & y_7 & + & y_{10} & \le & 6\\
+    &   &     &   & y_2 & + & y_5 & + & y_8 & + & y_{11} & \le & 11\\
+    &   &     &   & y_3 & + & y_6 & + & y_8 & + & y_{12} & \le & 8\\
+y_1 & + & y_2 & + & y_3 & + & y_4 & + & y_5 & + & y_6    & \le & 6\\
+    &   &     &   & y_4 & + & y_5 & + & y_7 & + & y_8    & \le & 5\\
+    &   &     &   &     &   & y_8 & + & y_9 & + & y_{11} & \le & 9\\
+    &   &     &   &     &   & y_{10}&+& y_{11}&+& y_{12} & \le & 4
+\end{array}
+$$
+
+\noindent $z_{LP}^* = 22$ avec
+$(y^*)^T = (0,6,0,0,0,0,3,2,7,3,0,1)$
+\end{solution}
+
+\begin{exercice}
+Calculez le paramètre $f$ de l'algorithme \algo{DET-ROUND-SC}.
+\end{exercice}
+
+\begin{solution}
+$$
+\begin{array}{ccl}
+f & = & \max\limits_{i\in\{1,\dots,12\}}(f_i)$ où $f_i = |\{j : e_i \in S_j\}|\\
+  & = & 3
+\end{array}
+$$
+
+Donc la solution sera au pire $3$ fois la solution optimale:
+$\text{APP} \le 3 \text{OPT}$
+\end{solution}
+
+\begin{exercice}
+Utilisez \algo{DET-ROUND-SC} pour calculer une solution au problème en nombre
+entiers et verifiez la garantie à fortiori de l'algorithme.
+\end{exercice}
+
+\begin{solution}
+On construit la solution approchée au problème $P_2$ de la manière suivante:
+$$
+x_i =
+\begin{cases}
+0 & \text{si } x_i^* < \frac{1}{f}, x^*\text{ étant la solution du
+problème relaxé}\\
+1 & \text{sinon}
+\end{cases}
+$$
+
+\noindent Ici, $x=(1,0,1,1,1,1,1)$, $\text{APP}=38$.\\
+$\text{OPT}=23$ est atteint en selectionnant $S_3, S_4, S_5$ et $S_7$.
+$$\frac{\text{APP}}{\text{OPT}} = \frac{38}{23}$$\\
+
+\noindent La garantie à fortiori est donnée par:
+$$
+\alpha = \frac{\text{APP}}{Z_{LP}^*} = \frac{38}{22}
+$$
+
+\noindent Cela implique que $\text{APP} \le 2\text{OPT}$
+\end{solution}
+
+\begin{exercice}
+Utilisez \algo{DUAL-ROUND-SC} et vérifiez le facteur d'approximation.
+\end{exercice}
+
+\begin{solution}
+Injectons les $y^*_i$ de $(y^*)^T = (0,6,0,0,0,0,3,2,7,3,0,1)$ dans les
+équations du dual de la solution de l'exercice 2.\\
+
+\noindent On va sélectionner $S_j$ dans la solution approchée ssi
+$\sum\limits_{i \text{ t.q } v_i \in S_j}{y_i} = w_j$
+$$
+\begin{array}{ccccccccccccc}
+    &   &     &   & 0 & + & 0 & + & 3 & + & 3 & =   & 6\\
+    &   &     &   & 6 & + & 0 & + & 3 & + & 0 & \le & 11\\
+    &   &     &   & 0 & + & 0 & + & 7 & + & 1 & =   & 8\\
+ 0  & + &  6  & + & 0 & + & 0 & + & 0 & + & 0 & =   & 6\\
+    &   &     &   & 0 & + & 0 & + & 3 & + & 2 & =   & 5\\
+    &   &     &   &     &   & 2 & + & 7 & + & 0 & = & 9\\
+    &   &     &   &     &   & 3 & + & 0 & + & 1 & = & 4
+\end{array}
+$$
+
+\noindent On obtient la même solution que pour \algo{DET-ROUND-SC}:
+$$
+y=(1,0,1,1,1,1,1)
+$$
+
+On a bien $38 \le 23 f = 23 . 3 = 69$.
+\end{solution}
+
+\begin{exercice}
+Utilisez \algo{GREEDY-SC} pour résoudre $P_1$.
+\end{exercice}
+
+\begin{solution}
+\noindent\textbf{Données:}\\
+\begin{center}
+\begin{tabular}{lr}
+$
+\begin{array}{c|c}
+i & S_i\\
+\hline
+1 & \{1,4,7,10\} \\
+2 & \{2,5,8,11\} \\
+3 & \{3,6,9,12\} \\
+4 & \{1,2,3,4,5,6\} \\
+5 & \{4,5,7,8\} \\
+6 & \{8,9,11,12\} \\
+7 & \{10,11\}
+\end{array}
+$
+&
+$
+\begin{array}{c|cc}
+i & |S_i| & w_i\\
+\hline
+1 & 4     & 6  \\
+2 & 4     & 10 \\
+3 & 4     & 8  \\
+4 & 6     & 6  \\
+5 & 4     & 5  \\
+6 & 4     & 9  \\
+7 & 2     & 4
+\end{array}
+$
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Init:}
+\begin{itemize}
+\item $I = \{\}$
+\item $\widehat{S}_j = S_j, \forall j$
+\end{itemize}
+
+\noindent\textbf{Itération 1:}
+$$
+\begin{array}{c|ccccccc}
+j               & 1 & 2  & 3 & 4 & 5 & 6 & 7\\
+\hline
+w_j             & 6 & 10 & 8 & 6 & 5 & 9 & 4\\
+|\widehat{S}_j| & 4 & 4  & 4 & 6 & 4 & 4 & 2
+\end{array}
+$$
+
+\begin{itemize}
+\item $l = 4$
+\item $I = \{4\}$
+\end{itemize}
+
+$$
+\begin{array}{c|c}
+i & \widehat{S}_i\\
+\hline
+1 & \{7,10\} \\
+2 & \{8,11\} \\
+3 & \{9,12\} \\
+4 & \{\} \\
+5 & \{7,8\} \\
+6 & \{8,9,11,12\} \\
+7 & \{10,11\}
+\end{array}
+$$
+
+\noindent\textbf{Itération 2:}
+$$
+\begin{array}{c|ccccccc}
+j               & 1 & 2  & 3 & 4 & 5 & 6 & 7\\
+\hline
+w_j             & 6 & 10 & 8 & / & 5 & 9 & 4\\
+|\widehat{S}_j| & 2 & 2  & 2 & / & 2 & 4 & 2
+\end{array}
+$$
+
+\begin{itemize}
+\item $l = 7$
+\item $I = \{4, 7\}$
+\end{itemize}
+
+$$
+\begin{array}{c|c}
+i & \widehat{S}_i\\
+\hline
+1 & \{7\} \\
+2 & \{8\} \\
+3 & \{9,12\} \\
+4 & \{\} \\
+5 & \{7,8\} \\
+6 & \{8,9,12\} \\
+7 & \{\}
+\end{array}
+$$
+
+\noindent\textbf{Itération 3:}
+$$
+\begin{array}{c|ccccccc}
+j               & 1 & 2  & 3 & 4 & 5 & 6 & 7\\
+\hline
+w_j             & 6 & 10 & 8 & / & 5 & 9 & /\\
+|\widehat{S}_j| & 1 & 1  & 2 & / & 2 & 3 & /
+\end{array}
+$$
+
+\begin{itemize}
+\item $l = 5$
+\item $I = \{4, 7, 5\}$
+\end{itemize}
+
+$$
+\begin{array}{c|c}
+i & \widehat{S}_i\\
+\hline
+1 & \{\} \\
+2 & \{\} \\
+3 & \{9,12\} \\
+4 & \{\} \\
+5 & \{\} \\
+6 & \{9,12\} \\
+7 & \{\}
+\end{array}
+$$
+
+\noindent\textbf{Itération 4:}
+$$
+\begin{array}{c|ccccccc}
+j               & 1 & 2 & 3 & 4 & 5 & 6 & 7\\
+\hline
+w_j             & / & / & 8 & / & / & 9 & /\\
+|\widehat{S}_j| & / & / & 2 & / & / & 2 & /
+\end{array}
+$$
+
+\begin{itemize}
+\item $l = 3$
+\item $I = \{4, 7, 5, 3\}$
+\end{itemize}
+
+$$
+\begin{array}{c|c}
+i & \widehat{S}_i\\
+\hline
+1 & \{\} \\
+2 & \{\} \\
+3 & \{\} \\
+4 & \{\} \\
+5 & \{\} \\
+6 & \{\} \\
+7 & \{\}
+\end{array}
+$$
+
+\noindent $\Rightarrow$ La solution est donc $(0, 0, 1, 1, 1, 0, 1)$.
+$\text{APP} = 23$ et $\text{OPT} = 21$ (avec $S_1, S_4 \text{ et } S_6$).
+
+\end{solution}
+
+\begin{exercice}
+Calculez le paramètre $g$ pour la méthode précédente et vérifiez son facteur
+d'approximation.
+\end{exercice}
+
+\begin{solution}
+Pour \algo{GREEDY-SC}, $g = \max\limits_{j}{|S_j}$. Ici, $g=6$.\\
+
+\algo{GREEDY-SC} a unfacteur d'approx $H_g$, le $g^\text{ième}$ nombre
+harmonique (c.f. notes de cours).
+$$
+H_g = \sum\limits_{i=1}^{g}{\frac{1}{i}} = 2.45
+$$
+\end{solution}
+
+\end{document}

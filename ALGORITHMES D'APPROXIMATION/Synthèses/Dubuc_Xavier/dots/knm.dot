@@ -1,0 +1,34 @@
+graph{
+
+	subgraph g1{
+		rank=same;
+		1[height=0.5,width=0.5,fixedsize=true];
+		2[height=0.5,width=0.5,fixedsize=true];
+		3[height=0.5,width=0.5,fixedsize=true];
+		4[height=0.5,width=0.5,fixedsize=true];
+		5[height=0.5,width=0.5,fixedsize=true];
+	}
+
+	subgraph g2{
+		rank=same;
+		6[height=0.5,width=0.5,fixedsize=true];
+		7[height=0.5,width=0.5,fixedsize=true];
+		8[height=0.5,width=0.5,fixedsize=true];
+	}
+	1 -- 6;
+	1 -- 7;
+	1 -- 8;
+	2 -- 6;
+	2 -- 7;
+	2 -- 8;
+	3 -- 6;
+	3 -- 7;
+	3 -- 8;
+	4 -- 6;
+	4 -- 7;
+	4 -- 8;
+	5 -- 6;
+	5 -- 7;
+	5 -- 8;
+	
+}

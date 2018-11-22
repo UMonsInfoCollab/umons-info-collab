@@ -1,0 +1,15 @@
+graph g{
+1[label="obj1?",height=0.9,width=0.9,fixedsize=true];
+2[label="obj2?",height=0.9,width=0.9,fixedsize=true];
+3[label="obj2?",height=0.9,width=0.9,fixedsize=true];
+4[label="...",height=0.6,width=0.6,fixedsize=true];
+5[label="...",height=0.6,width=0.6,fixedsize=true];
+6[label="...",height=0.6,width=0.6,fixedsize=true];
+7[label="...",height=0.6,width=0.6,fixedsize=true];
+1--2[label="oui"];
+1--3[label="non"];
+2--4[label="oui"];
+2--5[label="non"];
+3--6[label="oui"];
+3--7[label="non"];
+}

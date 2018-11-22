@@ -1,0 +1,6 @@
+#
+dot -Teps -o$1.eps $1.dot
+epstopdf $1.eps
+rm $1.eps
+mv ./$1.pdf ../pdf
+

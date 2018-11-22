@@ -1,0 +1,10 @@
+graph g{
+a [height=0.5,width=0.5,fixedsize=true];
+b [height=0.5,width=0.5,fixedsize=true];
+c [height=0.5,width=0.5,fixedsize=true];
+d [height=0.5,width=0.5,fixedsize=true];
+b -- a [color=blue,style=bold];
+a -- c [color=blue,style=bold];
+d -- c [color=blue,style=bold]
+b -- d [color=blue,style=bold];
+}

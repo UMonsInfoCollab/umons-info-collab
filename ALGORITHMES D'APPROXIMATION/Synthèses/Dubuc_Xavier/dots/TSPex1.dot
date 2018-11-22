@@ -1,0 +1,14 @@
+graph g{
+a [height=0.5,width=0.5,fixedsize=true];
+b [height=0.5,width=0.5,fixedsize=true];
+c [height=0.5,width=0.5,fixedsize=true];
+d [height=0.5,width=0.5,fixedsize=true];
+a -- b [label=1];
+a -- c [label=2];
+a -- d [label=5];
+b -- c [label=6];
+b -- d [label=2];
+c -- d [label=1];
+{rank=same; a b};
+{rank=same; c d};
+}

@@ -1,0 +1,41 @@
+graph g{
+1[label="b1",height=0.6,width=0.6,fixedsize=true];
+2[label="b2",height=0.6,width=0.6,fixedsize=true];
+3[label="b3",height=0.6,width=0.6,fixedsize=true];
+4[label="...",height=0.6,width=0.6,fixedsize=true];
+13[label="bn-1",height=0.9,width=0.9,fixedsize=true];
+5[label="bn",height=0.6,width=0.6,fixedsize=true];
+6[label="a1",height=0.6,width=0.6,fixedsize=true];
+7[label="a2",height=0.6,width=0.6,fixedsize=true];
+8[label="a3",height=0.6,width=0.6,fixedsize=true];
+9[label="a4",height=0.6,width=0.6,fixedsize=true];
+10[label="...",height=0.6,width=0.6,fixedsize=true];
+11[label="an",height=0.6,width=0.6,fixedsize=true];
+12[label="an+1",height=0.9,width=0.9,fixedsize=true];
+
+{rank=same; 1 2 3 4 5 13};
+{rank=same; 6 12 7 8 9 10 11};
+
+1--2[label=1,color=green,style=bold];
+2--3[label=1,color=green,style=bold];
+3--4[label=1,color=green,style=bold];
+4--13[label=1,color=green,style=bold];
+13--5[label=1,color=green,style=bold];
+
+6--7[label="1+eps",color=green,style=bold];
+7--8[label=1,color=green,style=bold];
+8--9[label=1,color=green,style=bold];
+9--10[label=1,color=green,style=bold];
+10--11[label=1,color=green,style=bold];
+11--12[label="1+eps",color=green,style=bold];
+
+1--6[label="1+eps",color=green,style=bold];
+1--7[label=1,color=red,style=bold];
+2--7[label=1,color=red,style=bold];
+2--8[label=1,color=red,style=bold];
+3--8[label=1,color=red,style=bold];
+3--9[label=1,color=red,style=bold];
+13--11[label=1,color=red,style=bold];
+5--11[label=1,color=red,style=bold];
+5--12[label="1+eps",color=green,style=bold];
+}

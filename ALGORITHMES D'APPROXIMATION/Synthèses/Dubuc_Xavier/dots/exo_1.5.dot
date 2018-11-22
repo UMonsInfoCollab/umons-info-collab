@@ -1,0 +1,39 @@
+graph g{
+1[fillcolor=firebrick4,style=filled,fontcolor=white];
+2[fillcolor=firebrick4,style=filled,fontcolor=white];
+3[fillcolor=firebrick4,style=filled,fontcolor=white];
+4[fillcolor=firebrick4,style=filled,fontcolor=white];
+5[fillcolor=firebrick4,style=filled,fontcolor=white];
+6[fillcolor=firebrick4,style=filled,fontcolor=white];
+7[fillcolor=forestgreen,style=filled,fontcolor=white];
+8[fillcolor=forestgreen,style=filled,fontcolor=white];
+9[fillcolor=cyan4,style=filled,fontcolor=white];
+10[fillcolor=cyan4,style=filled,fontcolor=white];
+11[fillcolor=cyan4,style=filled,fontcolor=white];
+12[fillcolor=orange,style=filled,fontcolor=white];
+13[fillcolor=orange,style=filled,fontcolor=white];
+14[fillcolor=orange,style=filled,fontcolor=white];
+15[fillcolor=orange,style=filled,fontcolor=white];
+16[fillcolor=orange,style=filled,fontcolor=white];
+17[fillcolor=orange,style=filled,fontcolor=white];
+7--1;
+7--2;
+7--3;
+8--4;
+8--5;
+8--6;
+1--9;
+2--9;
+3--10;
+4--10;
+5--11;
+6--11;
+12--1;
+13--2;
+14--3;
+15--4;
+16--5;
+17--6;
+{rank=same; 1 2 3 4 5 6}
+{rank=same; 7 8 9 10 11 12 12 14 15 16 17}
+}

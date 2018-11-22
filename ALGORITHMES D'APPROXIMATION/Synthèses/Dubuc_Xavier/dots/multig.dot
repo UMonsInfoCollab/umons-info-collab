@@ -1,0 +1,18 @@
+graph g{
+1[height=0.5,width=0.5,fixedsize=true];
+2[height=0.5,width=0.5,fixedsize=true];
+3[height=0.5,width=0.5,fixedsize=true];
+4[height=0.5,width=0.5,fixedsize=true];
+5[height=0.5,width=0.5,fixedsize=true];
+1 -- 2 [color=blue,style=bold];
+1 -- 2 [color=red,style=bold];
+2 -- 3 [color=blue,style=bold];
+2 -- 3 [color=red,style=bold];
+2 -- 5 [color=blue,style=bold];
+2 -- 5 [color=blue,style=bold];
+3 -- 4 [color=red,style=bold];
+3 -- 4 [color=blue,style=bold];
+{rank=same; 2 3};
+5 -- 4 [color=red,style=dashed];
+1 -- 5 [color=red,style=dashed];
+}
