@@ -1,0 +1,138 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage{amsmath,mathtools}
+\usepackage[utf8]{inputenc}
+
+% Math commands
+\newcommand*{\indif}{\sim}
+\newcommand*{\stricpref}{\prec}
+\newcommand*{\indifchange}[2]{\prescript{}{#1}{\indif}_{#2}}
+\newcommand*{\stricprefchange}[2]{\prescript{}{#1}{\stricpref}_{#2}}
+
+\renewcommand{\partname}{} 
+
+\begin{document}
+	\section*{Notation}
+	Soit $i,j \in \mathbf{N}$, $c_i$ le critère d'indice $i$, $v_{c_i}$ la valeur du critère d'indice $i$,
+	la notation:
+	$$(v_{c_i},v'_{c_i})\indifchange{c_i}{c_j}(v_{c_j},v'_{c_j})$$
+	Signifie que pour passer de $v_{c_i}$ à $v'_{c_i}$ sur le critère $c_i$, on est prêt à passer de
+	$v_{c_j}$ à $v'_{c_j}$ sur le critère $c_j$.\\
+	
+	Par exemple, $(1,2)\indifchange{1}{2}(5,4)$ signifie que pour passer de $1$ à $2$ sur
+	le critère $1$, on est prêt à passer de $5$ à $4$ sur le critère $2$.
+	\section*{Exercice 1}
+		\subsection*{Partie 1}
+			Voir fichier \textit{ChoixDeThierry}, feuille 
+			\textit{Somme pondérée} pour le travail Excel...\\
+			%
+			~\\
+			%
+			\textit{Norm-décal} représente une addition dans la
+			 normalisation\\
+			\textit{Norm-Divis} représente une division dans la 
+			 normalisation
+			%
+		%
+		\subsection*{Partie 2}
+			On a effectué une transformation affine pour passer de
+			$u_j(g_i)$ à $u^{'}_{j}(g_i)$. \\
+			En effet,  $u^{'}_{j}(g_i) = 
+			\frac{u_j(g_i)}{\max_j (u_j(g_i))}$\\
+			%
+			~\\
+			%
+			Par la normalisation, on a que 
+			$$ k_1 \cdot \frac{\Delta \text{coût}}{\max \text{coût}} 
+			 = k_2 \cdot \frac{\Delta \text{accel}}{\max \text{accel}}$$
+			Choisissons 17000 comme coût de référence pour un delta de 1
+			seconde d'accélération : 
+			$$ -1 (\frac{17000}{21334} - \frac{x}{21334})
+			 = -2 (\frac{28}{30.8) - \frac{29}{30.8}} $$
+			$$ \Leftrightarrow 
+			   (17000 - x) = 2 \cdot 21334 \cdot \frac{-1}{30.8} 
+			 = -1385.32 $$
+			Pour notre modèle, on aura donc une équivalence entre deux
+			voiture différant de 1 sec d'accélération Ssi leurs prix 
+			diffèrent de 1385.32 en coût.
+			%
+		%
+	%
+	\section*{Exercice 3}
+		Soient 3 critères à \textbf{maximiser}.\\
+		%
+		~\\
+		%
+		\textbf{(1)} Supposons que le décideur nous dise que :
+		$$ (2, 3, 4) \succ (4, 3, 3) $$
+		On peut en déduire le modèle d'utilité suivant :
+		$$ k_1 \cdot u^{'}_{1}(2) + k_2 \cdot u^{'}_{2}(3) + 
+		   k_3 \cdot u^{'}_{3}(4) >
+		   k_1 \cdot u^{'}_{1}(4) + k_2 \cdot u^{'}_{2}(3) + 
+		   k_3 \cdot u^{'}_{3}(3) $$
+		$$ \Leftrightarrow 
+		   k_1 \cdot u^{'}_{1}(1) + k_3 \cdot u^{'}_{3}(4) >
+		   k_1 \cdot u^{'}_{1}(4) + k_3 \cdot u^{'}_{3}(3) $$
+		$$ \Leftrightarrow 
+		   k_1 (u^{'}_{1}(1) - u^{'}_{1}(4)) > 
+		   k_3 (u^{'}_{3}(4) - u^{'}_{3}(4)) $$
+		$$ \Leftrightarrow 
+		   (2, 4)\ _1>_3\ (3, 4) $$
+		%
+		\\~\\
+		%
+		\textbf{(2)} Et si le décideur nous dit que 
+		$$ (2, 1, 4) \stricpref (4, 1, 3) $$
+		On peut en déduire le modèle d'utilité suivant :
+		\begin{center}
+		\begin{tabular}{crcl}
+		& $k_1 \cdot u^{'}_{1}(2) + k_2 \cdot u^{'}_{2}(1) + k_3 \cdot u^{'}_{3}(4)$ & $<$ &
+		   $k_1 \cdot u^{'}_{1}(4) + k_2 \cdot u^{'}_{2}(1) + k_3 \cdot u^{'}_{3}(3) $ \\
+		$\Leftrightarrow$ & $k_1 \cdot u^{'}_{1}(2) + k_3 \cdot u^{'}_{3}(4)$ & $<$ &
+			$k_1 \cdot u^{'}_{1}(4) + k_3 \cdot u^{'}_{3}(3)$ \\
+		$\Leftrightarrow$ & $k_1 \cdot (u^{'}_{1}(1) - u^{'}_{1}(4))$ & $<$ & 
+			$k_3 \cdot (u^{'}_{3}(4) - u^{'}_{3}(4))$ \\
+		$\Leftrightarrow$ & $(2, 4)$ & $\stricprefchange{1}{3}$ & $(3, 4)$
+		\end{tabular}
+		\end{center}
+		Par \textbf{(1)} et \textbf{(2)}, on trouve qu'on ne peut pas
+		utiliser le modèle par fonction de valeur
+		additive, on retrouve le même problème que dans l'exemple 
+		"frites mayo".
+	%
+	\section*{Exercice 4}
+		\subsection*{Partie 1}
+			(1, 5, 3) $\sim$ (2, 4, 3) $\rightarrow$ On remarque que le 
+				$3^{\text{ème}}$ critère est commun aux deux vecteurs, 
+				il vaut 3. On peut donc faire le rapport entre k1 et k2.
+			\begin{center}
+			\begin{tabular}{crcl}
+				& $ k_1\cdot u^{'}_{1}(1) + k_2\cdot u^{'}_{2}(5) + k_1\cdot u^{'}_{3}(3)$
+				& $=$ & $k_1\cdot u^{'}_{1}(2) + k_2\cdot u^{'}_{2}(4) + k_3\cdot u^{'}_{3}(3) $\\
+				%$$ \Leftrightarrow 
+				$\Leftrightarrow$ & $k_1\cdot u^{'}_{1}(1) + k_2\cdot u^{'}_{2}(5)$
+				& $=$ & $k_1\cdot u^{'}_{1}(2) + k_2\cdot u^{'}_{2}(4)$\\
+				$\Leftrightarrow$ & $\frac{k_1}{k_2}$ & $=$ &
+					$\frac{u^{'}_{1}(2) - u^{'}_{1}(1)}
+						 {u^{'}_{2}(5) - u^{'}_{2}(4))}$
+			\end{tabular}
+			\end{center}
+		\subsection*{Partie 2}
+			En remettant les nouvelles valeurs dans la formule donnée 
+			ci-dessus, on trouve:
+			$$ \frac{k_1}{k_2} = \frac{4 - 2}{17 - 16} = \frac{2}{1}$$
+		\subsection*{Partie 3}
+			Depuis les jugements d'indifférence fournis dans l'énoncé ont peut déduire
+			les jugements indifférence suivants:
+			\begin{center}
+			\begin{tabular}{rcl}
+				$(1,5,3) \indif (2,4,3)$ & $\Rightarrow$ & $(1,5) \indif (2,4)$\\
+				$(1,4,3) \indif (2,2,3)$ & $\Rightarrow$ & $(1,4) \indif (2,2)$\\
+				$(1,2,3) \indif (2,0,3)$ & $\Rightarrow$ & $(1,2) \indif (2,0)$
+			\end{tabular}
+			\end{center}
+			En effet, le critère en indice $3$ a la valeur $3$ pour chaque indifférence, il
+			sera donc simplifié dans l'équation du modèle.
+			
+			\textbf{TODO: graphe des valeurs marginales}
+			
+\end{document}
