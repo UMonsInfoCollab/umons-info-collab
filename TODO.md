@@ -10,7 +10,6 @@
   * Le valider à trois
 * Trouver un admin en bachelier
 * Quand le dépôt est prêt, le communiquer un peu plus
-* Contacter Anthony et Danny pour expliquer la démarche
 
 ## Animation
 
