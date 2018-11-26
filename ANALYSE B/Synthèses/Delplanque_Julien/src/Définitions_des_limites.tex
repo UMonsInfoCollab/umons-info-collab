@@ -1,0 +1,47 @@
+\documentclass[a4paper,11pt]{report}
+ 
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\renewcommand{\thesection}{}
+\renewcommand{\thesubsection}{}
+
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[C]{} 
+\fancyhead[L]{}
+\fancyhead[R]{}
+
+\renewcommand{\footrulewidth}{1pt}
+\fancyfoot[C]{\textbf{\thepage}} 
+\fancyfoot[L]{Delplanque Julien}
+\fancyfoot[R]{2013-2014}
+
+\begin{document}
+\renewcommand{\labelitemi}{$\cdot$}
+\begin{Large}\begin{center} 
+   \underline{\textbf{Analyse I (Partie B): Définitions des limites}} 
+\end{center}\end{Large}
+
+\begin{itemize}
+	\item $\lim\limits_{x \rightarrow +\infty}{f(x)} = +\infty \iff \forall R > 0, \exists B >0 , \forall x \ge B, f(x) \ge R$\\
+	
+	\item $\lim\limits_{x \rightarrow -\infty}{f(x)} = -\infty \iff \forall R > 0, \exists A < 0, \forall x \le A, f(x) \le R$\\
+	
+	\item Soit $\lambda \in \mathbb{R}$, $\lim\limits_{x \rightarrow +\infty}{f(x)} = \lambda \iff \forall \varepsilon > 0, \exists A > 0, \forall x \ge A, |f(x)+\lambda|\le \varepsilon$\\
+	
+	\item Soit $\lambda \in \mathbb{R}$, $\lim\limits_{x \rightarrow -\infty}{f(x)} = \lambda \iff \forall \varepsilon > 0, \exists B < 0, \forall x \le B, |f(x)+\lambda| \le \varepsilon$\\
+	
+	\item Soit $a \in \mathbb{R}$, $\lim\limits_{x \rightarrow a}{f(x)} = +\infty \iff \forall R > 0, \exists \delta > 0, \forall x \in \mathbb{R}, |x-a| \le \delta \Rightarrow f(x) \ge R$\\
+	
+	\item Soit $a \in \mathbb{R}$, $\lim\limits_{x \rightarrow a}{f(x)} = -\infty \iff \forall R > 0, \exists \delta > 0, \forall x \in \mathbb{R}, |x-a| \le \delta \Rightarrow f(x) \le R$\\
+	
+	\item Soient $a,\lambda \in \mathbb{R}$, $\lim\limits_{x \rightarrow a}{f(x)} = \lambda \iff \forall \varepsilon > 0, \exists \delta > 0, \forall x \in \mathbb{R}, |x-a| \le \delta \Rightarrow |f(x)-\lambda| \le \varepsilon$\\
+\end{itemize}
+\end{document}

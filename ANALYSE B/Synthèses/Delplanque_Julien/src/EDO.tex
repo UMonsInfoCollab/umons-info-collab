@@ -1,0 +1,94 @@
+\documentclass[a4paper,11pt]{report}
+ 
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\renewcommand{\thesection}{}
+\renewcommand{\thesubsection}{}
+
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[C]{} 
+\fancyhead[L]{}
+\fancyhead[R]{}
+
+\renewcommand{\footrulewidth}{1pt}
+\fancyfoot[C]{\textbf{\thepage}} 
+\fancyfoot[L]{Delplanque Julien}
+\fancyfoot[R]{2013-2014 last update: 04/2015}
+
+\begin{document}
+\renewcommand{\labelitemi}{$\cdot$}
+\begin{Large}\begin{center} 
+   \underline{\textbf{Analyse I (Partie B): Les équations différentielles ordinaires}} 
+\end{center}\end{Large}
+
+\section{Définition}
+\begin{itemize}
+	\item Une EDO (d'ordre n) est une équation de type $f(t,\partial_t^nu,...,\partial_t^1u,u)=0$
+	\item Une solution pour une EDO de ce type est une fonction $u:I\rightarrow\mathbb{R}$ où $I\subseteq\mathbb{R}$ qui satisfait l'EDO i.e $u$ est $n$ fois dérivable sur $I$ et $\forall t \in I,f(t,\partial_t^nu,...,\partial_t^1u,u)=0$
+\end{itemize}
+
+\section{Les EDO linéaires homogènes}
+\begin{itemize}
+	\item Forme générale: Une EDO linéraire homogène est de la forme:\\
+	\begin{center}
+	$\sum\limits_{i=0}^n a_i(t)\partial_t^iu(t)=0$
+	\end{center}
+	\item Exemple: $\sin(t)\partial_t^3u(t)+t^2\partial_t u(t)-5 u(t)=0$
+	\item Rappel:
+	\begin{itemize}
+		\item $\partial^k(u_1(t)+u_2(t)) = \partial^k u_1(t) + \partial^k u_2(t)$
+		\item $\partial^k(\alpha u_1(t)) = \alpha \partial^k u_1(t)$
+		\item $\partial^k$ est un opérateur linéaire.
+	\end{itemize}
+\end{itemize}
+
+\section{Conséquences}
+Si 
+\begin{itemize}
+\item $u_1(t)$ est solution de $\sum\limits_{i=0}^n a_i(t) \partial_t^i u(t) = 0$ et 
+\item $u_2(t)$ est solution de $\sum\limits_{i=0}^n a_i(t) \partial_t^i u(t) = 0$, 
+\end{itemize}
+
+alors 
+\begin{itemize}
+\item $u_1(t) + u_2(t)$ est solution de $\sum\limits_{i=0}^n a_i(t) \partial_t^i u(t) = 0$
+\item $\alpha u_1(t)$ est solution de $\sum\limits_{i=0}^n a_i(t) \partial_t^i u(t) = 0$.
+\end{itemize}
+
+\section{Principe de superposition}
+Si on connait une solution particulière de l'équation notée $u_p(t)$ et si $u_0(t)$ est solution de l'EDO homogène, alors les solutions de l'EDO seront de la forme $u(t) = u_p(t) + u_0(t)$.
+
+\newpage
+\section{Résoudre une EDO}
+Par principe de superposition, on va devoir trouver une solution particulère et une solution de l'équation homogène.
+\subsection{Résoudre une équation homogène}
+\begin{itemize}
+	\item Trouver le polynome caractéristique $\sum\limits_{i=0}^n a_i(t) x^i$.
+	\item Trouver les racines du polynome caractéristique et leurs multiplicité.
+	\item Les solutions du polynôme de la forme $\sum\limits_{i} P_i(t) e^{\lambda it}$ où $\lambda i$ est la racine du polynome caractéristique et $P_i(t)$ est le polynôme de degré $<m_i$ qui est la multiplicité de la racine $\lambda_i$.
+\end{itemize}
+
+\subsection{Trouver une solution particulière de l'équation $\sum\limits_{i=0}^n a_i(t)\partial_t^iu(t)=q(t)e^{ut}$ où $u\in\mathbb{R}$, $q(t)$ est un polynôme.}
+Il y a deux cas:
+\begin{itemize}
+	\item Si $u$ est racine du polynome caractéristique, alors il existe une solution de la forme $t^m r(t) e^{ut}$ où m est la multiplicité de $u$ et $r(t)$ est un polynome de degré $\le$ au degré de $q(t)$.
+	\item Si $u$ n'est pas une racine du polynome caractéristique, alors il existe une solution particulière de la forme $r(t) .e^{ut}$ où $r(t)$ est un polynome de degré $\le$ degré $q(t)$
+\end{itemize}
+
+\section{Remarque}
+\begin{itemize}
+\item Pour trouver les solution réelles de l'EDO, il faut prendre la partie réelle des solution $\mathbb{C}$.
+\item $cos(t)=\frac{e^{it}+e^{-it}}{2}$
+\item $sin(t)=\frac{e^{it}-e^{-it}}{2i}$
+\item $cosh(t)=$
+\item $sinh(t)=$
+\end{itemize}
+\end{document}

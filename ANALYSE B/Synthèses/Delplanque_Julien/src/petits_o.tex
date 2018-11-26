@@ -1,0 +1,176 @@
+\documentclass[a4paper,11pt]{report}
+ 
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\roman{subsection}}
+
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[C]{} 
+\fancyhead[L]{}
+\fancyhead[R]{}
+
+\renewcommand{\footrulewidth}{1pt}
+\fancyfoot[C]{\textbf{\thepage}} 
+\fancyfoot[L]{Delplanque Julien}
+\fancyfoot[R]{2013-2014}
+
+\begin{document}
+\renewcommand{\labelitemi}{$\cdot$}
+\begin{Large}\begin{center} 
+   \underline{\textbf{Analyse I (Partie B): Propriétés sur les petits o}} 
+\end{center}\end{Large}
+%%%%%
+\section{Définition de petit o}
+Soit $f:\mathbb{R}\rightarrow\mathbb{R}$, $a\in Dom(f)$, on dit que f est un petit o de $(x-a)^n$ ssi\\
+\begin{center}
+	$f(a)=0$ et $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n}}=0$
+\end{center}
+
+%%%%%
+\section{Propriétés}
+%%%
+\subsection{Soit $m,n \in \mathbb{N}$, si $ m \le n$, alors $o((x-a)^n) = o((x-a)^m)$}
+Soit $f(x) = o((x-a)^n)$,\\
+Donc par définition de petit o,
+\begin{center}
+	$f(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n} = 0}$
+\end{center}
+Montrons que $f(x) = o((x-a)^m)$ c'est-à-dire montrons que $f(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^m}} = 0$
+\begin{center}
+\begin{tabular}{rcll}
+$f(a)$ & $=$ & $0$ & par hypothèse\\
+&&& \\
+$\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^m}}$ & $=$ & $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n (x-a)^{m-n}}}$ & \\
+& $=$ & $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n}}.\lim\limits_{x \rightarrow a}{\frac{1}{(x-a)^{m-n}}}$ & car la limite du produit est le produit des limites\\
+& $=$ & $0.\lim\limits_{x \rightarrow a}{(x-a)^{n-m}}$ & par hypothèse et car $m \le n$ donc $n-m \ge 0$\\
+& $=$ & $0.0$ & car $x \rightarrow a$ \\
+& $=$ & 0 & \\
+\end{tabular}
+\end{center}
+Cqfd.
+
+%%%
+\subsection{Soit $m,n \in \mathbb{N}$, $o((x-a)^n).o((x-a)^m) = o((x-a)^{n+m})$}
+Soit $f(x) = o((x-a)^n$,
+
+Soit $g(x) = o((x-a)^m$,\\
+Donc par définition de petit o,
+\begin{center}
+	$f(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n} = 0}$\\
+	$g(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^m} = 0}$
+\end{center}
+
+Posons $h(x) = f(x).g(x)$,\\
+Montrons que $h(x) = o((x-a)^{n+m})$ c'est à dire montrons que $h(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{h(x)}{(x-a)^{n+m}}} = 0$
+\begin{center}
+\begin{tabular}{rcll}
+$h(a)$ & $=$ & $f(a).g(a)$ & par définition de $h$\\
+& $=$ & $0.0$ & par hypothèse \\
+& $=$ & $0$ &\\
+&&& \\
+$\lim\limits_{x \rightarrow a}{\frac{h(x)}{(x-a)^{n+m}}}$ & $=$ & $\lim\limits_{x \rightarrow a}{\frac{h(x)}{(x-a)^n (x-a)^{m}}}$ & \\
+& $=$ & $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n}}.\lim\limits_{x \rightarrow a}{\frac{g(x)}{(x-a)^m}}$ & car la limite du produit est le produit des limites\\
+& $=$ & $0.0$ & par hypothèse\\
+& $=$ & $0$ & \\
+\end{tabular}
+\end{center}
+Cqfd.
+
+%%%
+\subsection{Soit $m,n \in \mathbb{N}$, $(o((x-a)^n))^m = o((x-a)^{n.m})$}
+Soit $f(x) = o((x-a)^n)$,\\
+Donc par définition de petit o,
+\begin{center}
+	$f(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n} = 0}$
+\end{center}
+
+Posons $h(x) = (f(x))^m$,\\
+Montrons que $h(x) = o((x-a)^{n.m})$ c'est à dire montrons que $h(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{h(x)}{(x-a)^{n.m}}} = 0$
+
+\begin{center}
+\begin{tabular}{rcll}
+$h(a)$ & $=$ & $(f(a))^m$ & par définition de $h$\\
+& $=$ & $(0)^m$ & par hypothèse \\
+& $=$ & $0$ &\\
+&&& \\
+$\lim\limits_{x \rightarrow a}{\frac{h(x)}{(x-a)^{n.m}}}$ & $=$ & $\lim\limits_{x \rightarrow a}{\frac{(f(x))^m}{(x-a)^{n.m}}}$ & par définition de $h$\\
+& $=$ & $\lim\limits_{x \rightarrow a}{\frac{(f(x))^m}{((x-a)^n)^m}}$ & par une propriété sur les exposants\\
+& $=$ & $\lim\limits_{x \rightarrow a}{(\frac{f(x)}{(x-a)^n})^m}$ & par une propriété sur les exposants\\
+& $=$ & $(\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n}})^m$ & car la limite du produit est le produit des limites\\
+& $=$ & $0^m$ & par hypothèse\\
+& $=$ & $0$ & \\
+\end{tabular}
+\end{center}
+Cqfd.
+
+%%%
+\subsection{Soit $n \in \mathbb{N}$, $o((x-a)^n) = o(1).(x-a)^n$}
+Soit $f(x) = o((x-a)^n)$,\\
+Donc par définition de petit o,
+\begin{center}
+	$f(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n} = 0}$
+\end{center}
+
+\begin{itemize}
+	\item \textbf{si $x \ne a$} alors prenons $g(x) = \frac{f(x)}{(x-a)^n}$\\
+	$g(x)$ est un petit o de 1 car:
+	\begin{center}
+	$g(a) = \frac{f(a)}{(x-a)^n} = \frac{0}{(x-a)^n} = 0$ et $\lim\limits_{x \rightarrow a}{\frac{g(x)}{1} = \lim\limits_{x \rightarrow a}{\frac{f(x)}{(x-a)^n}} = 0}$\\
+	\end{center}
+	On a bien:\\
+	\begin{center}
+	\begin{tabular}{rcll}
+	$f(x)$ & $=$ & $g(x).(x-a)^n$ &\\
+	& $=$ & $\frac{f(x)}{(x-a)^n}.(x-a)^n$ & \\
+	& $=$ & $f(x)$ & \\
+	\end{tabular}
+	\end{center}
+	Cqfd.\\
+	
+	\item \textbf{si $x = a$} alors prenons $g(x) = 0$
+	\begin{center}
+	$g(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{g(x)}{1} = 0}$\\
+	\end{center}
+	On a bien:
+		\begin{center}
+	\begin{tabular}{rcll}
+	$f(x)$ & $=$ & $g(x).(x-a)^n$ &\\
+	& $=$ & $0.(x-a)^n$ & par définition de g(x) et car $x = a$\\
+	& $=$ & $0$ & \\
+	\end{tabular}
+	\end{center}
+	Cqfd.
+\end{itemize}
+
+%%%
+\subsection{Soit $n \in \mathbb{N}$, $o(1).(x-a)^n = o((x-a)^n)$}
+Soit $f(x) = o(1)$,\\
+Donc par définition de petit o,
+\begin{center}
+	$f(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{f(x)}{1} = 0}$
+\end{center}
+
+Posons $h(x) = f(x).(x-a)^n$,\\
+Montrons que $h(x) = o((x-a)^n)$ c'est à dire montrons que $h(a) = 0$ et $\lim\limits_{x \rightarrow a}{\frac{h(x)}{(x-a)^{n}}} = 0$
+\begin{center}
+\begin{tabular}{rcll}
+$h(a)$ & $=$ & $f(a).(x-a)^n$ & par définition de $h$\\
+& $=$ & $0.(x-a)^n$ & par hypothèse \\
+& $=$ & $0$ &\\
+&&& \\
+$\lim\limits_{x \rightarrow a}{\frac{h(x)}{(x-a)^{n}}}$ & $=$ & $\lim\limits_{x \rightarrow a}{\frac{f(x).(x-a)^{n}}{(x-a)^{n}}}$ & par définition de $h$\\
+& $=$ & $\lim\limits_{x \rightarrow a}{f(x)}$ & \\
+& $=$ & $0$ & par hypothèse\\
+\end{tabular}
+\end{center}
+Cqfd.
+\end{document}

@@ -1,0 +1,123 @@
+\documentclass[a4paper,11pt]{report}
+ 
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\renewcommand{\thesection}{}
+\renewcommand{\thesubsection}{}
+
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[C]{} 
+\fancyhead[L]{}
+\fancyhead[R]{}
+
+\renewcommand{\footrulewidth}{1pt}
+\fancyfoot[C]{\textbf{\thepage}} 
+\fancyfoot[L]{Delplanque Julien}
+\fancyfoot[R]{2013-2014}
+
+\begin{document}
+\renewcommand{\labelitemi}{$\cdot$}
+\renewcommand{\labelitemii}{$-$}
+\begin{Large}\begin{center} 
+   \underline{\textbf{Analyse I (Partie B): $\forall n \in \mathbb{N}, \sqrt[n\,]{x}$ est continue sur son domaine.}} 
+\end{center}\end{Large}
+
+Tenons pour vrai que:
+\begin{center}
+(i) $x-a = (\sqrt[n\,]{x}-\sqrt[n\,]{a})\sum\limits_{k=0}^{n-1}{\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k}}$\\
+(ii) $\forall n \in \mathbb{N}, n$ pair $\rightarrow Dom(\sqrt[n\,]{x}) = \mathbb{R}^+$\\
+(iii) $\forall n \in \mathbb{N}, n$ impair $\rightarrow Dom(\sqrt[n\,]{x}) = \mathbb{R}$\\
+\end{center}
+
+\textbf{Montrons que $\forall n \in \mathbb{N}, \sqrt[n\,]{x}$ est continue sur son domaine.}
+\begin{center}
+i.e $\forall n \in \mathbb{N}, \forall a \in Dom(\sqrt[n\,]{x}), \forall \varepsilon > 0, \exists \delta > 0, \forall x \in Dom(\sqrt[n\,]{x}), |x-a| \le \delta \rightarrow |\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \varepsilon$
+\end{center}
+Preuve:\\
+Soit $n \in \mathbb{N}$,
+\begin{itemize}
+	\item \textbf{Si $n$ est pair}, alors le domaine de $\sqrt[n\,]{x}$ est $\mathbb{R}^+$. (ii)\\
+	Soit $a \in \mathbb{R}^+$,\\
+	Soit $\varepsilon > 0$,\\
+	Prenons $\delta = \varepsilon \sqrt[n\,]{a^{n-1}} > 0$,\\
+	Soit $x \in \mathbb{R}^+$ tel que $|x-a| \le \delta$,\\
+	On a:\\
+	\begin{center}
+		$|\sqrt[n\,]{x}-\sqrt[n\,]{a}| = |\frac{(\sqrt[n\,]{x}-\sqrt[n\,]{a})\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}}{\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}}|$\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| = \frac{|x-a|}{|\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}|}$ (i) et par une prop. des $|.|$\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \frac{\delta}{|\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}|}$ par hyp.\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \frac{\delta}{|\sqrt[n\,]{x^{n-1}}+\sqrt[n\,]{x^{n-2}}\sqrt[n\,]{a}+...+\sqrt[n\,]{x}\sqrt[n\,]{a^{n-2}}+\sqrt[n\,]{a^{n-1}}|} \stackrel{(\alpha)}{\le}  \frac{\delta}{\sqrt[n\,]{a^{n-1}}} \le \varepsilon$\\		
+	\end{center}
+	$(\alpha)$: $|\sqrt[n\,]{x^{n-1}}+\sqrt[n\,]{x^{n-2}}\sqrt[n\,]{a}+...+\sqrt[n\,]{x}\sqrt[n\,]{a^{n-2}}+\sqrt[n\,]{a^{n-1}}|$\\
+	= $\sqrt[n\,]{x^{n-1}}+\sqrt[n\,]{x^{n-2}}\sqrt[n\,]{a}+...+\sqrt[n\,]{x}\sqrt[n\,]{a^{n-2}}+\sqrt[n\,]{a^{n-1}}$\\ Car $a>0$ et $x>0$\\
+	Par transitivité,\\
+	\begin{center}
+		$|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \varepsilon$\\
+	\end{center}
+	Cqfd\\
+	
+	\item \textbf{Si $n$ est impair}, alors le domaine de $\sqrt[n\,]{x}$ est $\mathbb{R}$. (iii)\\
+	Soit $a \in \mathbb{R}$,\\
+	\begin{itemize}
+		\item \textbf{Si $a > 0$},\\
+		Soit $\varepsilon > 0$,\\
+		Prenons $\delta = \min{(\frac{a}{2},\varepsilon \sqrt[n\,]{a^{n-1}})}>0$ ,\\
+		Soit $x \in \mathbb{R}$ tel que $|x-a| \le \delta$ i.e $a-\delta \le x \le a+\delta$ donc en prenant $\delta = \frac{a}{2} > 0$, on a $a-\frac{a}{2} \le x \le a+\frac{a}{2}$ i.e $0 < \frac{a}{2} \le x \le \frac{3a}{2}$. Donc par transitivé, $0 < x$.\\
+		On a:\\
+		\begin{center}
+		$|\sqrt[n\,]{x}-\sqrt[n\,]{a}| = |\frac{(\sqrt[n\,]{x}-\sqrt[n\,]{a})\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}}{\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}}|$\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| = \frac{|x-a|}{|\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}|}$ (i) et par une prop des $|.|$\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \frac{\delta}{|\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}|}$ par hyp.\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \frac{\delta}{|\sqrt[n\,]{x^{n-1}}+\sqrt[n\,]{x^{n-2}}\sqrt[n\,]{a}+...+\sqrt[n\,]{x}\sqrt[n\,]{a^{n-2}}+\sqrt[n\,]{a^{n-1}}|} \le  \frac{\delta}{\sqrt[n\,]{a^{n-1}}} \le \varepsilon$\\
+		\end{center}
+		Par transitivité,\\
+		\begin{center}
+			$|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \varepsilon$\\
+		\end{center}
+		Cqfd\\
+		
+		\item \textbf{Si $a = 0$},\\
+		Soit $\varepsilon > 0$,\\
+		Prenons $\delta = \varepsilon^n>0$ ,\\
+		Soit $x \in \mathbb{R}$ tel que $|x-a| \le \delta$ i.e $|x| \le \delta$ i.e $-\delta \le x \le \delta$ donc en prenant $\delta = \varepsilon^n$, on a $-\varepsilon^n \le x \le \varepsilon^n$.\\ 
+		Comme $\forall x \in \mathbb{R},\forall m \in \mathbb{N}, (-x)^{2m+1} = -x^{2m+1}$, on a $(-\varepsilon)^n \le x \le \varepsilon^n$ i.e $-\varepsilon \le \sqrt[n\,]{x} \le \varepsilon$ cette dernière inégalité est équivalente à $|\sqrt[n\,]{x}| \le \varepsilon$.\\
+		Cqfd\\
+		
+		\item \textbf{Si $a < 0$},\\
+		Soit $\varepsilon > 0$,\\
+		Prenons $\delta = \min{(\frac{|a|}{2},\varepsilon \sqrt[n\,]{a^{n-1}})} > 0$ ,\\
+		Soit $x \in \mathbb{R}$ tel que $|x-a| \le \delta$ i.e $|x| \le \delta$ i.e $a-\delta \le x \le a+\delta$ donc en prenant $\delta = \frac{|a|}{2} = \frac{-a}{2}> 0$ car $a < 0$, on a $\frac{3a}{2} \le x \le \frac{a}{2}<0$.\\ Donc par transitivité, $x<0$.\\
+		On a:\\
+		\begin{center}
+		$|\sqrt[n\,]{x}-\sqrt[n\,]{a}| = |\frac{(\sqrt[n\,]{x}-\sqrt[n\,]{a})\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}}{\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}}|$\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| = \frac{|x-a|}{|\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}|}$ (i) et par unr prop. des $|.|$\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \frac{\delta}{|\sum\limits_{k=0}^{n-1}{(\sqrt[n\,]{x^{n-1-k}}\sqrt[n\,]{a^k})}|}$ par hyp.\\
+		
+		i.e $|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \frac{\delta}{|\sqrt[n\,]{x^{n-1}}+\sqrt[n\,]{x^{n-2}}\sqrt[n\,]{a}+...+\sqrt[n\,]{x}\sqrt[n\,]{a^{n-2}}+\sqrt[n\,]{a^{n-1}}|} \le \frac{\delta}{\sqrt[n\,]{a^{n-1}}} \le \varepsilon$\\
+		\end{center}
+		Par transitivité,\\
+		\begin{center}
+			$|\sqrt[n\,]{x}-\sqrt[n\,]{a}| \le \varepsilon$\\
+		\end{center}
+		Cqfd\\
+	\end{itemize}
+\end{itemize}
+\textbf{Conclusion}: On a bien prouvé que $\forall n \in \mathbb{N}, \sqrt[n\,]{x}$ est continue sur son domaine.
+\end{document}
