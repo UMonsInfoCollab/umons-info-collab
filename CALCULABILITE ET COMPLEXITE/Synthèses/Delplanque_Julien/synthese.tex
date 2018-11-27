@@ -1,0 +1,112 @@
+\documentclass[a4paper,11pt]{report}
+ 
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\renewcommand{\thesection}{}
+\renewcommand{\thesubsection}{}
+
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[C]{} 
+\fancyhead[L]{}
+\fancyhead[R]{}
+
+\renewcommand{\footrulewidth}{1pt}
+\fancyfoot[C]{\textbf{\thepage}} 
+\fancyfoot[L]{Delplanque Julien}
+\fancyfoot[R]{2015-2016}
+\newcommand{\Poly}{\textit{P}}
+\newcommand{\NPoly}{\textit{NP}}
+\newcommand{\CoNPoly}{\textit{Co-NP}}
+\newcommand{\PSpace}{\textit{PSPACE}}
+\newcommand{\PSpaceComp}{\textit{PSPACE-Complet}}
+\newcommand{\NPSpace}{\textit{NPSPACE}}
+\newcommand{\PolyReduc}[2]{\textsc{#1} $\le_{p}$ \textsc{#2}}
+\newcommand{\languageDef}[3]{\textsc{#1} = $\{$ #2 | #3 $\}$}
+
+\begin{document}
+\section{Langages et leurs définitions}
+\begin{itemize}
+%\item \languageDef{}{}{}
+\item \languageDef{Path}{$<G,s,t>$}{$G$ est un graphe orienté possédant un chemin de $s$ à $t$}
+\item \languageDef{HamPath}{$<G,s,t>$}{$G$ est un graphe non-orienté t.q $G$ possède un chemin hamiltonien de $s$ à $t$}
+\item \languageDef{HamCycle}{$<G>$}{$G$ est un graphe non-orienté t.q $G$ 
+possède un cycle hamiltonien} (cycle passant par tous les sommets une et une 
+seule fois).
+\item \languageDef{EulerCycle}{$<G>$}{$G$ est un graphe non orienté t.q $G$ 
+possède un cycle Eulerien} (cycle passant par chaque arc du graphe une et une 
+seule fois).
+\item \languageDef{Clique}{$<G,k>$}{$G$ est un graphe non-orienté possédant 
+une clique de taille $k$} (une clique est un sous ensemble de sommets du 
+graphe tous 2 à 2 distincts reliés par une arrête).
+\item \languageDef{Sat}{$<\Phi>$}{$\Phi$ est une formule booléenne satisfiable}
+\item \languageDef{LP}{$<A,\overset{\rightarrow}{b}>$}{$A$ est une matrice $m \times n$ de réels t.q $\exists \overset{\rightarrow}{x}$ un vecteur de réels vérifiant $A\overset{\rightarrow}{x} \ge \overset{\rightarrow}{b}$}
+\item \languageDef{Composite}{$<n>$}{$n \in \mathbb{N} \backslash \{0,1\}$ et $n$ est composé}
+\item \languageDef{Prime}{$<n>$}{$n \in \mathbb{N} \backslash \{0,1\}$ et $n$ est premier}
+\item \languageDef{3-Color}{$<G>$}{$G$ est un graphe non-orienté t.q $G$ est 3-colorable}
+\item \languageDef{QBF}{$<\Phi>$}{$\Phi$ est une formule booléenne totalement quantifiée t.q $\Phi$ est vraie}
+\item \languageDef{3-Sat}{$<\Phi>$}{$\Phi$ est une formule booléenne sous forme 3CNF satisfiable}
+\item \languageDef{Sudoku}{$<G>$}{$G$ est une grille de taille $n^2 \times n^2$ partiellement complétée en respectant les règles du sudoku généralisé}
+\item \languageDef{Vertex-Cover}{$<G,k>$}{$G$ est un graphe non-orienté possédant une couverture de taille $k$} (une couverture est un sous ensemble
+de sommets du graphe $G$ tel que pour toute arrête $(u,v)$ de $G$, soit $u\in C$
+soit $v \in C$).
+\item \languageDef{TSP}{$<G,k>$}{$G$ est un graphe non-orienté, comple, pondéré et qui possède un cycle hamiltonien de poids $\le k$}
+\item \languageDef{Ind}{$<G,k>$}{$G$ est un graphe non-orienté possédant un ensemble indépendant de taille $k$} (un ensemble indépendant $I$ est un sous
+ensemble de sommets tel que toute paire de sommets de $I$ est non reliée par
+une arrête).
+\item \languageDef{IP}{$<A,\overset{\rightarrow}{b}>$}{$A$ est une matrice $m \times n$ d'entiers t.q $\exists \overset{\rightarrow}{x}$ un vecteur d'entiers vérifiant $A\overset{\rightarrow}{x} \ge \overset{\rightarrow}{b}$}
+
+\end{itemize}
+
+\section{Langages et leurs appartenances aux classes}
+\begin{itemize}
+%\item \textsc{} $\in $
+\item \textsc{Path} $\in$ \Poly
+\item \textsc{HamPath} $\in$ \NPoly
+\item \textsc{HamCycle} $\in$ \NPoly
+\item \textsc{EuleurCycle} $\in$ \Poly
+\item \textsc{Clique} $\in$ \NPoly
+\item \textsc{Sat} $\in$ \NPoly
+\item \textsc{Sat} $\in$ \PSpace
+\item \textsc{LP} $\in$ \Poly
+\item \textsc{Composite} $\in$ \Poly
+\item \textsc{Prime} $\in$ \Poly
+\item \textsc{3-Color} $\in$ \NPoly
+\item \textsc{QBF} $\in$ \PSpaceComp
+\end{itemize}
+
+\section{Réductions polynomiale}
+\begin{itemize}
+%\item \PolyReduc{}{}
+\item \PolyReduc{3-Sat}{Clique}
+\item \PolyReduc{Sudoku}{3-Sat}
+\item \PolyReduc{Clique}{Vertex-Cover}
+\item \PolyReduc{HamCycle}{TSP}
+\item \PolyReduc{3-Sat}{IP}
+\item \PolyReduc{3-Sat}{3-Color}
+\end{itemize}
+
+\section{Langages NP-Complet}
+\begin{itemize}
+%\item \textsc{}
+\item \textsc{Sat}
+\item \textsc{3-Sat}
+\item \textsc{Clique}
+\item \textsc{Vertex-Cover}
+\item \textsc{HamCycle}
+\item \textsc{TSP}
+\item \textsc{Ind}
+\item \textsc{IP}
+\item \textsc{3-Color}
+\item \textsc{MaxSat}
+\item \textsc{Sudoku}
+\end{itemize}
+
+\end{document}

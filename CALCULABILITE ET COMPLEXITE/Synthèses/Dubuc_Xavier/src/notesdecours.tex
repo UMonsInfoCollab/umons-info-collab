@@ -1,0 +1,848 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{multicol}
+
+\usepackage{mathenv}
+
+\def\nbOne{{\mathchoice {\rm 1\mskip-4mu l} {\rm 1\mskip-4mu l}
+{\rm 1\mskip-4.5mu l} {\rm 1\mskip-5mu l}}}
+
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}{0cm}{0cm}{0cm}{0cm}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[french]{babel}
+\selectlanguage{french}
+
+\usepackage{color}
+\usepackage{graphicx}
+\graphicspath{{img/}} 
+\usepackage{listings}
+\definecolor{colKeys}{rgb}{0.75,0,0}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.75,0.75,0}
+\definecolor{colString}{rgb}{0,0,0.7}
+
+\usepackage{verbatim}
+\usepackage{moreverb}
+
+\lstset{
+basicstyle=\ttfamily\small, %
+identifierstyle=\color{colIdentifier}, %
+keywordstyle=\color{colKeys}, %
+stringstyle=\color{colString}, %
+commentstyle=\color{colComments}, %
+showspaces=false,
+}
+\lstset{language=java}
+
+% Commandes personnelles %
+
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\definecolor{maintitle}{rgb}{0.66,0,0.22}
+\definecolor{title}{rgb}{0,0.5,0.5}
+\newcommand{\maintitlecolor}[1]{\textcolor{maintitle}{#1}}
+\newcommand{\titre}[1]{\textcolor{title}{#1}}
+\newcommand{\tsect}[1]{\titre{\section{#1}}}
+\newcommand{\tssect}[1]{\titre{\subsection{#1}}}
+\newcommand{\tsssect}[1]{\titre{\subsubsection{#1}}}
+\newcommand{\vect}[1]{\overrightarrow{#1}}
+\newcommand{\dred}[1]{\textcolor{darkred}{\textbf{#1}}}
+\newcommand{\dgre}[1]{\textcolor{darkgreen}{\textbf{#1}}}
+\newcommand{\dblu}[1]{\textcolor{darkblue}{\textbf{#1}}}
+\newcommand{\dora}[1]{\textcolor{darko}{\textbf{#1}}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\ora}[1]{\textcolor{darko}{#1}}
+\newcommand{\rouge}[1]{\textcolor{darkred}{#1}}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\cdil}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\term}[1]{\textit{\textcolor{maintitle}{#1}}}
+\newcommand{\image}[1]{\includegraphics{#1}}
+\newcommand{\imageR}[2]{\includegraphics[width=#2px]{#1}}
+\newcommand{\imageRT}[2]{\includegraphics[height=#2px]{#1}}
+\newcommand{\img}[1]{\begin{center}\includegraphics[width=400px]{#1}\end{center}}
+\newcommand{\imag}[1]{\begin{center}\includegraphics{#1}\end{center}}
+\newcommand{\imgR}[2]{\begin{center}\includegraphics[width=#2px]{#1}\end{center}}
+\newcommand{\imgRT}[2]{\begin{center}\includegraphics[height=#2px]{#1}\end{center}}
+\newcommand{\point}[2]{\item \ora{\underline{#1}} : \textit{#2}}
+\newcommand{\bfp}[2]{\item \textbf{#1} : \textit{#2}}
+\newcommand{\sumparam}[3]{\sideset{}{_{#1}^{#2}}\sum{#3}}
+\newcommand{\sumin}[3]{\sideset{}{_{i=#1}^{#2}}\sum{#3}}
+\newcommand{\sumkn}[3]{\sideset{}{_{k=#1}^{#2}}\sum{#3}}
+\newcommand{\intin}[3]{\sideset{}{_{#1}^{#2}}\int{#3}}
+\newcommand{\stitre}[1]{\noindent\textbf{\underline{#1}} \\}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ualpha}{\vect{u_\alpha}}
+\newcommand{\valpha}{\vect{v_\alpha}}
+\newcommand{\palpha}{\vect{\Psi_\alpha}}
+\newcommand{\npcomp}{\term{$\mathcal{NP}$-complet}}
+\newcommand{\npcompl}{\term{$\mathcal{NP}$-complet} }
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\begin{sffamily}
+
+\title{$ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\\begin{Huge}\maintitlecolor{Calculabilité \& Complexité}\end{Huge} \\ 
+	   $ $ \\ \begin{LARGE}\textit{Notes de cours}\end{LARGE}}
+\author{\textit{Xavier Dubuc} \\ \blu{Xavier.DUBUC@student.umons.ac.be} \\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ 
+$ \\ 
+\includegraphics{UMONS.jpg}}
+\date{}
+\end{sffamily}
+
+\begin{document}\begin{sffamily}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\newpage
+
+\tsect{Préambule}
+
+Le cours se base sur 2 livres de références dont voici les références :
+\begin{center}
+\textbf{Theoretical Computer Science} \\
+\textbf{\term{Juraj Hromkovic}} \\
+\textit{Springer}
+\end{center}
+
+\begin{center}
+\textbf{Introduction to the theory of Computation} \\
+\textbf{\term{Michael Sipser}} \\
+\textit{PWS Publishing Company 1997}
+\end{center}
+
+Sur \term{moodle} seront placés régulièrement des devoirs consistant en la lecture d'un chapitre du livre ou à la 
+réalisation d'un exercice demandé qui sera éventuellement corrigé en classe.
+L'\term{examen écrit} se déroule à \textbf{cahier ouvert}.
+
+\tsect{Introduction}
+
+Dans le cadre de nos études, nous avons été amenés à faire beaucoup de programmation, il nous a été demandé que nos 
+programmes s'arrêtent et qu'ils soient corrects et qu'ils utilisent des algorithmes efficaces en \term{temps} et en
+\term{espace} \textit{(notion de complexité dans le pire des cas)}. Dans ce cours, nous allons nous poser des questions 
+fondamentales sur ce que l'on peut résoudre via l'algorithmique.
+\begin{enumerate}
+\item \term{Calculabilité} : \textit{"Étant donné un problème bien formulé, peut-on le résoudre par un algorithme ?"}\\
+\imgR{img1.png}{200}
+On va devoir faire des preuves pour lesquelles nous aurons besoin d'un modèle mathématique pour les algorithmes, nous 
+utiliserons les \term{machines de Turing} \textit{(On a vu précédemment les automates qui sont des machines de Turing 
+simplifiées}.
+\item \term{Complexité} : \textit{"Étant donné un problème qye l'on peut résoudre par un algorithme, quelle est sa 
+complexité ?"}\\
+La complexité exprimée ici sera calculée sur les \term{machines de Turing} et non sur les algorithmes, on va ainsi 
+définir des \term{classes de complexité}.
+\imgR{img2.png}{200}
+\end{enumerate}
+
+\newpage
+
+\tsect{Alphabets, words, languages and algorithmic problems}
+
+\tssect{Introduction}
+
+On va avoir besoin de la notion de \term{mots}, \term{textes} sur un \term{alphabet}. \\
+$\rightarrow$ \underline{Exemple} : \textit{un programme en JAVA est un texte sur l'alphabet du clavier :\\
+\begin{center} entrées $\rightarrow$ \boxed{Programme} $\rightarrow$ sorties \end{center}
+$\qquad$ Les entrées et les sorties sont également des textes sur un alphabet donné (par exemple, une entrée 
+\indent\indent $n \in \N$ est un mot sur l'alphabet $\{0,...,9\}$.} \\
+$\rightarrow$ \underline{Exemple 2} : \textit{le compilateur prend un programme en entrée et sa sortie, le programme 
+objet est un texte sur \indent l'alphabet $\{0,1\}$}
+
+\tssect{Notations et Définitions}
+
+\begin{itemize}
+\item Un \term{alphabet} $\Sigma$ est un ensemble fini de \term{symboles}. Par exemple : 
+	\begin{itemize}
+	\item $\Sigma_{bool} = \{0,1\}$
+	\item $\Sigma_{lat} = \{a,b,...,z\}$
+	\item $\Sigma_{keyboard} = \text{alphabet du clavier \textit{(il y a le symbole d'espacement)}}$
+	\item $\Sigma_m = \{0,1,...,m-1\}$, l'alphabet des digits pour écrire les nombres en base $m$.
+	\item $\Sigma_{logic} = \{x,0,1,(,),\wedge,\vee,\neg\}$
+	\item ...
+	\end{itemize}
+\item Un \term{mot} sur l'\term{alphabet} $\Sigma$ est une suite finie de \term{symboles} de $\Sigma$. Le \term{mot 
+vide} existe, on le note $\lambda$, il correspond à la suite vide de symboles de $\Sigma$.
+\item La \term{longueur} d'un \term{mot} $w$, notée $|w|$, est la longueur de la suite de symboles formant $w$. Par 
+exemple, $|\lambda|=0, |"espace"|=1$.
+\item \term{$\Sigma^*$} est l'ensemble de tous les mots sur l'alphabet $\Sigma$.
+\item \term{$\Sigma^+$} est l'ensemble de tous les mots non-vides sur l'alphabet $\Sigma$ $\Rightarrow \Sigma^+ = 
+\Sigma^* \setminus \{\lambda\}$. \\
+Par exemple, $\Sigma_{bool}^* = \{\lambda,0,1,00,01,10,11,000,001,...\}$, $\Sigma_{lat}^* = 
+\{zzz,agy,kikoo,lol,mdr,xd,cmb,wtf,...\}$
+\item Un \term{langage} L sur un \term{alphabet} $\Sigma$ est une partie (un sous-ensemble) de $\Sigma^*$, $\Rightarrow 
+L \subseteq \Sigma^*$. \\ A l'extrême, $L=\Sigma^*$ et $L=\emptyset$ sont possibles.
+\end{itemize}
+
+
+\tssect{Représentations}
+
+Il s'agit ici de parler de la représentation (par des mots sur un alphabet bien choisi) non-ambigüe d'objets manipulés 
+par les programmes/algorithmes. Par exemple, les nombres naturels peuvent être représentés en base 10 ou en base 2, 
+ainsi pour la base 2, $n \in \N$ est représenté par $Bin(n)$ qui est un mot sur $\Sigma_{bool}$. La représentation se
+doit d'être \term{non-ambigüe} afin que 2 objets ne soient pas représentés par le même mot ; c'est-à-dire qu'à partir 
+de la représentation d'un objet on doit être capable de retrouver l'objet sans ambiguité.\\
+
+\noindent \textbf{\underline{Exemple} :} \\
+
+\begin{enumerate}
+\item Un ensemble de nombres naturels $n_1,...,n_k$ représenté sur l'alphabet $\{0,1,\#\}$ par le mot $Bin(n_1)\# ... 
+\# Bin(n_k)$, cette représentation est non-ambigüe grâce au marqueur $\#$.
+\item Un graphe orienté $G$ dont la matrice d'adjacence est :
+ $ \begin{pmatrix}
+0 & 0 & 1 & 1 \\
+0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 1 \\
+0 & 0 & 0 & 0
+\end{pmatrix}$ représenté sur l'alphabet $\{0,1,\#\}$ par le mot $100\#0011001101010000$ \textit{($100$ étant le nombre 
+de sommets du graphe, c'est-à-dire $4$)} ou par le mot $0011\#0011\#0101\#0000$.
+\item Un graphe non-orienté pondéré dont la matrice d'adjacence est :
+ $ \begin{pmatrix}
+0 & 1 & 10 & 6 \\
+1 & 0 & +\infty & 5 \\
+10 & +\infty & 0 & 3 \\
+6 & 5 & 3 & 0
+\end{pmatrix}$ représenté sur l'alphabet $\{0,1,\#\}$ par le mot $0\#1\#1010\#110\term{\#\#}1\#0..$ ; on place la 
+représentation binaire de chaque nombre que l'on sépare par $\#$, puis entre chaque ligne du graphe on place 2 
+marqueurs : $\term{\#\#}$.
+\item Une formule boolée $\varphi$ contenant des \textit{variables booléennes} $X_1,X_2,...,X_i,...$, des connecteurs 
+logiques $\vee$, $\wedge$, $\neg$ et des parenthèses, par exemple, $\varphi \equiv (X_1 \wedge X_7) \vee \neq X_3$ est 
+représentée sur l'alphabet logique ($\Sigma_{logic} = \{x,0,1,(,),\wedge,\vee,\neg\}$) par le mot 
+$(X1\vee X111)\wedge\neg X11$. \\
+\end{enumerate}
+
+\noindent \textbf{\underline{Remarque} : TOUT} peut être codé en binaire (l'ordinateur le fait !), par exemple si on a 
+une représentation sur $\{0,1\#\}$, disons le mot $01\#11\#0$, on peut le transformer en mot sur $\{0,1\}$ en applicant 
+les transformations suivantes \term{(homéomorphisme)}:
+\begin{itemize}
+\item $0\to 00$
+\item $1\to 10$
+\item $\#\to 11$
+\end{itemize}
+dans le cas de l'exemple $01\#11\#0 \rightarrow f(0)f(1)f(\#)f(1)f(1)f(\#)f(0) = 00101110101100$
+
+\tssect{Opérations sur les mots et les langages}
+
+\tsssect{Définitions $\&$ Notations}
+
+\begin{itemize}
+\item Étant donnés 2 mots $x$ et $y$ sur l'alphabet $\Sigma$,
+	\begin{itemize}
+	\item la \term{concaténation} $x.y$ \textit{(noté aussi $xy$)}
+	est le mot obtenu en concaténant $y$ à la suite de $x$. \textit{(Remarque : $|x.y| = |x|+|y|$, $x\lambda = \lambda 
+	x = x$)}
+	\item $x$ est \term{préfixe} de $y$ si $\exists z \in \Sigma^*$ tel que $x.z = y$,
+	\item $x$ est \term{suffixe} de $y$ si $\exists z \in \Sigma^*$ tel que $z.x = y$,
+	\item $x$ est \term{facteur} ou \term{sous-mot} de $y$ si $\exists z_1,z_2 \in \Sigma^*$ tels que $z_1.x.z_2=y$.\\ 
+	\textit{(\term{suffixe} et \term{préfixe} sont des cas particuliers de \term{facteur})}
+	\end{itemize}
+\item Soit un langage $L$,
+	\begin{itemize}
+	\item la \term{cardinalité} de $L$ (nombre de mots qu'il contient) est notée $|L|$,
+	\item $\mathcal{P}(L) = $ ensemble des \term{parties}/\term{sous-ensembles} de $L$,
+	\item l'\term{exposant $i$} de $L$, note $L^\term{i}$ est défini comme 
+		$$ L^0 = \{\lambda\},\, L^1 = L,\, L^2 = L.L,\, L^i = L.L\,...\,L \text{(i fois, }i\geq 2) $$
+	\item l'\term{étoile} de $L$, notée $L^*$ est définie comme 
+	$$ \bigcup_{i\geq0} {L^i} \text{ ou } \{X_1X_2...X_n | X_i \in L, 1 \leq i \leq n, n\geq 0\}$$
+	\end{itemize}
+\item Soit $x$ un mot sur $\Sigma$ contenant le symbole $a$,
+	\begin{itemize}
+	\item $|x|$ est la \term{longueur} de $x$,
+	\item $|x|_a$ est le \term{nombre d'occurences du symbole $a$} dans $x$.
+	\end{itemize}
+\item Soit $L_1$, $L_2 \subseteq \Sigma^*$ deux langages sur l'alphabet $\Sigma$, la \term{concaténation} $L_1.L_2$ est définie comme $\{x_1.x_2 | x_1 \in L_1, x_2 \in L_2\}$,
+\end{itemize}
+
+\tsssect{Exemples}
+
+\begin{itemize}
+\item $L_1 = \{0,11\}$, $L_2 = \{1,10\}$ $\rightarrow L_1.L_2 = \{01,010,111,1110\}$
+\item $L = \{00,01,10,11\}$, $L^* = L^0\cup L^1\cup\,...= \{\lambda\} \cup L \cup \{\text{mots longueur 4}\}\cup ...$\\
+\indent $\qquad\qquad\qquad\qquad\,\,\qquad = \{$mots sur $\Sigma_{bool}$ de longueur paire$\}$.
+\item $\Sigma^*$ est l'\term{étoile} de $\Sigma$ : $\{X_1X_2...X_n | X_i \in \Sigma \text{\textit{ ($X_i$ symbole)}},\, 
+1 \leq i \leq n, n\geq 0\}$
+\end{itemize}
+
+\tssect{Problèmes algorithmiques}
+
+Soit un algorithme \textbf{A} : entrée $x\in\Sigma_1^*\rightarrow$ \boxed{\textbf{A}} $\rightarrow$ sortie 
+$y\in\Sigma_2^*$, sera modélisé plus tard par la notion de \term{machine de Turing}. Le but de l'algorithme est donc de 
+prendre un mot sur un certain alphabet en entrée et de fournir en sortie un autre mot sur un certain alphabet. Un 
+exemple d'algorithme \textbf{A} serait : $x$ est la représentation non-ambigüe d'un graphe orienté sur $\{0,1,\#\}$ et 
+$y \in \{0,1\}$ tel que $y = 0$ si le graphe est acyclique et $y=1$ sinon. \\
+
+\tsssect{Problème de décision}
+
+\noindent Existe-t-il un algorithme \textbf{A} qui peut résoudre ce \term{problème de décision}$(\Sigma,L)$ 
+\textit{(tel que $L \subseteq \Sigma^*$)}, c'est-à-dire un algorithme qui prend un mot $x \in \Sigma^*$ en entrée et 
+qui fournit en sortie $1$ si $x\in L$ et $0$ si $x \not\in L$ ? Dit autrement, existe-t-il un algorithme \textbf{A} qui 
+peut décider, pour $x$ un mot quelconque sur $\Sigma$, si oui ou non $x\in L$ ? Si un tel algorithme existe, on dit que 
+le \term{problème de décision $(\Sigma,L)$ est décidable}, sinon il est dit \term{indécidable}. Si un tel 
+algorithme existe, on dit que le \term{langage $L$ est récursif}. \\
+
+\noindent \textbf{\underline{Exemples} :} \\
+
+\begin{enumerate}
+\item Problème de décision $(\Sigma = \{a,b\},\, L = \{a^nb^n|n\geq 0\})$, l'algorithme \textbf{A} \textit{(simple)} 
+existe, il s'agit donc d'un problème \term{décidable} et $L$ est un langage \term{récursif}.
+\item Problème de décision $(\Sigma_{10},\, L = \{x \in \Sigma^*_{10} | \text{x est l'écriture en base 10 d'un nombre 
+premier}\}$, l'algorithme \textbf{A} existe, il s'agit donc d'un problème \term{décidable} et $L$ est un langage 
+\term{récursif}.
+\item Problème de décision $(\Sigma_{keyboard}, L = \{x \in \Sigma_{keyboard}^* | \text{x est un programme JAVA 
+syntaxiquement correct}\}$, l'algorithme \textbf{A} existe (il s'agit de l'analyse syntaxique du compilateur 
+\textbf{JAVA}, il s'agit donc d'un problème \term{décidable} et $L$ est un langage \term{récursif}.
+\item Problème de décision $(\Sigma_{logic}, L = \{x \in \Sigma_{logic}^* | \text{x représente une formule booléenne 
+satisfaisable}\}$, \textit{c'est-à-dire qu'il existe une assignation des variables booléennes de $x$ qui rend x 
+vraie}), l'algorithme naïf serait de tout tester mais sa complexité est alors exponentielle ! Il s'agit en fait d'un 
+problème \npcomp.
+\item Problème de décision $(\Sigma=\{0,1,\#\},L)$ avec 
+\begin{itemize}
+\item $L = \{w \in \Sigma^* \mid w\text{ représente un graphe G non-orienté possédant un cycle Hamiltonien}\}$ (c'est-
+à-dire un graphe admettant un chemin passant 1 seule fois par chaque sommet)
+\item $L' = \{w \in \Sigma^* \mid w\text{ représente un graphe G non-orienté possédant un cycle 
+Eulérien}\}$ (c'est-à-dire un graphe admettant un chemin passant 1 seule fois par chaque arête).
+\end{itemize}
+$(\Sigma,L)$ et $(\Sigma,L')$ sont \term{décidables} mais $(\Sigma,L)$  est \npcompl (il existe donc un algorithme mais 
+de complexité \textbf{exponentielle}) tandis que $(\Sigma,L')$ est \term{polynomial}, pour le prouver (et donc 
+construire un algorithme), il suffit de s'appuyer sur le théorème suivant : \\
+
+\boxed{\textit{G possède un \term{cycle eulérien} \textbf{SSI} G est connexe et que tout sommet a un nombre pair 
+d'arêtes adjacentes.}}
+
+\item Étant donné deux programmes \textbf{JAVA}, peut-on décider s'ils sont équivalents ? \textit{(c'est-à-dire est-ce 
+qu'ils produisent les mêmes sorties sur les mêmes entrées)}
+
+\item Étant donné un programme, peut-on décider par un algorithme s'il s'arrête toujours ?
+\end{enumerate}
+
+\tsssect{Fonctions calculables}
+
+\noindent\textbf{\underline{Définition} :} Soit $f:\Sigma_1^* \to \Sigma_2^*$ une fonction, on dit qu'elle est 
+\term{calculable} s'il existe un algorithme \textbf{A} tel que : \\
+
+\begin{center}$w \in \Sigma_1^* \to$ \boxed{\textbf{A}} $\to f(w) \in \Sigma_2^*$\end{center}
+
+\noindent Cela généralise la notion de problème de décision : $f:\Sigma^*\to\{0,1\}$ tel que :
+\begin{itemize}
+\item $f(w) = 0$ si $w \not\in L$
+\item $f(w) = 1$ sinon
+\end{itemize}
+
+\noindent Par exemple, un tel algorithme \textbf{A} existe : 
+
+\begin{center}$<x,y>\ \to$ \boxed{\textbf{A}} $\to\ <x+y>$ \\\textit{($< >$ signifie qu'il s'agit d'une représentation 
+non ambigüe sur un alphabet donné)}
+\end{center}
+
+\newpage
+
+\tsect{Finite automata}
+
+Le but de ce chapitre est d'introduire les \term{machines de Turing}, il s'agit du modèle mathématique utilisé pour 
+définir la notion d'algorithme. Pour aider à bien les comprendre, nous allons commencer par le modèle plus simple 
+d'\term{automate fini} et voir également des algorithmes \textit{"simples"} pour montrer que certains problèmes de 
+décision sont \term{décidables}. \\
+
+\noindent\textbf{\underline{Définition d'un automate fini sous la forme d'un programme} :} 
+\begin{itemize}
+\item alphabet $\Sigma = \{a_1,a_2,...,a_k\}$ fixé,
+\item une seule instruction autorisée :
+	\begin{verbatim}
+	    select input = a1 goto i1
+	           input = a2 goto i2
+	           ...
+	           input = ak goto ik	    
+	\end{verbatim}
+\item un programme est une suite finie d'instruction de ce type, chaque instruction étant numérotée \textit{(en 
+commençant par 0)}
+\item si le programme a des instructions numérotées de $0$ à $m$ alors on dispose d'un ensemble $F\subseteq 
+\{0,1,...,m\}$
+\end{itemize}
+Soit $w \in \Sigma^*$, l'automate accepte $w$ si : 
+\begin{itemize}
+\item $w$ va être traité symbole par symbole de la gauche vers la droite par les instructions du programme, en 
+commençant par l'instruction $0$,
+\item quand $w$ est entièrement traité, il faut que le numéro de la dernière instruction utilisée $\in F$.\\
+\end{itemize}
+
+\noindent\textbf{\underline{Exemple} :} \textit{(programme avec $\Sigma = \{0,1\}$ et $F=\{0,3\}$)}
+	\begin{verbatim}
+	0   select input = 0   goto 2
+	    select input = 1   goto 1
+	1   select input = 0   goto 3
+	    select input = 1   goto 0
+	2   select input = 0   goto 0
+	    select input = 1   goto 3
+	3   select input = 0   goto 1
+	    select input = 1   goto 2
+	
+	w = 1011
+	symboles :      1 0 1 1
+	instructions : 0 1 3 2 3
+	\end{verbatim}
+La dernière instruction choisie est $3$ et $3 \in F$, $w$ est donc accepté \textit{(par exemple, $w=101$ n'est pas 
+accepté)}. Un automate peut donc être assimilé à un problème de décision :
+\begin{center}
+$w\in\Sigma^*\, \to \,$ \boxed{\textbf{Automate}} $\to$ accepté/refusé
+\end{center}
+
+Les programmes de ce type sont de puissances très limitée :
+\begin{itemize}
+\item un seul type d'instruction,
+\item pas de variables autorisées,
+\item le mot $w$ ne peut être lu que d'une seule façon \textit{(symbole par symbole de gauche à droite)}.
+\end{itemize}
+
+\newpage
+
+\tssect{Vision graphique d'un automate}
+
+\imgR{img3.png}{200}
+
+\noindent\textbf{\underline{Autre définition d'automate} :} \textit{cette représentation consiste à considérer les 
+instructions comme les états de l'automate.}
+
+\imgR{img4.png}{125}
+
+\noindent Les \term{goto}'s d'un instruction correspondent aux transitions issues de l'état correspondant. \\
+
+\begin{verbatim}
+	F = {0,3}
+	w = 1011
+	symboles = 1 0 1 1
+	etats =   0 1 3 2 3 
+\end{verbatim}
+$3 \in F \Rightarrow w$ accepté.\\
+
+\noindent\textbf{\underline{Définition d'un automate}} \\
+Un \term{automate fini} \textbf{M} est de la forme $(Q,\Sigma,delta,q_0,F)$ tel que :
+\begin{itemize}
+\item $Q$ est un ensemble fini d'états, \textit{(nombre fini d'instructions)}
+\item $\Sigma$ est un alphabet,
+\item $q_0$ est l'état initial ($q_0 \in Q$), \textit{(instruction de numéro 0)}
+\item $F \subseteq Q$ est l'ensemble des états accepteurs,
+\item $\delta : Q \times \Sigma \to Q$ est une fonction qui à chaque état $q\in Q$, à chaque symbole $a \in \Sigma$ 
+associe un état $p\in Q$ : $\delta(q,a) = p$ \textit{(goto pour l'instruction correpondant à l'état $q$)}. \\
+\end{itemize}
+
+\noindent\textbf{\underline{Notations graphiques} :} 
+\begin{itemize}
+\item état : \imageR{img5.png}{15}
+\item état initial : \imageR{img6.png}{20}
+\item état accepteur : \imageR{img7.png}{15}
+\item transition : $\delta(q,a) = p$ : \imageR{img8.png}{45}
+\end{itemize}
+
+\newpage
+
+\tssect{Fonctionnement d'un automate}
+
+\tsssect{Vocabulaire}
+
+\begin{itemize}
+\item \term{configuration} $(q,u)$ où $q \in Q$, $u\in \Sigma^*$, "photo" indiquant l'était courant $q$ et le mot $u$ 
+qu'il reste à traiter,
+\item \term{configuration initiale} $(q_0,w)$ où $q_0$ état initial et $w$ est le mot d'entrée de l'automate,
+\item \term{configuration finale} $(p,\lambda)$ où $p \in Q$ et $\lambda$ mot vide,
+\item une \term{étape de calcul} consiste à passer d'une \term{configuration} à la \term{configuration} suivante :
+$$ (q,u) \vdash_M (q',u') $$ tq $u=au'$ avec $a\in \Sigma$ et $u'\in \Sigma^*$ (et a le premier symbole de $u$),
+\imgR{img9.png}{100}
+\item un \term{calcul} est une suite d'étapes de calcul consécutives,
+\item le \term{calcul effectué par l'automate $M$ sur l'entrée $w$} est un \term{calcul} commençant en la configuration 
+$(q_0,w)$ et se terminant en une configuration finale qui est donc de la forme $(p,\lambda)$. Le \term{mot d'entrée} $w 
+\in \Sigma^*$ est \term{accepté} si ce calcul aboutit à $(p,\lambda)$ avec $p\in F$, il est \term{refusé} sinon.\\
+\end{itemize}
+
+\noindent \textbf{\underline{Exemple} :}\textit{ (voir automate précédent)} $w = 1011$ est il accepté ?
+$$ (0,1011) \vdash_M (1,011) \vdash_M (3,11) \vdash_M (2,1) \vdash_M (3,\lambda) $$
+Ok car $3 \in F$, $w$ est donc \textbf{accepté}.
+
+\tsssect{Notations}
+
+\begin{itemize}
+\item \term{$\vdash_M^*$} pour décrire un calcul ($0$, $1$ ou plusieurs étapes de calcul), sur l'exemple ci-dessus on a 
+: $$ (0,1011) \vdash_M^* (3,\lambda) $$
+\item $L \subseteq \Sigma^*$ est dit \term{régulier} s'il existe un automate fini \textbf{M} tel que $L(M)= L$
+\item $\hat{\delta}$ étend $\delta$ aux mots, $\hat{\delta} : Q \times \Sigma^* \to Q : (p,u) \to q$ (où 
+$u=a_1a_2...a_n$, $n\geq 0$ et les $a_i \in \Sigma^* $ $1 \leq i \leq n$
+\item $\term{L(M)} = \{w \in \Sigma^* \mid w$ est accepté par $M \}$ ou encore $ \{w \in \Sigma^* \mid (q_0,w)
+\vdash_M^* (p,\lambda)$ tel que $p \in F \}$, est le \term{langage accepté par M}.\\
+\textbf{M} résoud donc le probleme de décision suivant $(\Sigma,L(M))$ :
+\begin{center}$w \in \Sigma^* \to$ \boxed{\textbf{M}} $\to$ \textbf{accepté} $(w\in L(M))$ ou \textbf{refusé} $(w\in 
+L(M))$ \end{center}
+
+Pour l'exemple donné, $L(M) = \{w\in \{0,1\}^* \mid |w|\ pair\}$.
+\end{itemize}
+\tsssect{Prouver qu'un langage est régulier}
+
+\noindent \underline{Preuve} : \textbf{idée sous-jacente importante} : \textit{associer à chaque état l'information : }
+$$ Kl[p] = \{w \in \Sigma^* | \hat{\delta}(q_0,w)=p \} $$
+\textit{c'est-à-dire l'ensemble des étiquettes des chemins allant de l'état initial $q_0$ à l'état $p$.} \\
+
+\noindent Dans notre exemple ci-dessus : 
+$$\term{(*)}\left\{\begin{array}{lll}
+Kl[q_0]& = &\{ w \in \Sigma^* |\ |w|_0\text{ et }|w|_1\text{ sont pairs}\} \\
+Kl[q_1]& = &\{ w \in \Sigma^* |\ |w|_0\text{ pair, }|w|_1\text{ impair}\} \\
+Kl[q_2]& = &\{ w \in \Sigma^* |\ |w|_0\text{ impair, }|w|_1\text{ pair}\} \\
+Kl[q_3]& = &\{ w \in \Sigma^* |\ |w|_0\text{ et }|w|_1\text{ sont impairs}\} \\
+\end{array}\right.$$
+
+\noindent De manière générale, $$ L(M) = \bigcup_{p\in F} Kl[p] $$
+\newpage
+
+Dans notre exemple, \begin{eqnarray*}
+L(M) & = & Kl[q_0] \cup Kl[q_3] \\
+             & = & \{ w \in \Sigma^* |\ |w|_0\text{ et }|w|_1\text{ sont pairs ou }|w|_0\text{ et }|w|_1\text{ sont 
+             impairs}\} \\
+             & = & \{ w \in \Sigma^* |\ |w|_0 + |w|_1\text{ est pair}\} 
+\end{eqnarray*}
+
+On va à présent prouver $\term{(*)}$ par récurrence sur la longueur des mots $w\in\Sigma^*$ :
+\begin{itemize}
+\item\textbf{\underline{Cas de base} :} $|w| \leq 2$
+	\begin{enumerate}
+		\item $|w| = 0$ c'est-à-dire $w = \lambda$ et donc $|w|_0 = |w|_1 = 0$, c'est donc pair et $\hat{\delta}(q_0,w) 
+		= q_0$ de manière évidente.
+		\item $|w| = 1$ c'est-à-dire 
+			\begin{itemize}
+			\item $w = 0$ en quel cas, $|w|_0 = 1$ \textit{(impair)} et $|w|_1 = 0$ \textit{(pair)} et $\hat{\delta}
+			(q_0,w)= q_2$ (cf dessin).
+			\item $w = 1$ en quel cas, $|w|_0 = 0$ \textit{(pair)} et $|w|_1 = 1$ \textit{(impair)} et $\hat{\delta}
+			(q_0,w)= q_4$ (cf dessin).
+			\end{itemize}
+		\item $|w| = 2$ c'est-à-dire
+			\begin{itemize}
+			\item $|w|=00$ ...
+			\item $|w|=01$ ...
+			\item $|w|=10$ ...
+			\item $|w|=11$ ...
+			\end{itemize}
+	\end{enumerate}
+\item\textbf{\underline{Cas général} :} soit $w \in \Sigma^*$ tel que $|w| = k \geq 3$, \\
+
+\noindent Écrivons $w$ sous la forme $w = z a$ où $a\in \Sigma^*$, $|z| = |w|-1$, par hypothèse de récurrence, 
+$\term{(*)}$ est vrai pour $z$, montrons $\term{(*)}$ pour $w$.
+
+	\begin{itemize}
+	\item \textbf{1er cas}, supposons que $z \in Kl[q_2]$,
+		\begin{enumerate}
+		\item et que $a = 0$, par hypothèse de récurrence, $|z|_0$ impair et $|z|_1$ pair, donc :
+		$$\left\{\begin{array}{lll}
+		|w|_0 & = &|z|_0 + 1 \rightarrow \text{pair} \\	
+		|w|_1 & = &|z|_1 \rightarrow \text{pair} \\	
+		\end{array}\right.$$
+		Dans l'automate on a $\hat{\delta}(q_0,z) = q_2$ et $\delta(q_2,0)=q_0$.
+		\item et que $a = 1$, par hypothèse de récurrence, $|z|_0$ impair et $|z|_1$ pair, donc :
+		$$\left\{\begin{array}{lll}
+		|w|_0 & = &|z|_0 \rightarrow \text{impair} \\	
+		|w|_1 & = &|z|_1 + 1 \rightarrow \text{impair} \\	
+		\end{array}\right.$$
+		Dans l'automate on a $\hat{\delta}(q_0,z) = q_2$ et $\delta(q_2,1)=q_3$.			
+		\end{enumerate}
+	\item \textbf{2ème cas}, supposons que $z \in Kl[q_1]$, ...
+	\item \textbf{3ème cas}, supposons que $z \in Kl[q_3]$, ...
+	\item \textbf{4ème cas}, supposons que $z \in Kl[q_4]$, ... \\
+	\end{itemize}
+\end{itemize}
+
+\noindent \textbf{\underline{Remarque} :} pour atteindre $q_3$ (et les autres) il faut envisager les mots de longueurs 
+$\leq 2$ dans le cas de base.
+
+\newpage
+
+\tsssect{Prouver qu'un langage n'est pas régulier}
+
+Il faut montrer qu'il n'existe aucun automate $M$ tel que $L(M) = L$, ce qui est plus difficile. Pour nous aider à
+faire ces preuves, nous allons voir 2 outils, \\
+\begin{enumerate}
+\item \term{\textbf{Lemme 3.12}} \\
+\begin{center}
+\term{Soit $M = (Q,\Sigma,\delta,q_0,F)$ un automate fini, soit $x,y \in \Sigma^*$, $x \neq y$ et tels que
+$\hat{\delta}(q_0,x) = \hat{\delta}(q_0,y)$, \textbf{\\alors} $\forall z \in \Sigma^*$, $xz \in L(M) \Leftrightarrow yz 
+\in L(M)$}
+\end{center}
+\imgR{img12.png}{200}
+
+Comme on peut le voir sur le dessin, si $q\in F$ alors les 2 mots seront acceptés, ils seront refusés sinon ; ceci est
+dû au fait que $\hat{\delta}$ est une fonction et donc, si on choisit un mot et un état de départ alors il n'y a qu'un
+seul état d'arrivée. $x,y \in Kl[p]$, $M$ n'est pas capable de distinguer $x$ et $y$ une fois que l'état $p$ est 
+atteint. \\
+
+\textbf{\underline{Exemples de preuves utilisant cet outil : $\rightarrow$ cf feuilles d'exercices.}} \\
+
+\item \term{\textbf{Lemme de la pompe (Lemme 3.14)}} \\
+
+\begin{center}
+\term{Soit $L\subseteq \Sigma^*$ un langage régulier, alors il existe une constante $n_0 \in \N$ telle que 
+$\forall w \in \Sigma^*$ avec $|w| \geq n_0$, on a $w = yxz$ t.q. :
+		\begin{enumerate}
+		\item $|yx| \leq n_0$
+		\item $|x| \geq 1 $
+		\item $\text{soit } \{yx^kz\ |\ k\in \N\} \subseteq L$, \\ 
+		$\text{soit } \{yx^kz\ |\ k\in \N\} \cap L = \emptyset \text{ ("ne contient aucun mot de L")}$
+		\end{enumerate}}
+\end{center}
+\textbf{\underline{Commentaires} :}
+\begin{itemize}
+\item la \textit{pompe} désigne le fait d'itérer le mot $x$,
+\item ou bien tous les mots de la forme $yx^kz$ avec $k\geq 0$ sont \textbf{acceptés} ou bien ils sont tous 
+\textbf{rejetés}.\\
+\end{itemize}
+
+\textbf{\underline{Preuve} :} comme $L$ est \term{régulier}, il existe un automate fini $M$ tel que $L(M)=L$, prenons
+$n_0 = |Q|$, c'est-à-dire le nombre d'états que contient $M$. \\
+Soit $w$ tel que $|w| \geq n_0$, en partant de $q_0$ et en lisant $w$, on doit nécessairement passer $2$ fois par le 
+même état, cela apparaîtra dès qu'on aura lu $n_0$ symboles $\term{(*)}$ de $w = yxz$.
+
+\imgR{img13.png}{200}
+
+On a bien :
+\begin{enumerate}
+\item $|yx| \leq n_0$ car $\term{(*)}$,
+\item $|x| \geq 1$ car cycle non-vide d'étiquette $x$,
+\item Si $q\in F$, alors $\forall k yx^kz$ est \textbf{accepté}, sinon $\forall k yx^kz$ est \textbf{refusé}.\\
+\end{enumerate}
+
+\textbf{\underline{Exemples de preuves utilisant cet outil : $\rightarrow$ cf feuilles d'exercices.}}
+
+\end{enumerate}
+
+\tssect{Automates non-déterministes}
+
+Le \term{non-déterminisme} est une notion importante, surtout pour les machines de \textbf{Turing}. Pour rappel, 
+jusqu'à présent les automates utilisés étaient déterministes en ce sens que pour tout mot, il n'existe qu'un seul 
+calcul possible pour ce mot à partir de l'état initial. En d'autres mots, $\delta$ est une \term{fonction totale} 
+et $\hat{\delta}(q_0,w)$ donne un unique état.\\
+\textbf{Ici,} on va permettre pour un mot $w$ plusieurs calculs possibles, en modifiant la définition de $\delta$.\\
+
+\textbf{\underline{Définition} :} $M=(Q,\Sigma,\delta,q_0,F)$ est un \term{automate non-déterministe} si $\delta : 
+Q\times \Sigma \to \mathcal{P}(Q)$ \textit{(au lieu de $\delta : Q\times \Sigma \to Q$ pour les automates 
+déterministes, les définitions pour $Q$, $\Sigma$, $q_0$ et $F$ restent identiques)}.
+
+\tsssect{Vocabulaire et définitions revisitées}
+
+\begin{center}
+\begin{tabular}{|c|cc|}
+\hline
+& \textbf{Automates déterministes} & \textbf{Automates non-déterministes} \\
+\hline
+\textit{Instructions} & select input = $a_1$ goto $i_1$ & select input = $a_1$ goto $i_1$ or goto $j_1$ or ... \\
+& $\qquad\ $ input = $a_2$ goto $i_2$ & ... \\
+& $\qquad\ $ ... & $\quad\ $ input = $a_k$ goto $i_k$ or goto $j_k$ ... \\
+& $\qquad\ $ input = $a_k$ goto $i_k$ & \\
+\hline
+\textit{Configuration} & $(q,u) \in Q \times \Sigma^*$ & $(q,u) \in Q \times \Sigma^*$ \\
+\hline
+\textit{Étape de calcul} & $(q,u) \vdash_M (p,v)$ ($u = av$, $p$ unique) & $(q,u) \vdash_M (p_i,v)$ ($u = av$)\\
+& & $\delta(q,a) = \{p_1,...,p_k\}$ \textit{(plus d'unicité !)} \\
+& & L'automate choisit de poursuivre le calcul\\
+& & avec $p_i$, $1\leq i\leq k$. \\
+& & Remarque : Si $\delta(q,a) = \{\}$, alors le calcul \\
+& & est \term{bloqué} et $u$ ne peut pas être \\
+& & traité par l'automate à partir de l'état $q$. \\
+& & \\
+& Calcul unique sur le mot d'entrée $w$ & Plusieurs calculs sur le mot d'entrée $w$ \\
+& $(q_0,w) \vdash_* (p,\lambda)$ \textit{($p$ unique)} & sont possibles, dont certains ont été bloqués.\\
+& & un \term{arbre de calcul} sur l'entrée $w$ est utilisé, \\
+& & il s'agit d'un arbre reprenant tous les calculs\\
+& & possibles, y compris ceux qui sont bloqués. \\
+& & \\
+& $w$ accepté si $(q_0,w) \vdash_* (p,\lambda)$ avec $p\in F$ & $w$ accepté si parmis tous les \\
+& \imageR{img14.png}{100} & calculs sur l'entrée $w$, il en existe un de la forme \\
+& & $(q_0,w) \vdash_* (p,\lambda)$ avec $p\in F$ \\
+& & \imageR{img15.png}{100} \\
+& & Dans ce cas, l'automate choisit ce calcul pour\\
+& & montrer qu'il accepte $w$. \\
+\hline
+\end{tabular}
+\end{center}
+\newpage
+\textbf{\underline{Exemple} :} \imageR{img10.png}{200} $\rightarrow$ mot d'entrée : $w = 10110$. \\
+
+Voici l'arbre de calcul sur l'entrée $w$ : \\
+
+\begin{center}
+	\begin{verbatim}
+             (q0,10110)
+             /        \
+         (q0,0110) (q1,0110)
+            /            \
+        (q0,110)      bloqué !
+        /      \
+     (q0,10)    (q1,10)
+      /    \       \
+   (q0,0) (q1,0)   (q2,0)
+     /       \        \
+(q0,lambda) bloqué ! (q2, lambda)
+	\end{verbatim}
+\end{center}
+
+Vu que l'on a $q_2 \in F$, le chemin choisit par l'automate est celui se terminant par $(q_2,\lambda)$ car le calcul 
+est \indent terminé et $w$ est ainsi accepté.
+
+\tsssect{Langage calculé par un automate non-déterministe}
+
+$L(M)= \{w \in \Sigma^*\ |\ \exists$ un calcul sur l'entrée $w$ de la forme $(q_0,w) \vdash_* (p,\lambda)$ avec $p\in F 
+\}$ \\
+
+\textbf{\underline{Extension de} :}
+
+\begin{multicols}{2}
+\begin{itemize}
+\item $\hat{\delta}(q,\lambda) = \{q\}$
+\item $\hat{\delta}(q,u)$ déjà calculé
+\item $\hat{\delta}(q,ua) = \{p\in Q\ |\ \exists r\in \hat{\delta}(q,u)$ et $p\in \delta(r,a)\}$
+\end{itemize}
+$\Rightarrow \hat{\delta}$ défini par récurrence.
+\imgR{img16.png}{100}
+\end{multicols}
+
+Donc, on a aussi : $L(M) = \{w \in \Sigma^*\ |\ \exists p\in F, p \in \hat{\delta}(q_0,w)\}$\\
+\imgR{img17.png}{100}
+
+Le langage calculé par l'exercice précédent est donc : $L(M) = \{w \in \Sigma^*_{bool}\ |\ w$ possède le facteur 
+$11\}$. \\
+\newpage
+\textbf{\underline{Preuve} :} 
+\begin{enumerate}
+\item \term{$L(M) \subseteq \{w \in \Sigma^*_{bool}\ |\ w$ possède le facteur $11 \}$ ?} \\
+Soit $w \in L(M)$, parmis les calculs sur $w$, il y en a un de la forme $(q_0,w) \vdash_* (q_2,\lambda)$
+\imgR{img18.png}{200}
+$\Rightarrow 11$ est bien facteur de $w$.
+\item \term{$\{w \in \Sigma^*_{bool}\ |\ w$ possède le facteur $11 \} \subseteq L(M)$ ?} \\
+Soit $w$ de la forme $w = u11v$ où $u$, $v \in \Sigma^*_{bool}$. Parmi tous les calculs sur $w$, on considère le 
+suivant : $$ (q_0, u11v) \vdash_* (q_0,11v) \vdash_* (q_1,1v) \vdash_* (q_2,v) \vdash_* (q_2,\lambda),\ q_2\in F$$
+$\Rightarrow w \in L(M)$.
+\end{enumerate}
+
+\tsssect{Questions}
+
+\begin{enumerate}
+\item \textbf{Les automates non déterministes acceptent-ils plus de langages que les automates déterministes ?} \\
+La réponse est \term{non}, on introduit alors le théorème suivant : 
+\begin{center}
+\term{Soit $M$ un automate non déterministe, \textbf{alors} il existe un automate déterministe $M'$ t.q. $L(M') = 
+L(M)$} \\ \textit{(il existe un algorithme pour transformer un automate non déterministe en automate déterministe)}
+\end{center}
+L'idée de cet algorithme est de \term{simuler tous les calculs} possibles de l'automate non déterministe par un 
+\term{parcours en largeur} de l'arbre de calcul sur $w$.
+$w$ quelconque, arbre de calcul sur l'entrée $w$ (par $M$) :
+\begin{multicols}{2}
+\imgR{img19.png}{150}
+Soit $i$ un niveau, l'automate déterministe $M'$ doit retenir toutes les configurations du niveau $i \rightarrow$ pas 
+vraiment, il suffit de retenir les différents états apparaissant dans les configurations de ce niveau. En effet, si un 
+état $q$ apparaît au moins 2 fois, c'est dans des configurations identiques de la forme $(q,u)$ où $u$ est le reste du
+mot $w$ à traiter et le sous arbre de racine $(q,u)$ est le même pour chaque configuration $(q,u)$ du niveau $i$.
+\end{multicols}
+
+\textbf{\underline{Exemple} :} \textit{construction de $M'$ sur l'exemple précédent}
+\imgR{img11.png}{300}
+\begin{multicols}{2}
+$F'=$ ? \\
+états de $M' =$ ensemble des états du dernier niveau de l'arbre de calcul, il faut que cet ensemble $\ni p$.
+\imageR{img20.png}{100}
+\end{multicols}
+En général la construction de $M'$ à partir de $M$ se fait comme suit : \\
+Soit $M = (Q,\Sigma,\delta,q_0,F)$, montrons comment construire $M'=(Q',\Sigma,\delta',q_O',F')$,
+\begin{itemize}
+\item $Q' = \mathcal{P}(Q) = \{<P>\ |\ P\subseteq Q\}$ \textit{(chaque état de $M'$ mémorise les états de $M$ 
+apparaissant à un niveau donné d'un arbre de calcul.}
+\item $q_O' = \{q_0\}$ \textit{(noté $<\{q_0\}>$ dans le livre)}
+\item $F' = \{<P> \in Q'\ |\ P\cap F \neq \emptyset \}$, un état $<P>$ est final dans $M'$ s'il est de la forme 
+$P=\{p_1,p_2,...,p_k\}$ avec l'un des $p_i \in F$
+\item $\delta' : Q' \times \Sigma \rightarrow Q'$, $\delta'(<P>,a) = <R>$ tq $R = \{r \in Q\ |\ \exists p \in P, r \in
+\delta(p,a)\}$ \imageR{img21.png}{100}
+\end{itemize}
+Il faudrait encore prouver que $L(M)=L(M')$, mais voir livre.
+
+\textbf{\underline{Commentaires sur ce théorème} :}
+\begin{itemize}
+\item les automates non déterministes ne sont pas plus puissants que les automates déterministes,
+\item il existe un algorithme de construction de $M'$ à partir de $M$,
+\item la taille de $M'$, si $M$ a $n$ états ($|Q|=n$) alors $M'$ a $2^n$ états ($|\mathcal{P}(Q)|=2^n$), \rouge{taille 
+exponentielle}, mais l'exemple précédant montre que si l'on se limite aux états accessibles de l'état initial, la 
+taille reste convenable.
+\item le théorème suivant est négatif : soit $L_k$ défini comme suit :
+\begin{center}\begin{eqnarray*}
+L_k & = & \{x1y | x \in \Sigma^*_{bool}, y \in \Sigma^{k-1}_bool\}\text{, }k\geq 1\text{ fixé} \\
+    & = & \{w \in \Sigma^*_{bool}\ |\ \text{$w$ possède un $1$ en position $k$ en partant de la fin}\}
+\end{eqnarray*}
+\end{center}
+$L_k$ est accepté par l'automate non-déterministe suivant : \\
+\imgR{img22.png}{200}
+Alors, l'automate déterministe $M'_k$ construit par l'algorithme précédent a au moins $2^k$ états parmis les états 
+accessibles de l'état initial. \\
+\end{itemize}
+
+\item \textbf{Les automates non-déterministes sont peu naturels, quel est leur intérêt ?}\\
+C'est un concept interessant car pour certains exemples, il est plus facile de trouver un automate 
+\term{non-déterministe}. Dans ces exemples, on compte le langage $L_k$ ci-dessus ou encore en exercices, on a vu :
+$$ \{ w \in \{a,b,c\}^*\ |\ w = xabcabc,\ x\in \{a,b,c\}^*\}$$
+Nous avons du avoir une certaine réflexion afin d'obtenir l'automate déterministe alors que l'automate non-
+déterministe est très simple : 
+\imgR{img23.png}{200}
+
+\textit{(Si on applique l'algorithme pour obtenir un automate déterministe, on retombe sur celui que l'on a trouvé
+en exercice, dans ce cas-ci, on a donc pas d'explosion de taille)} \\
+
+\noindent \textbf{\underline{Rappel important} : }\textit{ si $w$ est accepté par un automate non-déterministe, parmi
+tous les calculs possibles sur ce $w$, l'automate sait lequel choisir pour accepter $w$.} \\
+
+\item \textbf{Étant donné un langage régulier, comment peut-on montrer que tout automate déterministe qui l'accepte a 
+une taille $\geq c$ où $c$ est une constante bien choisie ?}
+
+Nous allons le montrer sur un exemple simple : $L  = \{x11y\ |\ x,y \in \{0,1\}^* \}$, son automate non-déterministe
+est simple : \imgR{img10.png}{200}
+
+\textbf{\underline{Proposition} : }\textit{Tout automate déterministe acceptant $L$ a une taille $\geq 3$}
+
+\textbf{\underline{Rappel} : \term{\underline{Lemme 3.12}}} \\
+\begin{center}
+\term{Soit $M = (Q,\Sigma,\delta,q_0,F)$ un automate fini, soit $x,y \in \Sigma^*$, $x \neq y$ et tels que
+$\hat{\delta}(q_0,x) = \hat{\delta}(q_0,y)$, \textbf{\\alors} $\forall z \in \Sigma^*$, $xz \in L(M) \Leftrightarrow 
+yz \in L(M)$}
+\end{center}
+
+\noindent \textbf{\underline{Preuve} : } soit $M$ un automate déterministe acceptant $L$, donc $M$ est de la forme
+$M = (Q,\{0,1\},\delta,q_0,F)$.\\
+
+$\qquad$\textbf{\underline{Intuition} : } exhiber 3 états nécéssaires pour mettre en évidence une certaine 
+information associée à ces états. \textit{(l'automate doit tester si le facteur \textbf{11} figure dans le 
+mot d'entrée $w$)}
+
+$$\left\{\begin{array}{rll}
+1^{er}\text{ état} & \text{:} & \text{pas vu de '1'} \\
+2^{e}\text{ état} & \text{:} & \text{vu un '1'} \\
+3^{e}\text{ état} & \text{:} & \text{vu deux '1'} \\
+\end{array}\right.$$
+
+Plus proprement, prenons $x = \lambda,\ y=1$, on a que $\hat\delta(q_0,\lambda) = q_0$ et $\hat\delta(q_0,1) = q_1$, 
+et on veut montrer que $q_0 \neq q_1$. Par l'\textbf{absurde}, supposons que $q_0=q_1$, par le \term{lemme 3.12}, avec
+$z=1$, on a donc $xz(=1)\in L \Leftrightarrow yz(=11) \in L$ ce qui est impossible car $11\in L$ alors que $1 \not\in 
+L$.\\ $$\Rightarrow \boxed{q_0\neq q_1}$$
+
+Soit $\hat{\delta}(q_0,11)=q_2$, on veut montrer que $q_2 \neq q_0$ et $q_2 \neq q_1$. \\ Par l'\textbf{absurde}, 
+supposons $q_2=q_0$, par le \term{lemme 3.12}, avec $z=0$, on a donc $xz(=0)\in L \Leftrightarrow yz(=110) \in L$ ce
+qui est impossible car $110 \in L$ alors que $0 \not\in L$. $$\Rightarrow \boxed{q_0\neq q_2}$$
+Par l'\textbf{absurde}, 
+supposons $q_2=q_1$, par le \term{lemme 3.12}, avec $z=0$, on a donc $xz(=10)\in L \Leftrightarrow yz(=110) \in L$ ce
+qui est impossible car $110 \in L$ alors que $10 \not\in L$. $$\Rightarrow \boxed{q_1\neq q_2}$$
+
+$\Rightarrow$ \textbf{3 états distincts $q_0$, $q_1$ et $q_2$.}
+$\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad \square $
+\end{enumerate}
+\end{sffamily}\end{document}
