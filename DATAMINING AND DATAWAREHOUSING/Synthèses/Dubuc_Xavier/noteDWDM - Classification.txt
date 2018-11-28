@@ -1,0 +1,355 @@
+DATAMINING -- notes
+-------------------
+------
+CHAP 4 ~ CLASSIFICATION
+------
+
+Définition : La classification est la tâche consistant à apprendre une fonction
+cible f qui à chaque ensemble d'attributs x associe un des labels de classe
+prédéfinis y.
+
+--> C'est appelé aussi un modèle de classification
+	→ le modèle peut être descriptif (par exemple quels facteurs recueillis sur
+	  un animal font de lui un mammifère),
+	→ le modèle peut être préventif/prédictif pour classifier des enregistrements
+	  dont la classe n'est pas connue.
+
+need : training set ("ensemble d'entrainement") càd des enregistrements dont la
+	   la classe est connue.
+
+--> DECISION TREE
+Construction via des algorithmes basés sur une approche greedy (vu que y'a bcp
+d'arbres de décision pour un même training set (exponentiel, faut trouver le
+meilleur ou un assez bon).
+
+Algorithme de Hunt (base de ID3, C4.5, CART)
+	On pose D_t comme l'ensemble des enregistrements associés au noeud t
+	         y={y_1,...y_c}  comme l'ensemble des labels de classe
+	
+	Si tous les enregistrements dans D_t appartiennent à la même classe y_t,
+	|  alors t est une feuille dont la classe est y_t.
+	Sinon un test conditionnel est mis en place pour partitionne D_t en de
+	|  nouveaux sous-ensembles selon la réponse au test conditionnel.
+
+	__/!\_______________________________
+	|L'algorithme de Hunt fonctionne si chaque combinaison de valeurs d'attribut
+	|est présente dans les données et que chacune de ces combinaisons donne le
+	|même label de classe.
+
+	!? 1 : Si un noeud créé est vide (ça arrive si aucun enregistrement dans le
+		   noeud père n'avait cette combinaison de valeur) alors il est
+		   considéré comme un noeud ayant le label de la classe majoritairement
+		   représentée dans le noeud père.
+	!? 2 : Si le D_t d'un noeud contient des enregistrements avec exactement
+		   les mêmes combinaisons attributs-valeurs, alors il n'est pas possible
+		   de le splitter et le noeud est donc considéré comme une feuille ayant
+		   le label de la classe majoritairement représentée dans ce noeud.
+(on peut également utiliser comme critère d'arrêt un seuil d'enregistrements
+sous lequel on arrête de diviser (par exemple si on a 5 enregistrements dans un
+noeud et que le seuil vaut 6, on arête de diviser))
+
+Tous les algorithmes construisant des arbres de décision doivent répondre à 2
+questions :
+	? 1 : Comment diviser un ensemble d'enregistrements ?
+	? 2 : Comment arrêter la division ?
+
+Lors de l'expression d'un test conditionnel, s'il y a plus de 2 valeurs
+possibles pour l'attribut (typiquement un attribut nominal ou ordinal) on peut :
+- faire une sortie du noeud pour chaque valeur possible,
+- faire uniquement 2 sorties en agrégeant plusieurs valeurs ensemble.
+(pour les attributs continus, un test du genre "< B ?" ou une division en
+intervals sont possibles)
+
+Pour sélectionner un attribut pour la séparation, on mesure son niveau
+d'impureté, c'est-à-dire la distribution des enregistrements contenus dans les
+noeuds fils. Ainsi un noeud (0.5,0.5) (pour une classe binaire) est au maximum
+du niveau d'impureté vu que les 2 classes s'y retrouvent, tandis qu'un noeud
+(1,0) est au niveau 0 d'impureté, c'est un ensemble pur. Le but sera donc de
+''minimiser'' le niveau d'impureté des fils du noeud en ce sens où on voudra
+qu'ils soient les plus éloignés possible du degré d'impureté du père.
+
+(On peut mesure ce niveau d'impureté avec entropy, gini ou misclassification error)
+
+On cherche donc à maximiser (la somme correspond en fait à une moyenne pondérée) :
+	$\Delta = I(parent) - \sum_{j=1}^k \left(\frac{N(v_j)}{N}\right) I(v_j)
+
+où N est le nombre d'enregistrements contenus par le parent,
+   N(v_j) est le  -- - -- - --   -- -  - - -  par v_j
+   k est le nombre de valeur de l'attribut choisi ou considéré
+   
+Ce qui revient à juste minimiser la somme car I(parent) est pareil pour tous.
+
+(Dans le cas d'entropy, on appelle ce \Delta le gain d'information)
+
+Le problème d'entropy et compagnie est qu'elles favorisent les attributs qui
+ont beaucoup de valeur, ainsi un attribut identifiant (comme customer id) ou
+autre sera favorisé vu que le split pour chaque valeur donne des ensembles purs.
+Le souci est qu'il y a qu'un d'enregistrement dans chacun de ces ensembles et
+que du coup ça ne permet pas de faire une véritable classification.
+2 stratégies pour éviter ça :
+	1. Restreindre le split à uniquement des splits binaires (CART utilise ceci)
+	2. Modifier le critère de split, comme dans C4.5, en utilisant le 
+	   ratio de gain :
+				   $$ ratio = \Delta_info / split info $$
+				   (Delta_info = delta comme plus haut 
+				             mais uniquement avec entropy)
+	   avec split info = -\sum_{i=1}^k P(v_i) log_2(P(v_i))
+	   (et k est le nombre de split)
+
+Après la création de l'arbre il faut l'élaguer car les arbres trop grand
+souffrent d'un phénomène appelé "overfitting". Cet élagage permet d'augmenter
+le pouvoir généralisant de l'arbre.
+
+Caractéristiques des arbres de décision
+----------------------------------------
+1. Osef de la distribution suivie par la classe et les autres attributs.
+2. Problème NP-complet --> beaucoup d'algo se basent sur des heuristiques.
+3. Les techniques utilisées ne sont pas gourmandes en calculs
+	--> on peut avoir rapidement un modèle même quand le training set est grand
+   De plus, une fois l'arbre créé, classer un nouvel enregistrement prend un
+   temps de l'ordre de O(profondeur max de l'arbre).
+4. Faciles à interprêter (surtout les petits arbres).
+   Les précisions des arbres sont comparables à bien d'autres algorithmes
+   pour beaucoup de dataset simples.
+5. Ils fournissent une représentation expressive pour l'apprentissage de
+   fonction à valeurs discrètes. Cependant, elles ne généralisent assez mal
+   certains problèmes booléennes.
+6. Ils sont assez robustes à la présence de bruit, particulière lorsque les
+   méthodes pour éviter l'overfitting sont employées.
+7. La présence d'attributs redondants n'impactent pas la précision des arbres.
+   Le seul problème s'il y en a vraiment beaucoup c'est que l'arbre pourrait
+   être plus grand que nécessaire.
+8. Vu que beaucoup d'algorithmes emploient une approche top-down partitionnante
+   récursive, le nombre d'enregistrements diminue au fur et à mesure que l'on
+   descend dans l'arbre. Dès lors il se peut que dans les feuilles, le nombre
+   d'enregistrements stockés est trop faible pour faire des statistiques
+   satisfaisantes. Ce phénomène s'appelle \textbf{la fragmentation des données}.
+   Cela nous ramène à l'instauration d'un certain seuil au dela duquel la
+   fragmentation est interdite.
+9. Un sous-arbre peut être répliqué plusieurs fois dans un arbre de décision.
+   Cela rend l'arbre plus grand et plus complexe et peut-être même plus dur à
+   interprêter. 
+10. Les tests conditionnels utilisés jusque maintenant employaient uniquement un
+    attribut, ainsi, on peut voir la croissance de l'arbre comme
+    le partitionnement de l'espace des attributs en régions disjointes jusqu'à
+    ce que chaque région possède que des instances de la même classe. On appelle
+    les frontières entre ces différentes régions les "frontières de décision".
+    Vu que ces conditions ne concernent qu'un attribut elles sont
+    "rectilinéaires" c'est-à-dire parallèle à l'un des axes des coordonnées.
+    Ceci limite l'expressivité des arbres de décision. (Un data set du genre :
+    |
+    |++  ******
+    |++++  ****
+    |++++++  **
+    ------------  ne peut être partitionné correctement avec des frontières de
+    décision rectilinéaires)
+    
+    On peut alors utiliser un arbre de décision oblique, c'est-à-dire un arbre
+    autorisant l'emploi de plusieurs attributs pour les tests conditionnels.
+    Bien que ces arbres sont plus compactes et parfois plus expressifs, trouver
+    le test conditionnel optimal peut être gourmand en temps de calcul.
+11. La mesure d'impureté n'a qu'un faible impact sur le résultat final, le plus
+	important est la méthode d'élagage.
+
+Overfitting
+-----------
+
+2 types d'erreurs commises par un modèle de classification :
+	*  training errors (resubstition error ou apparent error)
+	   --> erreurs de misclassification sur le training set
+	*  generalization errors
+	   --> erreurs attendues lors de la classification d'enregistrements
+	   	   inconnus jusque là.
+--> Une classification doit avoir un faible nombre de ces 2 types d'erreurs.
+ => Une classification qui un nombre d'erreur de training errors très faible
+    mais un nombre de generalization errors élevé ne servira à rien car elle
+    sera trop spécifique au training set. C'est ce que l'on appelle de
+    l'overfitting, c'est-à-dire que l'on a trop "appris" sur le training set.
+    → on peut ainsi retrouver des noeuds dans l'arbre qui map avec l'un ou
+      l'autre outlier. (il se peut aussi que les points soient mal labelés,
+      du genre une vache étiquettée comme non mammifère)
+(l'underfitting sera lorsque l'on a pas assez appris)
+
+underfitting ... bons et meilleurs arbres ... overfitting
+0 --------------------------------------------------------> taille de l'arbre
+
+Il faut donc prendre un "bon" arbre au niveau de sa taille, qu'il soit pas trop
+grand ni trop petit.
+
+L'overfitting peut être causé par plusieurs raisons :
+- présence de bruit (--> outliers)
+  --> Soit des exceptions, soit des noeuds mal labellés (vache non mammifère)
+  ==> Amène à une mauvaise classification de certains enregistrements inconnus.
+- manque d'exemples représentatifs, si par exemple tous les animaux qui 
+  n'hibernent pas dans les exemples sont des non-mammifères, l'arbre va
+  considérer que c'est une règle réelle et donc classer les hommes comme tels.
+- lors de l'utilisation de la procédure de ``multiple comparaison''
+  De manière simple, si on se fixe un certain palier alpha que le gain 
+  d'information doit dépasser pour splitter un noeud :
+   - si on a un seul attribut on a un certain nombre de chance que ce gain soit
+     > alpha
+   - si on a 42 attributs, on a beaucoup plus de chances qu'au moins un de ces
+     attributs donnent un gain > alpha.
+   --> Il faudrait que alpha varie en fonction du nombre d'attributs disponibles
+   
+Estimation des Generalizations errors
+--------------------------------------
+--> la question est comment connaître la meilleure taille pour l'arbre ?
+    ("meilleure complexité pour le modèle")
+==> le meilleur est sans doute celui débouchant sur le plus petit nombre
+	d'erreur de généralisation. Le problème est que l'algorithme de construction
+	n'a accès qu'au training set et ne connait rien de l'ensemble global
+	représenté par le training set (si y'a pas l'homme dans le training set, il
+	n'a aucun moyen de savoir que l'homme existe).
+
+--> Comment estimer ce nombre de generalization error (GE) ?
+
+1°) "Resubstitution Estimate" (= training error estimate)
+	On assume que le modèle est une bonne représentation du training set, on
+	peut alors utiliser la training error comme estimation optimiste de la GE.
+
+2°) Incorporer la complexité du modèle,
+	stratégie se basant sur un principe connu :
+	____Def______[Occam's Razzor ou le principe de parcimonie] :
+	|Pour 2 modèles avec la même GE, on préfèrera toujours
+	|le modèle le moins complexe des deux.
+	\___ 2 méthodes permettent d'incorporer ce principe :
+	
+	A) Pessimistic Error Estimate
+	Cette méthode consiste à calculer explicitement la GE comme la somme des
+	training errors majorée par une pénalité dépendante de la complexité du
+	modèle.On a donc l'erreur pessimiste estimée de l'arbre T e_g(T) donnée par:
+	$$ e_g(T) = \frac{\sum_{i=1}^k\left[e(t_i)+\Omega(t_i)\right]}
+	                 {\sum_{i=1}^k n(t_i)} = \frac{e(T)+\Omega(T)}{N_t} $$
+	où Omega(t_i) est la pénalité pour le noeud t_i,
+	   n(t_i) le nombre d'enregistrements que le noeud t_i classifie
+	   e(t_i) ----------------------------mal classé en t_i
+	   N_t le nombre total d'enregistrements.
+	B) Minimum Description Length Principle (MDL)
+	En gros, on encode le modèle pour le transmettre à quelqu'un qui ne connait
+	pas les bonnes classes (et qui doit donc les connaitre pour savoir 
+	critiquer le modèle). Si le modèle est assez bon il n'y aura que le cout du
+	modèle à encoder, si pas il faudra également encoder les données mal
+	classées. Il est alors recommander de minimiser la fonction totale de cout
+	c'est-à-dire l'encodage du modele + l'encodage des données mal classées.
+
+3) Estimer des bornes statistiques (Statistical Bounds)
+   On peut également voir la GE comme une correction statistique de la training
+   error. Vu que la GE tend à être plus grande que la training error, la
+   correction statistique est calculée comme une borne supérieure sur la
+   training error en tenant compte du nombre d'enregistrements (du training set)
+   qui atteignent une feuille particulière.
+   (Par exemple, dans l'algorithme C4.5, le nombre d'erreurs commises par chaque
+   feuille est considérée comme suivant une distribution binomiale)
+   (on peut majorer par une loi normale par exemple)
+   (COMPLIQUE.)
+   
+4) Utiliser un ensemble de validation
+   On sépare l'ensemble de départ en 2 sous-ensembles, l'un est utilisé pour
+   l'apprentissage et l'autre pour estimer la GE. (en général 2/3 | 1/3)
+   --> le meilleur pour l'estimation mais moins de données sont disponibles pour
+   la construction du modèle :/ ..
+   
+Gérer l'overfitting dans la construction de l'arbre
+---------------------------------------------------
+On a vu comment permettre à l'algorithme d'apprentissage de chercher un modèle
+sans overfitter les données. Ici on développe 2 stratégies pour éviter cet
+overfitting dans le contexte de la construction de l'arbre (tree induction).
+
+1°) Prepruning (Critère d'arrêt "tôt")
+	Cette approche consiste à arrêter l'algorithme d'expansion de l'arbre avant
+	que l'arbre ne fit toutes les données du training set. Pour ce faire, un
+	critère d'arrêt plus restrictif doit être utilisé (comme ne plus splitter un
+	noeud lorsque le gain en pureté (ou l'amélioration en terme de GE) n'est
+	plus plus grand qu'un certain seuil).
+	L'avantage de cette approche est qu'elle empêche réellement l'overfitting,
+	cependant il est difficile de trouver le bon seuil -> trop bas et le modèle
+	ne sera pas assez bon et trop haut et l'overfitting ne sera pas évité.
+
+2°) Postpruning 
+	Cette approche laisse l'arbre être initialisé à sa taille maximale pour
+	ensuite passer par une phase de pruning(élagage) de bas en haut. On élague
+	l'arbre en remplaçant un sous-arbre par :
+	1) une feuille dont la classe est déterminée par la classe majoritaire,
+ ou 2) la branche la plus utilisée dans le sous arbre.
+ 	On stoppe cette phase lorsque plus aucune amélioriation n'est trouvée.
+ 
+ Le postpruning donne de meilleurs résultats que le préprunning car il base ses
+ décisions sur un arbre totalement généré tandis que le préprunning peut
+ souffrir d'une terminaison prématurée d'une branche. Cependant le préprunning
+ recquiert moins de calculs que le post-prunning, surtout que le temps pris par
+ le post prunning pour générer les parties de l'arbre qui sont élaguées par la
+ suite est du temps gaspillé !
+ 
+ 
+ Evaluer la performance d'une classifier
+ ---------------------------------------
+ 
+ Une fois le modèle correctement choisi (avec l'estimation de la GE) et généré
+ il peut être interessant de mesurer sa performance sur l'ensemble de test 
+ car cette mesure permet de donner une estimation non-biaisée de la GE.
+ 
+ 1) Méthode Holdout
+  On sépare le data set en 2 : training et test set.
+  --> dépend fortement de la taille et de ce que contiennent les sets
+  --> le modèle généré ne sera pas aussi bon car moins d'éléments dans training
+  --> les ensembles ne sont plus indépendants l'un de l'autre (une classe
+  	 surreprésentée dans l'un sera probablement sous-représentée dans l'autre
+  	 vu que les sous-ensembles proviennent du même ensemble de départ)
+  	 
+ 2) Random Subsampling (faire des sous échantillons aléatoires)
+  Identique au Holdout mais on répète plusieurs fois l'opération et on prend la
+  moyenne. Il souffre des mêmes soucis que le Holdout et, de plus, il n'y a
+  aucun controle sur qui est pris dans le training set ou dans le test set, il
+  se peut donc qu'un enregistrement soit pris plus de fois qu'un autre dans le
+  training set.
+
+ 3) Cross-Validation
+  Dans cette méthode, chaque enregistrement est utilisé une seule fois comme
+  test et un nombre identique pour tous comme training. On partitionne en fait
+  les données en k ensembles et à chaque run, une partition est utilisée comme
+  test et les k-1 autres comme training set. On peut également utiliser cette
+  méthode avec k=N, on appelle cela le leave-one-out mais cela rend les temps
+  de calcul très long et les tests sets ne contiennent jamais que 1
+  enregistrement ce qui fait que la variance de la métrique de performance peut
+  être élevée.
+
+ 4) Bootstrap
+ Dans les méthodes précédentes, lorsqu'on prenait un élément dans le training set,
+ on ne pouvait le prendre qu'une seule fois, dans le bootstrap lorsque l'on
+ prend un enregistrement dans le training set, on le replace dans le "pot" de
+ manière à ce qu'il soit à nouveau prenable autant que les autres. (en moyenne
+ un bootstrap de la taille du nombre d'enregistrement contient 63,2% des données
+ de départ) Les données restantes forment le test set. Cette procédure est
+ répétée un nombre b de fois puis on prend la moyenne pour évaluer la précision.
+ 
+ Méthodes pour comparer des classifiers
+ ---------------------------------------
+ 
+ Parfois, la différence entre les précisions des classifiers n'est pas assez 
+ significative statistiquement parlant. (85% de réussite sur 100 instances
+ est-ce mieux que 75% sur 5000 ... ?)
+ 
+ 2 questions se posent : 
+  1) "Combien" de confiance peut-on placer dans la précision d'un classifier ?
+   --> Estimer un interval de confiance.
+  2) Est-ce possible d'expliquer la différence de précision comme un résultat
+     d'une variation dans les tests sets ?
+   --> Etudier la signification de la variation de manière statistique.
+
+\-> Estimer un intervalle de confiance pour la précision.
+
+	Pour déterminer cet intervalle, on a besoin de trouver la distribution
+	suivie par la mesure de précision. Nous allons considérer que cette
+	distribution est binomiale. Puis calculs de proba immondes.
+	Plus le nombre de données augmente plus l'intervalle est serré.
+
+\-> Comparer la performance de deux modèles.
+	M_1 modèle testé sur D_1 contenant n_1 enregistrements avec e_1 comme taux d'erreur
+	M_2 modèle testé sur D_2 contenant n_2 enregistrements avec e_2 comme taux d'erreur
+	--> D_1 et D_2 sont indépendants.
+	Est-ce que la différence entre e_1 et e_2 est statistiquement signifiante ?
+	En assumant que n_1 et n_2 sont assez grands, on peut les approximer par
+	une loi normale. Il en va de même pour d = e_1 - e_2 avec d_t comme moyenne
+	(la vraie différence) et la variance sigma^2_d.
+	Puis gogo calcul proba chiant..

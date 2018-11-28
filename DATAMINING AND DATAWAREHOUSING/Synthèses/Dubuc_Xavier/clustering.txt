@@ -1,0 +1,2 @@
+Plusieurs type de clustering :
+Hierarchique, partitionnel, exclusif, overlapping, fuzzy, complet ou partiel

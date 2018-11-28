@@ -1,0 +1,236 @@
+Le support d'une règle X -> Y est s si s% des transactions contiennent les
+élements de X U Y.
+La confiance d'une règle X -> Y est c si c% des transactions qui contiennent X
+contiennent aussi Y.
+
+Une règle d'association est une expression implicative de la forme X -> Y où X
+et Y sont des ensembles disjoints. La puissance d'une règle peut être mesurée
+en terme de confiance et de support.
+
+Le problème ``Association Rule Discovery'' : Pour un set de transactions T,
+trouver toutes les règles ayant un support >= minsup et une confiance > minconf.
+(avec minsup(proche de 0.1 en général) et minconf(proche de 1 en général)donnés)
+
+Afin d'éviter la génération de règles inutiles, on va générer des itemsets et
+la première application que l'on peut faire est que si on a un itemset {A,B,C}
+qui est pas assez 'supporté', alors toutes les règles A->B, A->C, AB->C, ... ne
+le seront pas non plus, et donc on peut directement les oublier.
+
+--> 1. Trouver les frequent itemset (ceux qui ont un support suffisant)
+	2. Extraire les strong rules des frequent itemset, c'est-à-dire les règles
+	   ayant une haute valeur de confiance.
+	   
+1. reste exponentiel, solutions :
+	A. réduire le nombre d'itemset candidats à être frequent itemset (apriori
+		utilise cette approche),
+	B. réduire le nombre de comparaisons en utilisant des structures plus
+	   avancées. (cf 6.2.4)
+
+6.2.1 Le principe apriori
+
+	Thm : ``Si un itemset est fréquent, alors tous ses sous-ensembles doivent 
+			l'être aussi ''
+    Corollaire : Si un itemset est non-fréquent alors tout superset le contenant
+    			 ne l'est pas non plus. (superset = set plus grand)
+    --> Utiliser ces 2 principes pour pruner l'arbre/le graphe est appeller le
+        support-based pruning.
+	==> Possible car le support est anti-monotone, cad support(A) n'est jamais
+	plus grand que le support des sous ensembles de A.
+	
+6.2.2 Generation des frequent itemset dans l'algo apriori
+	
+	On calcule le support de chaque élément isolé et on "supprime" ceux qui
+	n'ont pas un support assez grand. On itère avec les 2-itemsets créés à
+	partir des 1-itemset restants, et ainsi de suite jusqu'à ne plus en trouver.
+
+	--> Cet algorithme est "level-wise", c'est-à-dire qu'il traverse le treillis
+	    des itemsets niveau par niveau des 1-itemset jusqu'à la taille maximale
+	    des frequent itemsets.
+	--> Il emploie une strategie "generate-and-test", c'est-à-dire qu'il génère
+	    à chaque itération les candidats puis il calcule pour chaque le support
+	    et supprime ceux qui ne sont pas assez supportés.
+	==> O(k_{max} + 1) où k_{max} est la taille maximale des frequent itemsets.
+
+6.2.3 Generation de candidats et pruning
+
+	L'algorithme apriori fait appel à 2 opérations :  (n'accède pas à la DB)
+		* générer des candidats
+		* pruner/élaguer les candidats
+	Mettons en lumière cette dernière opération, on considère un k-itemset X
+	tel que X = {i_1,i_2,...,i_k}. L'algorithme doit déterminer si tous les
+	sous-ensembles de X, X-{i_j} (\forall j = 1,...,k) sont fréquents. 
+	Si l'un d'entre eux ne l'est pas, X est élagué directement. 
+	--> O(k) par itemset de taille k
+	  O(k-m) en fait avec m les itemsets de taille k-1 utilisés pour générer 
+	  l'itemset de taille k considéré. (logique vu qu'il ne faut plus que
+	  vérifier que les k-m autres sont fréquents eux aussi)
+	Pour générer les itemsets de manière efficiente il faudrait :
+	1. éviter de générer trop d'itemsets candidats inutiles,
+	2. assurer que l'ensemble des candidats est complet,
+	3. un itemset ne doit être générer qu'une seule fois
+	On peut soit tout générer et puis faire du pruning mais complexité exponentielle
+	alors on utilise plutot une récursivité :
+	  frequent k-itemset = frequent (k-1)-itemset U frequent 1-itemset
+	--> Ca se peut cependant qu'on génère plusieurs fois le même itemset
+		({a,b,c} = {b,c} U {a} = {a,b} U {c} .... )
+    (on peut éviter ça en gardant les itemsets triés par ordre lexicographique
+     et en ne générant que les k-itemsets tels que le (k-1)-itemset est avant
+     le 1-itemset dans l'ordre lexicographique.
+     {Bread,Diaper} + {Milk} OK
+     {Bread,Milk} + {Diaper} NON
+     {Diaper,Milk} + {Bread} NON
+     
+     Cette approche n'est pas encore parfaite car elle génère tout de même
+     quelques itemsets inutiles. Bread,Diaper,Milk est généré avec
+     {Bread,Diaper} + {Milk} alors que Break,Milk n'est pas frequent.
+     Plusieurs heuristiques existent pour éviter ça comme par exemple le fait
+     que chaque élément d'un k-itemset fréquent doit apparaitre dans au moins
+     k-1 k-1-itemset fréquents sinon le k-itemset n'est pas fréquent.
+     
+	L'approche utilisée par apriori est de fusionner des (k-1)-itemsets et ce,
+	uniquement si leur (k-2) premiers éléments sont identiques (et seulement eux)
+	--> il faut cependant s'assurer que les (k-2) autres sous-ensembles sont
+	fréquents.
+
+6.2.4 Compter le support count des itemsets
+
+	La manière naïve de le faire est de regarder chaque itemset généré et de les
+	comparer à chaque transaction afin de compter le support count. On peut
+	également générer tous les itemsets contenus par une transaction et 
+	augmenter le support de chacun d'entre eux qui sont candidats fréquents.
+	
+	Il faut donc comparer les itemsets générés aux itemsets candidats afin
+	d'incrémenter le support des candidats matchés. On peut le faire avec un
+	arbre de hashage.
+	--> Voir Figure 6.11 page 19
+	
+6.2.5 Complexité de calcul pour l'algorithme Apriori
+
+	Elle est impactée par plusieurs facteurs : 
+	* Le seuil de support 
+	  le diminuer   -> plus d'itemset considérés 'fréquents'
+	                  → plus à générer, plus à compter, ...
+	                -> la taille max des itemsets fréquents est plus grande
+	                  → plus de passages sur les données
+	* Le nombre d'items (Dimensionnalité)
+	  -> besoin de plus d'espace pour stocker
+	  -> plus de cout de calcul et de I/O si le nombre d'itemsets fréquents
+	      augmente
+	* Le nombre de transactions
+	    Vu que l'algorithme passe en revue les transactions.
+	* Taille moyenne des transactions
+		  Pour des datasets dense, cette taille peut être très grande. 
+		  1°) La taille max des itemsets fréquent tend à augmenter,
+		  2°) Plus d'itemsets contenus dans les transactions
+
+6.3 Génération de règles
+
+	Chaque itemset fréquent peut générer 2^k-2 règles différentes (on ignore les
+	règles avec un ensemble vide). Une règle peut se générer en partitionnant
+	l'itemset en 2 ensembles non-vides : X \subseteq itemset : X -> Y-X, il faut
+	que cette règle satisfasse au seuil de confidence.
+
+	Pour calculer la confiance de la règle, il n'est requis aucun calcul
+	supplémentaire car c'est un ratio de support count qui ont été calculé
+	précédemment (vu que les sous ensembles des itemsets fréquents sont des
+	itemsets fréquents)
+	
+  6.3.1 Pruning basé sur la confiance
+  
+  	On a pas de règle d'antimonotonie mais on a tout de même le théorème suivant :
+  	"Si une règle X->Y-X ne satisfait pas le seuil de confiance,
+	 alors pour tout X'\subseteq X la règle X'->Y-X' ne la satisfait pas non plus.
+	 
+  6.3.2 Génération de règles dans l'algorithme Apriori
+  
+  	level-wise, même style de principe que pour les frequent itemsets.
+  	On génère les règles avec le plus d'éléments à gauche de la fleche puis,
+  	si elle n'a pas assez de confiance on abandonne la génération à partir de
+  	cet itemset. Sinon, si {a,b,c} -> d et {a,b,d} -> c sont "assez confiante"
+  	on teste {a,b} -> {d,f}.
+
+6.4 Représentation compacte des frequent itemsets
+
+	Il est important de pouvoir identifier un sous-ensemble de frequent itemsets
+	représentatifs desquels tous les autres frequent itemsets.
+	2 représentations sont données :
+	1°) Maximal frequent itemsets
+		Un maximal frequent itemset est un itemset frequent tel qu'aucun de ses
+		supersets directs ("fils" dans le treilli) n'est fréquents.
+		C'est l'ensemble le plus petit d'itemsets fréquents tels que tous les
+		autres itemsets fréquents peuvent en être dérivés.
+		Le problème de ceci est que on perd les informations du support sur les
+		sous-set de ces maximal frequent itemsets. Par moment il est donc
+		préférable d'avoir une représentation un peu plus "grande" mais qui
+		conserve ces informations afin de ne pas devoir les recalculer à nouveau.
+
+	2°) Closed frequent itemsets
+		Un frequent itemset est un closed frequent item si aucun de ses 
+		supersets immédiats n'a le même support count que lui. Vu autrement, un
+		frequent itemset n'est pas closed si au moins un de ses supersets
+		immédiats a le même support que lui.
+		Une règle X->Y est redondante s'il existe X'\subseteq X et Y'\subseteq Y
+		tels que X'->Y' avec le même support et la même confiance.
+		Ce genre de règle ne sont pas générées si les closed frequent itemsets
+		sont utilisés pour la génération.
+
+6.5 Méthodes alternatives pour générer des frequent itemsets (FI)
+
+	Même si apriori améliore de manière considérable les performances pour générer
+	les règles d'associations, il souffre toujours d'un overhead I/O assez important
+	car il faut passer plusieurs fois sur la BDD des transactions.
+	La génération des FI peut être vue comme un traversée du treillis des itemsets.
+	Plusieurs manières peuvent être envisagées pour la traversée :
+	
+	* general-to-specific (de haut en bas) (utilisé par Apriori)
+	* specific-to-general (de bas en haut), utile pour trouver des itemsets
+	  très spécifiques dans des transitions denses, la limite des "FI" est
+	  localisée vers le bas du treillis.
+	* bidirectionnal : combinaison des 2 précédentes --> recquiert plus d'espace
+					   de stockage.
+	* classes d'équivalence : on pourrait imaginer que la recherche se fait
+	  d'abord dans une classe particulière avant de se poursuivre dans une autre.
+	  Par exemple dans apriori les classes d'équivalence sont définies au travers
+	  la taille des itemsets. On peut aussi les définir selon le préfixe ou le
+	  suffixe des itemsets. Dans ces 2 derniers cas on utilise un arbre de 
+	  préfixe/suffixe.
+	* DF / BF (profondeur/largeur) : apriori utilise un parcours en largeur, on
+	  pourrait alors imaginer un parcours en profondeur
+	  --> l'avantage est qu'on trouve les maximal FI plus rapidement en trouvant
+	  la bordure de FI plus rapidement.
+	  
+  Representation du data set de transactions
+  ----- Cette représentation a de l'influence sur le coût d'I/O.
+  2 représentations possibles :
+    * horizontale : transaction associée à une liste d'item
+    * verticale : item associé à une liste de transactions contenant l'item
+  	--> Demande beaucoup de mémoire, meilleure manière de faire --> section suivante.
+
+6.6 FP-Growth Algorithm
+
+	On utilise une structure de données plus compacte : le FP-Tree.
+    Un peu comme un prefix-tree où on compte le nombre de chemin matché.
+     A 3
+      \ 
+       B 3
+      / \ 
+   1 C   D 1  Signifie qu'on a 3 transactions contenant A et B et 1 contenant C
+   et 1 contenant D --> {AB,ABC, ABD} sont les 3 transactions :) !
+   On ajoute également des liens entre tous les noeuds correspondant à un même
+   item pris dans des transactions différentes (afin de compter rapidement le
+   support count)
+   -->
+     A 4
+    / \ 
+ 1 C   B 3
+      / \ 
+   1 C   D 1 
+   pareil qu'avant sauf qu'on a {AC} comme transaction supplémentaire. On met
+   alors un lien entre les deux C afin de compter rapidement que C est supporté
+   1 + 1 = 2 fois :) !
+   
+   (Chaque transaction trie ses items dans l'ordre du support global, dans l'exemple
+   A > B > C > D (en support count 4>3>2>1))
+   
+   (relire quand même le chapitre sur le FP-Tree, pas évident tout ça ... !)
+   
