@@ -1,0 +1,866 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{multicol}
+\usepackage{mathrsfs}
+\usepackage{mathenv}
+
+\def\nbOne{{\mathchoice {\rm 1\mskip-4mu l} {\rm 1\mskip-4mu l}
+{\rm 1\mskip-4.5mu l} {\rm 1\mskip-5mu l}}}
+
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}{0cm}{0cm}{0cm}{0cm}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[french]{babel}
+\selectlanguage{french}
+
+\usepackage{color}
+\usepackage{graphicx}
+\graphicspath{{img/}} 
+
+\usepackage{verbatim}
+\usepackage{moreverb}
+
+% Commandes personnelles %
+
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\newcommand{\dred}[1]{\textcolor{darkred}{\textbf{#1}}}
+\newcommand{\dgre}[1]{\textcolor{darkgreen}{\textbf{#1}}}
+\newcommand{\dblu}[1]{\textcolor{darkblue}{\textbf{#1}}}
+\newcommand{\dora}[1]{\textcolor{darko}{\textbf{#1}}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\ora}[1]{\textcolor{darko}{#1}}
+\newcommand{\red}[1]{\textcolor{darkred}{#1}}
+
+\newcommand{\image}[1]{\includegraphics{#1}}
+\newcommand{\imageR}[2]{\includegraphics[width=#2px]{#1}}
+\newcommand{\imageRT}[2]{\includegraphics[height=#2px]{#1}}
+\newcommand{\img}[1]{\begin{center}\includegraphics[width=400px]{#1}\end{center}}
+\newcommand{\imag}[1]{\begin{center}\includegraphics{#1}\end{center}}
+\newcommand{\imgR}[2]{\begin{center}\includegraphics[width=#2px]{#1}\end{center}}
+\newcommand{\imgRT}[2]{\begin{center}\includegraphics[height=#2px]{#1}\end{center}}
+\newcommand{\point}[2]{\item \ora{\underline{#1}} : \textit{#2}}
+\newcommand{\bfp}[2]{\item \textbf{#1} : \textit{#2}}
+\newcommand{\sumin}[3]{\sideset{}{_{i=#1}^{#2}}\sum{#3}}
+\newcommand{\stitre}[1]{\noindent\textbf{\underline{#1}}}
+\newcommand{\stitreD}[2]{\noindent\textbf{\underline{#1}} \textit{(#2)}\\}
+
+\newcommand{\neu}{n\oe ud}
+\newcommand{\neuSP}{n\oe ud }
+\newcommand{\neus}{n\oe uds}
+\newcommand{\neuSPs}{n\oe uds }
+
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\title{\textbf{\textcolor{darkblue}{Compilation $\sim$ Résumé 2010.}}}
+\author{\textit{Dubuc Xavier} \\ \red{contact@xavierdubuc.com}}
+
+\begin{document}
+
+\maketitle
+
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\tableofcontents
+
+$ $ \\
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\newpage
+
+\section{Introduction}
+
+\subsection{Structure générale d'un compilateur}
+
+Un compilateur est composé généralement de $6$ entités réalisant le processus de traduction intéragissant avec $2$ entités globales qui sont la \red{table des identifiants} et le 
+\red{gestionnaire des erreurs}. Ces 6 entités se regroupent en 2 catégories, 
+\begin{enumerate}
+\item l'\red{analyse} qui comporte
+	\begin{itemize}
+		\item \red{\textit{l'analyse lexicale}},
+		\item \red{\textit{l'analyse syntaxique}},
+		\item \red{\textit{l'analyse sémantique}};
+	\end{itemize}
+\item la \red{synthèse} qui comporte
+	\begin{itemize}
+		\item \red{\textit{le générateur de code intermédiaire}},
+		\item \red{\textit{l'optimiseur du code}},
+		\item \red{\textit{le générateur du code}}.
+	\end{itemize}
+\end{enumerate}
+
+\section{Analyse lexicale}
+
+\subsection{Buts}
+
+\begin{itemize}
+\item lire les symboles du programme source, un à un,
+\item écarter les blancs (au sens large : espace simple, tabulation, retour à la ligne,...) et les commentaires,
+\item produire en sortie, un à un, les lexèmes formant le programme source,
+\item stocker dans la table des identificateurs tous les identificateurs (au sens large : identificateur de variable, de classe, de méthode, ...) du programme source,
+\item détecter et gérer les erreurs lexicales. \\
+\end{itemize}
+
+\textit{(Un lexème étant un symbole ou un ensemble de symboles reconnus par l'analyse lexicale)}
+
+\subsection{Outils théoriques}
+
+\subsubsection{Les expressions régulières (Regex)}
+
+\noindent \underline{Notations et vocabulaire}
+
+\begin{itemize}
+\item un \red{alphabet} $A$ est un ensemble fini de symboles \textit{(par exemple, notre alphabet est l'ensemble $\{a, b, c, ..., z\}$)},
+\item un \red{mot} $w$ sur l'alphabet $A$ est une suite de symboles de $A$ \textit{(par exemple, si $A=\{0,1\}$, un exemple de mot : $w=01001$ ou $w=\epsilon$, $\epsilon$ 
+représentant le mot vide, c'est-à-dire aucun symbole)},
+\item la \red{concaténation} de 2 mots $w_1$ et $w_2$ sur l'alphabet $A$, notée $w_1\cdot w_2$ ou $w_1w_2$ est le résultat du placement de $w_2$ après $w_1$ 
+\textit{(par exemple : $w_1 = \red{01001}$, $w_2 = \blu{11} \Rightarrow w_1w_2 = \red{01001}\blu{11}$)},
+\item \red{$A^*$} désigne l'ensemble de tous les mots possibles sur l'alphabet $A$ \\ \textit{(par exemple $\{0,1\}^* = \{\epsilon,0,1,00,11,01,10,000,... \}$)},
+\item un \red{langage} $L\subseteq A^*$ est un sous-ensemble de $A^*$ \textit{(par exemple $L = \{w|w\text{ de longueur paire}\}$)}, \\
+\end{itemize}
+
+\textbf{$\Rightarrow$ une \red{expression régulière} $r$ est une notation définissant un certain langage $L(r)$.} \\
+
+\noindent Ces expressions régulières sont définies par induction comme suit : \\
+Soit $A$ un alphabet fixé,
+\begin{itemize}
+\item 		$r=a$ où $a\in A$ est une expression régulière définissant le langage $L(r) = \{a\}$ \\
+				$r=\epsilon$ est une expression régulière définissant le langage $L(r) = \{\epsilon\}$
+\item Soit $r$ et $s$ deux expressions régulières définissant les langages $L(r)$ et $L(s)$, alors, par ordre de priorité décroissante : 
+		\begin{itemize}
+			\item $r^*$ est une expression régulière définissant le langage $L(r^*) = \{ w_1...w_n | n \geq 0, \forall i\ w_i \in L(r)\}$,
+			\item $r.s$ est une expression régulière définissant le langage $L(r.s) = \{w_1w_2| w_1 \in L(r), w_2 \in L(s)\}$,
+			\item $r|s$ est une expression régulière définissant le langage $L(r|s) = L(r) \cup L(s)$ 
+			\item $r?$ est une abréviation de $(r|\epsilon)$
+			\item $[A-Za-z0-9]$ est une abréviation de $A|B|..|Z|a|b|..|z|0|...|9$
+			\item $r^+$ est une abréviation de $r.r^*$ \\
+		\end{itemize}
+\end{itemize}
+
+\stitre{Exemple} :  \textit{On souhaite définir une expression régulière \textbf{a} définissant les constantes réelles non-signées. Elles sont constituées d'une partie entière 
+formée d'un nombre $\geq 1$ quelconque de chiffres suivie d'une partie fractionnaire optionnelle formée d'une virgule suivie d'un nombre $\geq 1$ quelconque de chiffres, suivie 
+d'une partie exposant optionnelle formée du symbole E suivi d'un signe optionnelle + ou - suivi d'un nombre $\geq 1$ quelconque de chiffres.} \\
+\begin{center}
+\begin{array}{l}
+s = 0|1|...|9 \\
+r = s.s* \\
+pf = ,.r \\
+pe = E.(+|-|\epsilon).r \\
+a = r.(pf|\epsilon).(pe|\epsilon)
+\end{array}
+\end{center}
+
+ou avec les abréviations : 
+
+\begin{center}
+\begin{array}{l}
+r =([0-9])+ \\
+pf = ,.r \\
+pe = E.(+|-)?.r \\
+a = r.pf?.pe? \\
+\end{array}
+\end{center}
+
+\stitre{Remarque} : \textit{ces expressions ont une puissance limitée, en effet le langage formé par les mots bien parenthésés sur l'alphabet $\{(,)\}$ ni le langage $L = \{0^n1^n 
+| n\geq 0 \}$ (en effet $r = 0*1*$ définit le langage $L(r) : \{0^n1^m|m,n\geq 0\}$). L'intuition vient du fait que l'on est incapable au travers de ces expressions de «compter».}
+
+\subsubsection{Les automates finis}
+
+\noindent Un automate fini $\mathscr{A} = (Q,I,F,T,A)$ est constitué de
+\begin{itemize}
+\item $Q$ : un ensemble fini d'états,
+\item $I\subseteq Q$ : sous-ensemble des états initiaux,
+\item $F\subseteq G$ : sous-ensemble des états finaux,
+\item $T\subseteq (Q\times A\times Q$ est la relation de transition,
+\item $A$ un alphabet.
+\end{itemize}
+\textbf{$\qquad \Rightarrow \mathscr{A}$ est souvent représenté comme un graphe.}
+
+\noindent \underline{Exemple} :
+\imag{comp1.png}
+\begin{center}
+\begin{array}{l}
+A = \{0,1\}\\
+Q = \{q_0,q_1\}\\
+I = \{q_0\}\\
+F = \{q_1\}\\
+(q_0,1,q_1) \in T \\
+(q_0,0,q_0)\in T \\
+(q_1,0,q_0)\in T \\
+\end{array}
+\end{center}
+
+\noindent Un automate $\mathscr{A}$ reconnait un langage de mot de $A^*$ noté $L(\mathscr{A})$ : 
+\[
+L(\mathscr{A}) = \{w\in A^* |w \text{ est l'étiquette d'un chemin dans } \mathscr{A} \text{ allant d'un état initial à un état final.} \}
+\]
+
+\stitre{Lien avec l'analyse lexicale} : l'analyseur dispose d'une série d'automates, un par type de lexèmes. Le programme source est lu symbole par symbole, en faisant fonctionner 
+l'un de ces automates. Si cet automate accepte ainsi un $w$, on aura détecté le lexème $w$ dans le programme source.\\
+
+\noindent \underline{Théorèmes} \\
+1. Soit $L$ un langage, alors $L$ est défini par une expression régulière ssi $L$ est accepté par un automate. \textbf{(théorème de Kleene, 1956)} \\
+2. Soit $\mathscr{A}$ un automate non-déterministe, alors $\exists$ un automate déterministe qui accepte le même langage. (\textbf{Théorème de Rabin-Scott, 1959}) \\
+3. Soit $L$ un langage accepté par un $\mathscr{A}$, alors il existe un unique automate déterministe de taille minimale (en nombre d'états) qui calcule $L$. \\
+Toutes les preuves sont \textbf{effectives} (c'est-à-dire que les preuves donnent un algorithme).
+
+\subsection{Algorithme pour l'analyse lexicale}
+
+\imag{comp2.png}
+
+\begin{enumerate}
+\item A chaque lexème détecté, l'analyseur lexical va fournir en sortie son type et sa valeur \textit{(par exemple type : constante entière, valeur : 1998 ; on lit 4 symboles : 1, 9, 9
+et 8 que l'on interprête comme le lexème $1998$)},
+\item Étant donné le langage de programmation utilisé pour le programme source, à chaque type de lexème autorisé par ce langage, on possède une expression régulière qui le 
+définit, c'est-à-dire (via le théorème) un automate déterministe de taille minimale l'acceptant. \\
+L'analyseur lexical dispose de tous ces automates, placés dans un certain ordre. Au fur et à mesure de la lecture du programme source, il tente de faire fonctionner l'un 
+après l'autre ces automates jusqu'à ce que : 
+\begin{itemize}
+\item soit l'un ait fonctionné et a donc détecté un lexème d'un certain type,
+\item soit aucun ne fonctionne et on a détecté  une erreur lexicale
+\end{itemize}
+Concernant l'ordre, par exemple, l'automate des mots-clé doit précéder celui des identificateurs \textit{(sinon tous les mots-clés seront des identificateurs)}. \\
+\imag{comp3.png}
+\newpage
+\stitre{Exemple d'algorithme} : \textit{(pour les opérateurs relationnels vis à vis de l'automate ci-haut, les états $7$ et $9$ correspondent à d'autres automates)}
+\begin{verbatim}
+etat_initial <- 0, erreur <- faux, lex_f <- faux
+caractere <- SUIVANT()
+Tant que caractere = " ", "\n" ou tab faire caractere <- SUIVANT()
+   Tant que non erreur et non lex_f faire
+      selon que etat_initial vaut
+         0 : type_lexeme <- op_rel
+             Si caractere = '<' alors
+                caractere <- SUIVANT()
+                Si caractere = '=' alors val_lexeme <- 'LE'
+                Sinon Si caractere = '>' alors val_lexeme <- 'NE'
+                Sinon
+                   caractere <- PRECEDENT()
+                   val_lexeme <- 'LT'
+                lex_f <- vrai
+             Sinon si caractere = '=' ...
+             Sinon si caractere = '>' ...             
+             Sinon etat_initial <- 7
+          7 : ...
+          9 : ...
+          Sinon erreur <- vrai
+\end{verbatim}
+\item Un automate n'est rien d'autre qu'un petit bout de l'algorithme d'analyse lexiale d'où l'interêt d'avoir des automates déterministes et de taille minimale. On se rappelle que 
+pour détecter un lèxème, on est parfois amené à lire un caractère supplémentaire du programme source. Ce caractère supplémentaire pouvant faire partie du lexème suivant, il 
+faut utiliser PRECEDENT(). (Le programme source étant lu caractère par caractère)
+\item \textbf{\underline{Table des identificateurs} :} à chaque nouveau lexème détecté qui est de type identificateur il faut stocker celui-ci dans la table des identificateurs. 
+Comme en SDD, les tables de hachage sont préconisées. Concernant les mots-clé, une solution proposée indique de ne pas utiliser d'automate mais à la place, l'automate des 
+identificateurs et de faire la distinction entre eux et les identificateurs grâce à la table des identificateurs.
+\begin{center}
+	\begin{tabular}{|c|c|}
+	 \hline
+	 \textbf{\underline{Lexème}} & \textbf{\underline{Caractéristiques}} \\
+	 \hline
+	 \textbf{class} & \textit{mot-clé} \\
+	 \textbf{void} & \textit{mot-clé} \\
+	 ... & ... \\
+	 ... & ... \\
+	 \textbf{position} & \\
+	 ... & ... \\
+	 \hline
+	\end{tabular}
+\end{center}
+$ $ \\
+$ $ \\
+\item \textbf{\underline{Erreurs} :} 
+\begin{itemize}
+\item \textbf{détection} : quand aucun automate n'a fonctionné (erreur lexicale) \\
+\stitre{Exemples :}
+\begin{itemize}
+\item ... $< <$ ... $\rightarrow$ pas d'erreur détectée, on lit $2$ fois le lexème $<$.
+\item ... WIHLE ... $\rightarrow$ pas d'erreur détectée (nouvel identificateur détecté)
+\item ... $x$... où $x$ n'est autorisé par aucun automate $\rightarrow$ erreur détectée.
+\end{itemize}
+$\Rightarrow$ en pratique, il y a peu d'erreur lexicale.
+\item \textbf{récupération} : passer le caractère posant problème et les suivants \textit{(si nécessaires)} jusqu'à ce que l'un des automates fonctionne à nouveau 
+\textit{(méthode simple, il en existe des plus élaborées)}. (Rappel : cette analyse ne détecte pas un oubli de «$;$» ou de «$)$»)
+\end{itemize}
+\end{enumerate}
+ \newpage
+\section{Analyse syntaxique}
+
+L'analyse syntaxique reçoit une liste de lexèmes en entrée, et en fonction de celles-ci, elle calcule un arbre de dérivation. Pour ce faire on va voir un outil théorique, les grammaires 
+ainsi que 2 analyses syntaxiques, l'analyse syntaxique descendante et l'analyse syntaxique ascendante. Par exemple, pour une expression arithmètique : $2+x*3$ l'arbre pourrait 
+être : 
+
+\begin{center}
+	\begin{boxedverbatim}
+      E
+  /   |   \
+ E    O    E
+ |    |  / | \
+NBR   + E  O  E
+        |  |  |
+       ID  * NBR
+	\end{boxedverbatim}
+\end{center}
+
+\subsection{Les grammaires}
+
+Une grammaire décrit la syntaxe du langage de programmation utilisé. On les définit comme suit : soient : 
+\begin{itemize}
+\item $T$, un alphabet terminal (dont les symboles sont appelés symboles terminaux),
+\item $V$, un alphabet de variables (dont les symboles sont appelés variables),
+\item $S$, un axiome, $S\in V$ (S comme \textbf{S}tart)
+\end{itemize}
+La grammaire est formée d'un ensemble de règles (\textbf{les règles syntaxiques}) de la forme $X\rightarrow \alpha$ où $X\in V$ et $\alpha$ est un mot sur $T\cup V$.
+
+Par exemple pour les expressions arithmétiques comme ci-dessus, la grammaire associée est :
+\begin{center}
+	\begin{boxedverbatim}
+E -> EOE
+E -> (E)
+E -> ID
+E -> NBR
+O -> +
+O -> -
+O -> /
+O -> *
+	\end{boxedverbatim}
+\end{center}
+
+Ici, $T = \{ID, NBR, (, ), +, -, *, /\}$, $V=\{E,0\}$, \textbf{E} est l'axiome. On remarque également que les expressions arithmétiques (E) sont définies récursivement et que les 
+lexèmes (NBR, ID, +, *, -, /, (, )) reviennent.
+
+\noindent \textbf{Le but de l'analyse syntaxique est de vérifier que la suite de lexèmes calculées par l'analyseur lexical respecte bien la syntaxe du langage de programmation 
+utilisé telle que définie par la grammaire donnée.}
+
+\subsubsection{Les dérivations et les arbres de dérivation}
+
+\noindent Les \red{dérivations} sont définies comme suit : 
+\[
+\gamma_1 X \gamma_2 \Rightarrow \gamma_1 \alpha \gamma_2 \text{ où } \gamma_1, \gamma_2 \text{ sont des mots sur } T\cup V \text{ et } X \rightarrow \alpha (X\in V) 
+\text{ est une règle de la grammaire.}
+\]
+\textbf{Le but de l'analyseur syntaxique est de trouver les dérivations à effectuer qui, en partant de l'axiome, donnent la liste des lexèmes donnée.} \\
+\textit{(Pour spécifier que l'on effectue plusieurs dérivations, on utilise $\rightarrow^*$)}
+\newpage
+\noindent L'\red{arbre de dérivation} est formé de noeuds internes qui sont étiquetés par des symboles de variables et de feuilles qui sont étiquetées par des symboles terminaux 
+ou $\epsilon$, et il est tel que la relation père-fils vérifie :
+\begin{enumerate}
+\item la règle $X \rightarrow a$ ($a = a_1a_2 ... a_k$ symboles du mot $a$)
+\begin{verbatim}
+     X
+ / | ... \
+a1 a2 ... ak
+\end{verbatim}
+\item la règle $X \rightarrow \epsilon$
+\begin{verbatim}
+   X
+   |
+epsilon
+\end{verbatim}
+\end{enumerate}
+
+\noindent \textbf{\underline{Remarque importante} : }$T=\{$symboles terminaux$\}$ = $\{$types de lexèmes$\}$, \textit{un lexème à ce stade n'est plus vu comme un mot 
+mais comme un symbole terminal.}
+
+\subsubsection{Retour aux grammaires}
+
+Soit $G$ une grammaire d'axiome $S$, le langage $L(G)$ défini par $G$ est l'ensemble : 
+\[\{w \in T^* | S \rightarrow^* w\}\]
+c'est-à-dire l'ensemble des suites de lexèmes $w$ telles que à partir de l'axiome $S$, il existe une série de dérivations permettant d'arriver à $w$. \\
+
+\stitre{Terminologie en anglais}
+\begin{verbatim}
+Grammaire (hors-contexte) -> (context-free) grammar
+Analyse syntaxique -> parsing
+Arbre de dérivation -> parsing tree
+\end{verbatim}
+
+\subsubsection{Puissance des grammaires}
+
+\stitre{Propriété 1} : si $L$ est un langage défini par une expression régulière, alors il existe une grammaire $G$ qui permet également de définir $L$. \textbf{Les grammaires 
+sont donc au moins aussi puissantes que les expressions régulières.} \\
+\stitre{Propriété 2} : il existe des langages $L$ définis par des grammaires pour lesquels il n'existe aucune expression régulière les définissant. \textbf{Les grammaires sont donc 
+plus puissantes que les expressions régulières.} \\
+\stitre{Propriété 3} : il existe des langages qui ne peuvent pas être définis par des grammaires. \textbf{Les grammaires ont donc une puissance limitée.} \textit{(par exemple, une 
+grammaire spécifiant un langage spécifiant les mots du type $wCw$ avec $w\in \{a,b\}^*$. En effet, rien ne permet d'assurer que les 2 mots $w$ soient identiques.} \\
+
+\noindent \textbf{\underline{Point de vue de compilation}} : plusieurs langages de programmation demandent de déclarer le type d'un identifiant avant de l'utiliser, ici $wCw$ 
+représente la déclaration de l'id, un bout de programme et l'usage de l'id. Ceci ne pouvant être vérifié par une grammaire, donc si on commet l'erreur d'oublier la déclaration d'un 
+id, cette erreur ne peut pas être détectée lors de l'analyse syntaxique. Par contre, vérifier que les accolades sont bien organisées dans un programme pourra l'être. \\
+
+On peut conclure que les expressions régulières et les automates ne savent pas compter, tandis que les grammaires le peuvent, mais de manière limitée grâce à une pile.
+\newpage
+\subsubsection{Grammaires ambigües}
+
+Une \red{grammaire ambigüe} est un grammaire telle que si pour $w \in T^*$, il existe 2 arbres de dérivation différents montrant que $S\rightarrow^*w$. Par exemple, pour les 
+expressions arithmétiques, la suite de lexèmes $NBR+NBR*ID$ possède 2 arbres de dérivation : \\
+
+\begin{verbatim}
+      E                              E
+  /   |   \                      /   |   \
+ E    O    E         OU         E    O    E
+ |    |  / | \                / | \  |    |
+NBR   + E  O  E              E  O  E *    ID
+        |  |  |              |  |  |
+       NBR * ID            NBR + NBR
+\end{verbatim}
+
+En marge de cela, il faudra résoudre les cas d'ambiguité, via 2 solutions possibles :
+\begin{itemize}
+\item soit on remplace la grammaire par une grammaire non-ambigüe,
+\item soit on garde la grammaire ambigüe et aider l'algorithme de compilation à faire le bon choix. \\
+\end{itemize}
+
+\stitre{Transformation de la grammaire des expressions arithmétiques en une grammaire non-ambigüe.} \\
+
+On remarque aisément que les opérateurs $*$ et $/$ sont plus prioritaires que $+$ et $-$ et que la grammaire est doit être associative gauche (5-4-3 doit correspondre à 
+(5-4)-3 et pas à 5-(4-3)). On peut donc dresser le tableau suivant :
+\begin{center}
+	\begin{tabular}{|*{5}{c|}}
+	\hline
+	Opérateurs & $+$ & $-$ & $*$ & $/$ \\
+	Priorité & $1$ & $1$ & $2$ & $2$  \\
+	Associativité & gauche & gauche & gauche & gauche \\
+	\hline
+	\end{tabular}
+\end{center}
+
+On définit donc la grammaire suivante :
+\begin{center}
+	\begin{boxedverbatim}
+// Priorité 1
+E -> E+T
+E -> E-T
+E -> T
+// Priorité 2
+T->T*F
+T->T/F
+T->F
+// Priorité la plus haute
+F->(E)
+F->ID
+F->NBR
+	\end{boxedverbatim}
+\end{center}
+
+On peut également y ajouter l'opérateur d'exponentiation, celui-ci étant prioritaire sur les autres et ayant une associativité droite (en effet $2^{3^4} = 2^{(3^4)}$). La grammaire 
+devient donc :
+\begin{center}
+	\begin{boxedverbatim}
+E -> E+T
+E -> E-T
+E -> T
+T -> T*F
+T -> T/F
+T -> F
+F -> X^F
+F -> X
+X -> (E)
+X -> ID
+X -> NBR	
+	\end{boxedverbatim}
+\end{center}
+
+\subsection{Analyse syntaxique descendante}
+
+\stitre{Problème} : Soit une grammaire $G$ et  $w \in T^*$ la suite  de lexèmes produite par l'analyse lexicale. Il faut vérifier si $w \in L(G)$ et si c'est le cas donner l'arbre de 
+dérivation correspondant ; sinon détection et récupération d'erreur. \\
+$\rightarrow$ Théorie des grammaires : il existe un algorithme qui teste si $w \in L(G)$ en $O(n^3)$ (\red{trop couteux !}) où $n$ est le nombre de lexèmes produit par l'analyse 
+lexicale. Nous allons, pour certaines familles de grammaires qui englobent généralement les grammaires des langages de programmation, on va détailler de tels algorithmes en 
+$O(n)$ c'est-à-dire que l'on effectue un travail en $O(1)$ sur chaque lexème. Dans cette section, nous allons étudier une famille de grammaire où l'algorithme va construire 
+l'arbre de dérivation de haut en bas et de gauche à droite. \\
+
+\stitre{Exemple introductif}
+
+\begin{center}
+	\begin{boxedverbatim}
+(1) type -> simple	
+(2) type -> î ID
+(3) type -> ARRAY [simple] OF type
+(4) simple -> INTEGER
+(5) simple -> CHAR
+(6) simple -> NBR DOTDOT NBR
+	\end{boxedverbatim}
+\end{center}
+\textit{(î signifie pointeur)} \\
+$T =\{ \text{î}, ID, ARRAY,[,],OF,INTEGER,CHAR,NBR,DOTDOT\}$\\
+$V=\{type,simple\}$ (type est l'axiome).\\
+Un exemple accepté : $ARRAY [2..17] OF\ CHAR$ \\
+$\rightarrow w = ARRAY [NBR\ DOTDOT\ NBR ] OF\ CHAR$
+L'arbre de dérivation est donc : 
+\begin{verbatim}
+          type
+  /    /   |  \  \   \
+ARRAY [ simple ] OF type
+      /   |   \       |
+    NBR DOTDOT NBR simple
+                      |
+                     CHAR
+\end{verbatim}
+
+\noindent L'\textit{« algorithme »} pour le construire de haut en bas et de gauche à droite est globalement comme suit :
+\begin{enumerate}
+\item Choisir entre (1), (2), (3) : 
+	\begin{itemize}
+		\item on écarte (1) car $simple \not\rightarrow ARRAY$,
+		\item on écarte (2) car il n'y a pas de pointeurs,
+		\item \textit{on choisit donc (3)}
+	\end{itemize}
+\item Matching entre le lexème lu et le lexème proposé par l'arbre («$[$»)
+\item Choisir entre (4), (5), (6) pour $simple$ $\rightarrow$ \textit{on choisit (6)}
+\item Matching pour $DOTDOT$, $NBR$, $]$ et $OF$
+\item Choisir entre (1), (2), (3) pour $type$ $\rightarrow$ \textit{on choisit (1)}
+\item Choisir entre (4), (5), (6) pour $simple$ $\rightarrow$ \textit{on choisit (5)} \\
+\end{enumerate}
+
+\noindent \textbf{Il y a donc 2 types d'actions possibles :}
+\begin{enumerate}
+\item \textbf{Match} entre le lexème lu et le lexème courant de l'arbre,
+\item Étant donné un noeud $X$ de l'arbre, avec $X \in V$, choisir la bonne règle $X\rightarrow \alpha$ (c-à-d $\alpha$ tel que $\alpha \rightarrow^* a\beta$ où $a$ est le 
+lexème lu).
+\end{enumerate}
+
+Concernant cette 2ème action, le choix à faire est aisé dès lors que la \textbf{table M} a été construite : 
+\begin{center}
+\begin{tabular}{c|c}
+\textbf{X$\backslash$a} & \textbf{lexèmes possibles} \\
+\hline
+\textbf{Symboles de variables possibles} & \\
+ & \\
+\end{tabular}
+\end{center}
+\newpage
+\noindent Dans notre cas : 
+
+\begin{center}
+	\begin{tabular}{*{10}{c|}c}
+	\textbf{X$\backslash$a} & î & ID & ARRAY & [ & ] & OF & INTEGER & CHAR & NBR & DOTDOT \\
+	\hline
+	\textit{type} & (2) & & (3) & & & & (1) & (1) & (1) & \\
+	\hline
+	\textit{simple} & & & & & & & (4) & (5) & (6) & \\
+	\end{tabular}
+\end{center}
+
+\stitre{Algorithme d'analyse syntaxique sur l'exemple.} \\\textit{(lex\_lu représente le lexème lu et lex\_arbre le lexème courant de l'arbre)}
+\begin{verbatim}
+Algorithme Match(lex_lu,lex_arbre)
+   Si lex_lu = lex_arbre alors lex_lu <- <lexème suivant dans w>
+   Sinon <erreur>
+   
+Algorithme Type(lex_lu)
+   Si lex_lu appartient à {INTEGER, CHAR, NBR} alors Simple(lex_lu)
+   Sinon Si lex_lu = î alors
+      Match(lex_lu,î)
+      Match(lex_lu,ID)
+   Sinon Si lex_lu = ARRAY alors
+      Match(lex_lu,ARRAY)
+      Match(lex_lu,[)
+      Simple(lex_lu)
+      Match(lex_lu,])
+      Match(lex_lu,OF)
+      Type(lex_lu)
+   Sinon <erreur>
+
+Algorithme Simple(lex_lu)
+   Si lex_lu = ...
+   Sinon Si lex_lu  = ...
+   Sinon Si lex_lu = ...
+   Sinon <erreur>
+\end{verbatim}
+
+\noindent Au niveau du fonctionnement, étant donné $w$ et $a$ son premier lexème, on appelle $Type(a)$. L'analyse s'est \gre{bien passée} si l'algorithme \textbf{s'arrête sans 
+tomber sur une erreur} et que \textbf{tous les lexèmes sont de $w$ ont été traités}. \\
+
+\noindent \textbf{De manière générale, étant donné une grammaire, on construit sa table M et on écrit les différents algorithmes : \textit{Match} et un par \textit{symbole de 
+variable}.} \\
+
+\noindent Il existe cependant des grammaires qui ne sont pas facilement traitables avec cette méthode, en effet si 2 règles ont un début identique (par exemple $A \rightarrow 
+a$ et $A \rightarrow ab$), le compilateur devra faire le choix mais si il prend le mauvais choix, il devra revenir en arrière (\textit{backtracking}) et essayer avec l'autre règle. 
+Cela peut être très \red{couteux} si le \textit{backtracking} demande de revenir très en arrière. On ne traitera donc pas de telles grammaires avec cette méthode, mais par 
+d'autres méthodes mieux adaptées.
+
+\subsubsection{Grammaires $LL(1)$, First $\&$ Follow}
+
+Les grammaires qui peuvent être traitées par cette méthode d'analyse syntaxique descendante sont celles telles que la table $M$ possède au maximum 1 règle par case. Ces 
+grammaires sont appellées \red{grammaires LL(1)} \textit{(on construit l'arbre de \red{g}auche (left) à droite et on lit \red{1 seul} lexème à la fois dans $w$ de la \red{g}auche 
+vers la droite).} Pour ces grammaires, l'algorithme d'analyse syntaxique descendante est en $O(1)$ où $n$ est la taille de $w$. \\
+\newpage
+\stitre{Comment construire la table $M$ ?}
+
+\begin{enumerate}
+\item \underline{Cas simple} \\
+On fait ici l'hypothèse que la grammaire ne possède pas de règle $Y\rightarrow \epsilon$, on introduit une notion importante :
+\begin{center}
+\fbox{
+\begin{array}{rcl}
+\mathbf{FIRST(\alpha)} & = & \{b\in T|\alpha \rightarrow^* b\gamma \text{ pour un certain } \gamma \in (T\cup V)^*\} \\
+& = & \{ \text{\textbf{lexèmes} b tels que l'on peut dériver }\alpha \text{0, 1 ou plusieurs fois de telle sorte} \\
+& &  \text{ à faire apparaître ce b en 1ère position}\}
+\end{array}}
+\end{center}
+Dès lors, \red{$M(X,a)$ contient $X\rightarrow \alpha$ si $a\in FIRST(\alpha)$ (c'est-à-dire $\alpha \rightarrow^* a\beta$)}.
+\item \underline{Cas compliqué} \\
+Ici la grammaire possède une ou plusieurs $Y \rightarrow \epsilon$, on introduit ainsi une nouvelle notion :
+\begin{center}
+\fbox{
+\begin{array}{rcl}
+\mathbf{FOLLOW(X)} & = & \{b \in T | S \rightarrow^* \beta Xb\gamma \text{ avec } \beta, \gamma \in (T\cup V)^*\} \\
+& = & \{ \text{\textbf{lexèmes} b tels qu'en dérivant 0, 1 ou plusieurs fois l'axiome,}\\
+& & \text{on peut faire apparaître b juste après X} \}
+\end{array}}
+\end{center}
+\textit{On rajoute \$ si on a $S\rightarrow^*\beta X$ où $\beta \in (T\cup V)^*$ (c-à-d quand $X$ n'est suivi d'aucun lexème)} \\
+Dès lors, \red{$M(X,a)$ contient $X\rightarrow \epsilon$ si $a\in FOLLOW(X)$}.
+\end{enumerate}
+
+\stitre{Propositions}
+\begin{enumerate}
+\item Toute grammaire ambigüe n'est pas \textbf{LL(1)}.
+\item Toute grammaire récursive gauche (grammaire possédant des règles de la forme $X\rightarrow X\alpha$, $X \rightarrow \beta$) n'est pas \textbf{LL(1)}.\\
+\underline{Remarque} : on peut toujours rendre une grammaire récursive gauche, non-récursive gauche :
+\begin{verbatim}
+X -> XG
+X -> B
+\end{verbatim}
+Cette grammaire peut être résumée en : $X \rightarrow^* BGG...G$ (avec 0, 1 ou plusieurs G), elle peut être transformé en :
+\begin{verbatim}
+X -> BX'
+X' -> epsilon
+X' -> GX'
+\end{verbatim}
+\end{enumerate}
+
+\subsubsection{Détection et récupération d'erreurs}
+
+Une erreur est \textbf{détectée} si il n'y a pas de match entre le lexème lu dans $w$ et le lexème courant de l'arbre ou si il n'y a pas de règle proposée dans la table $M$ lors du 
+traitement du noeud $X$ dans l'arbre et le lexème $a$ dans $w$, autrement dit $M(X,a)$ est vide. \\
+
+\stitre{Récupération}
+
+\noindent Les erreurs possibles sont l'oubli d'un lexème, l'ajout d'un lexème en trop ou mettre un lexème à la place d'un autre, dans notre cas, nous allons faire l'hypothèse qu'il 
+s'agit uniquement d'un oubli de lexème ou d'un lexème en trop.
+
+\begin{enumerate}
+\item En cas de \textbf{mismatch}, dans le cas d'un \textit{oubli}, l'action de récupération est de passer $a$ dans l'arbre et traiter le noeud suivant. Dans le cas d'un 
+\textit{lexème en trop}, on ignore $b$ dans $w$ et on passe au lexème suivant.
+\item Lorsque\textbf{ $M(X,a)$ est vide}, dans le cas d'un \textit{oubli}, l'action de récupération est d'oublier $X$(le noeud en cours de dérivation) et son sous-arbre dans 
+l'arbre et de passer au noeud suivant et dans $w$ passer des lexèmes jusqu'à ce que le lexème à traiter $\in FOLLOW(X)$. Dans le cas d'un \textit{lexème en trop}, on ignore le 
+lexème et les lexèmes suivants jusqu'à lire un lexème $c \in FIRST(X)$
+\end{enumerate}
+Toute la difficulté réside dans le fait de savoir dans quelle situation on se trouve, pour cela, des heuristiques basées sur la connaissance des fautes fréquentes dans les programmes 
+sont utilisées.
+
+\subsection{Analyse syntaxique ascendante}
+
+Dans cette analyse, on construit l'arbre de dérivation du bas vers le haut et de la gauche vers la droite. On ajoute pour celà un nouvel axiome $S'$ et une nouvelle règle
+$S'\rightarrow S$. Pour ce faire, il y a 2 actions importantes : 
+\begin{enumerate}
+\item Lire le lexème suivante de le placer comme nouvelle feuille dans l'arbre de dérivation $\rightarrow$ \red{SHIFT}.
+\item Remonter dans l'arbre de dérivation grâce à une règle de la grammeaire $\rightarrow$ \red{REDUCE}. \\\textit{(de $\alpha$ vers $X$ avec $X\rightarrow \alpha$ une 
+règle de la grammaire permise)}
+\end{enumerate}
+La difficulté est de n'utiliser qu'une règle permise à ce moment de l'analyse (règle qui n'amènera pas à un blocage plus loin dans la méthode). L'algorithme va utiliser une 
+\textbf{pile} pour symboliser le passé et un \textbf{automate} (différent de ceux de l'analyse lexicale) qui l'aidera à bien faire les 2 actions qui sont à leur disposition. La 
+\textbf{pile}, en cours d'exécution, contient la partie supérieure de ce qui a été construit dans l'arbre de dérivation et l'\textbf{automate} contient des états et des transitions 
+étiquetées par des symboles $\in T\cup V$ ainsi que l'état initial $I_0$. Les états qu'elle contient sont en fait des états de l'automate qui sont intercalés entre chaque transition.
+\\ \textbf{Structure de la pile} : \begin{tabular}{|c|c|c|c|c|c|c|c|} \hline $I_0$ & $\alpha_1$ & $I_x$ & $\alpha_2$ & $I_y$ & $\alpha_3$ & ... & $\alpha_k$\\ 
+\hline\end{tabular}  \\
+
+\stitre{Actions à effectuer} \\
+
+\textbf{Pile : }  \begin{tabular}{|c|c|c|c}\hline & ... & I & \\ \hline \end{tabular} \\
+\textbf{Lexèmes à lire : } \begin{tabular}{|c|c|c|c|}\hline a & ... &  & \$ \\ \hline \end{tabular} \\
+
+\begin{itemize}
+\item Si, étant donnés $I$ et $a$, $I$ indique qu'il faut faire un \textbf{SHIFT}, alors on empile $a$ et $I'$ tel que l'automate possède la transition $(I,I')$ avec comme 
+étiquette $a$. On lit ensuite le lexème suivant.
+\item Sinon, s'il indique un \textbf{REDUCE} avec $X\rightarrow \alpha$, alors on dépile $\alpha$ et tous les états intercalés. Soit $I'$, l'état au sommet de la pile après 
+dépilement, on empile $X$ et $I''$ tel que l'automate possède une transition $(I',I'')$ avec $C$ comme étiquette.
+\item On est en \gre{arrêt avec succès} si $I$ indique que l'on a fini (c'est-à-dire $a = \$$).
+\item On est dans une situation d'erreur sinon.
+\end{itemize}
+
+\subsubsection{Méthode SLR}
+
+Méthode basée sur un automate \textbf{SLR}, automate qui contient des états et des transitions et à chaque état est associé l'ensemble des règles marquées de la forme 
+$X\rightarrow\beta .\gamma$ (qui représentent en fait passé, présent, futur). Au début de l'algorithme, aucun lexème n'a été lu et $I_0$ est le contenu de la pile, dès lors les 
+règles marquées ont toutes leur point à gauche (en effet, il n'y a pas de passé). \\
+
+\stitre{Construction de l'automate}\\
+
+\begin{itemize}
+\item \textbf{\underline{États} : }
+\begin{enumerate}
+\item état initial $I_0$ qui contient la règle marquée $S'->.S$,
+\item état $I$ tel que : si $I$ contient une règle marquée de la forme $X\rightarrow \alpha . Y \beta$ ($Y\in V, \alpha,\beta\in (T\cup V)^*$) alors $I$ doit contenir toute 
+règle marquée de la forme $Y\rightarrow .\gamma$ telle que $Y\rightarrow \gamma$ est une règle de la grammaire.
+\end{enumerate}
+\item \textbf{\underline{Transitions} : } \\
+Étiquetées par des symboles de $T\cup V$, si l'état $I$ contient une règle marquée de la forme $X\rightarrow \alpha . \sigma \beta$ où $\sigma \in T\cup V$, alors il existe 
+$I'$ dans l'automate, possédant une règle marquée de la forme $X\rightarrow \alpha \sigma . \beta$, et une transition $(I,I')$ avec $\sigma$ comme étiquette.
+\end{itemize}
+On construit l'automate en partant de $I_0$ et en appliquant les règles définies ci-dessus au fur et à mesure. \\
+
+Cette méthode, basée sur l'automate \textbf{SLR} fonctionne quand il n'y a pas de backtracking c'est-à-dire quand il n'y a pas de conflit \textbf{shift-reduce} ou de conflit 
+\textbf{reduce-reduce}. Si c'est le cas, la grammaire associée est dite \textbf{SLR(1)} (on dérive toujours l'élément de \red{d}roite et on lit \red{un} lexème à la fois de la 
+\red{g}auche vers la droite) \\
+\newpage
+\noindent Pour les grammaires non \textbf{SLR(1)}, il faut trouver d'autres méthodes d'analyse syntaxique ascendante.
+\textbf{\underline{Proposition} : } les grammaires ambigües ne sont pas \textbf{SLR(1)}.
+Au travers de l'exemple des affectations en \textbf{C} \textit{(voir cours)}, on remarque que l'automate \textbf{SLR} autorise des actions (dans ce cas-ci un reduce avec la règle 
+$R\rightarrow L .$ dans l'état $S_2$) qui mène à des blocages. Autrement dit l'automate se trompe en autorisant cette action en cet état. On en conclut que la méthode 
+\textbf{SLR} est \red{trop simple} et on va envisager une nouvelle méthode plus évoluée et plus puissante, la méthode \dred{Canonical LR}.
+
+\subsubsection{Méthode Canonical LR}
+
+L'idée de l'automate \red{Canonical LR} est de remplacer la condition $a\in FOLLOW(X)$ du \textbf{reduce} par une condition plus contraignante. Dit autrement, au lieu de 
+travailler avec l'entièreté de \textbf{FOLLOW(X)}. \stitre{Définition de l'automate} :\\
+\begin{itemize}
+\item État : information = ensemble de couples $(X\rightarrow \alpha . \beta, b)$ avec $b\in T$ \textit{($b$ lexème)} et $b\in FOLLOW(X)$.
+\item État initial $I_0$ tel que $(S'\rightarrow.S, $\$$ ) \in I_0$ ce qui est normal vu que $FOLLOW(S') = \{$\$$\}$
+\item L'automate \textbf{canonical LR} est construit petit à petit à partir de l'état initial selon les $2$ principes suivants :
+\begin{enumerate}
+\item Si $I \ni (X\rightarrow \alpha . Y\beta, b)$ avec $Y\in V$ alors $I$ contient aussi $(Y\rightarrow .\gamma,c)$ tel que $Y\rightarrow \gamma$ est une règle de la 
+grammaire et $c\in FIRST(\beta b)$.
+\item Si $I \ni (X\rightarrow \alpha . \sigma \gamma, b)$ avec $\sigma \in T\cup V$, alors il existe dans l'automate une transition $(I,I')$ avec $\sigma$ comme étiquette et 
+$I' \ni (X\rightarrow \alpha \sigma . \gamma, b)$. \\
+\end{enumerate}
+\end{itemize}
+
+\stitre{Actions possibles} \\
+Soit $a$ le lexème courant, lu dans $w$ et $I$ l'état au sommet de la pile.
+\begin{enumerate}
+\item faire l'action \gre{«arrêt avec succès»} si $a=$\$ et $I \ni (S'\rightarrow S.,$\$$)$,
+\item faire l'action \textbf{shift} si l'automate possède une transition $(I,I')$ avec comme étiquette $a \Rightarrow$ \textbf{empiler} $a$ et $I'$,
+\item faire l'action \textbf{reduce} si $I\ni (X\rightarrow \alpha . , a)$, dans ce cas, \textbf{dépiler} $\alpha$ et les états intercalés puis \textbf{empiler} $X$ et $I''$ tel 
+qu'il existe une transition $(I',I'')$ avec $X$ comme étiquette. ($I'$ état au sommet de la pile après dépilement)
+\item \red{erreur} sinon.
+\end{enumerate}
+On aura une grammaire \dred{canonical LR} si elle peut être traitée par cette méthode avec un automate sans conflit.
+
+\stitre{Conflits dans l'automate canonical LR}
+\begin{itemize}
+\item conflit \textbf{shift-reduce} si transaction $(I,I')$ avec $a$ en étiquette et que $I \ni (X \rightarrow \alpha ., a)$,
+\item conflit \textbf{reduce-reduce} si $I \ni (X \rightarrow \alpha ., a)$ et $I \ni (X \rightarrow \beta ., a)$.
+\end{itemize}
+
+\subsubsection{Méthode LALR}
+
+On construit l'automate \red{canonical LR} et on fusionne ensuite les états de cet automate qui ont les mêmes règles marquées (regroupant toutes les 2èmes composantes 
+possibles). 
+
+\subsubsection{Comparaison entre les 3 méthodes}
+
+\begin{itemize}
+\item L'automate \red{canonical LR} est en général plus gros (à cause des $2^{\text{èmes}}$ composantes) et on voit des sous graphes équivalents qui apparaissent.
+\item Dans l'automate \red{canonical LR}, $I \ni (X\rightarrow \alpha . \beta, b)$ indique $b\in FOLLOW(X)$ ; on n'a pas nécessairement tout $FOLLOW(X)$ apparaissent en 
+$2^{\text{ème}}$ composante.
+\item L'automate \red{LALR} a pour but de garder la richesse de l'automate \red{canonical LR}, tout en fusionnant les sous-graphes équivalents dans le but de réduire la taille de 
+l'automate.
+\item Au niveau de la puissance : \[\{grammaires\ SLR\} \subsetneq \{grammaires\ LALR\} \subsetneq \{grammaires\ SLR\} \subsetneq \{grammaires\}\]
+\end{itemize}
+
+\subsubsection{Grammaires ambigües}
+
+Dans l'analyse syntaxique descendante, on se contentait de rendre les grammaires non ambigües, dans l'analyse syntaxique ascendante, on peut également lever les conflits. (Par 
+exemple lorsque l'on doit faire un reduce ou un shift avec + dans l'était $I_7$ pour les expressions arithmétiques, le reduce est à préconiser vu que $+$ est associatif à gauche)
+
+\subsubsection{Gestion des erreurs}
+
+On détecte une erreur si aucune action de type shift, reduce ou arrêt avec succès pas possible. On dresse le tableau des actions possibles en fonction des états et des lexèmes et 
+toutes les cases vides sont les erreurs détectées. Pour récupérer d'une erreur, l'idée générale est de faire comme si on avait traiter $X$, c'est-à-dire dépiler $\alpha$, empiler 
+$X$ et passer les lexèmes jusqu'à lire un lexème $b$ qui suit $X$ tel que $b \in FOLLOW(X)$. Mais en général on effectue une analyse plus fine grâce à une étude des erreurs 
+commises et récupération d'erreur adaptée.
+
+\section{Analyse sémantique}
+
+\begin{enumerate}
+\item \textbf{\underline{Compilateur classique} :} les tâches importantes sont le \red{contrôle de type} et la \red{construction de l'arbre abstrait}.\\
+La \textbf{déclaration de type} est traitée à ce niveau (il y a donc interaction avec la table des identificateurs). Une erreur de type peut venir d'un identificateur non déclaré, un 
+nombre de paramètres d'une méthode qui n'est pas respecté, si, par exemple, la fonction modulo est appliquée à des entiers. L'\textbf{arbre abstrait} est construit à partir de 
+l'arbre de dérivation, « en compactant » celui-ci. Par exemple :
+\begin{verbatim}
+      E                            +
+  /   |   \                       / \
+ E    O    E                     ID  *
+ |    |  / | \         =>           / \
+ID    + E  O  E                    ID NBR
+        |  |  |
+       ID  * NBR
+\end{verbatim}
+\item \textbf{\underline{Variantes} :} par exemple traduire un programme \textit{html} en \textbf{latex}. Dans ces cas là, l'analyse sémantique joue le rôle de traduction. (ici 
+traduire la liste en html en une liste en latex)
+\end{enumerate}
+
+\subsection{Grammaires attribuées}
+
+Il s'agit d'un ensemble de couple (règle syntaxique, règle sémantique). Exemple de grammaire attribuée permettant de traduire vers le résultat de l'expression arithmétique 
+(attribut valeur, noté .val) :
+\begin{verbatim}
+E1 -> E2+T      E1.val <- E2.val + T.val
+E -> T          E.val <- T.val
+T1 -> T2*F      T1.val <- T2.val * F.val
+T -> F          T.val <- F.val
+F -> (E)        F.val <- E.val
+F -> NBR        F.val <- valeur reconnue lors de l'analyse lexicale pour NBR
+\end{verbatim}
+
+\noindent Un attribut $att$ est dit \red{synthétisé} si dans la grammaire attribuée on a : 
+\[ X\rightarrow \alpha_1\alpha_2 ... \alpha_n \qquad X.att \leftarrow f(\alpha_1.att, \alpha_2.att,...\alpha_n.att)\]
+\noindent Un attribut $att$ est dit \red{hérité} si dans la grammaire attribuée on a :
+\[ X\rightarrow \alpha_1\alpha_2 ... \alpha_n \qquad \alpha_i.att \leftarrow f(X,\alpha_j.att) (j \neq i) \]
+\newpage
+\subsection{Contrôle de type}
+
+Le but est de compléter la table des identificateurs concernant leur type et de repérer les erreurs sémantiques liées au type, on utilise pour ça un attribut \textit{type} qui 
+contient soit le \textit{type} soit \textit{error} s'il y a eu une erreur soit \textit{void} s'il n'y a pas de type. \textit{(cf exemple du cours)}
+
+\subsection{Implémentation, évaluation des grammaires attribuées}
+
+\begin{enumerate}
+\item \textbf{\underline{Méthode générale.}} \textit{(cf illustration sur l'exemple du cours)}
+	\begin{enumerate}
+		\item Construire un graphe dont les noeuds sont ceux de l'arbre de dérivation et donc les flèches sont telles que si on a le calcule d'attribut de la forme $X\leftarrow 
+		fct(y_1,y_2,...y_n)$ alors flèche de $y_i$ à $X$.
+		\item Tri topologique de ce graphe $\rightarrow$ numéroter les sommets de telle manière que $A\rightarrow B \Rightarrow n(A) < n(B)$. Ce tri permet de savoir dans quel 
+		ordre il faut effectuer les calculs d'attributs de l'arbre de dérivation.
+		\item En déduire l'algorithme des calculs d'attributs pour l'arbre de dérivation donné.
+	\end{enumerate}
+	\gre{Méthode générale} \underline{\textbf{mais}} \red{ne peut être appliquée qu'après avoir construit l'arbre de dérivation en entier} \textit{(pour les grammaires L ou S-
+	attribuées, on peut appliquer la méthode en même temps que l'on construit l'arbre de dérivation)}.\\
+	
+\item \textbf{\underline{Méthode pour les grammaires} \red{S-attribuées}}. \\
+Une grammaire attribuée est dite \red{S-attribuée} si tous ses attributs sont \textbf{synthétisés}. On va combiner le calcul de ces attributs avec une des méthodes d'analyse 
+syntaxique ascendante. D'un point de vue implémentation il suffit d'enrichir la pile utilisée par l'une de ces méthodes avec un champ supplémentaire dédiée aux attributs. \\
+\underline{Exemple} \textit{(pour 2*3+7 dont on synthétise la notation postfixe)} : \begin{tabular}{|c|c|c|c|}\hline E & * & E &  \\ \hline 2 & & 3 & \\ \hline \end{tabular} 
+$\Rightarrow$ \begin{tabular}{|c|c|}\hline E &  \\ \hline 2 3 * & \\ \hline \end{tabular} \\ \textit{(cf exemple complet dans le cours)}\\
+
+\item \textbf{\underline{Méthode pour les grammaires} \red{L-attribuées}}. \\
+Une grammaire attribuée est dire \red{L-attibuée} si chaque fois que les/l' attribut(s) hérité(s) de $\alpha_i$ est/sont fonction uniquement des attributs hérités du père $X$ et 
+des attributs hérités ou synthétisés de ses frères gauches $\alpha_1...\alpha_{i-1}$. \textit{(Les attributs synthétisés sont autorisés)} Le calcul des attributs va être combiné avec 
+la méthode d'analyse syntaxique descendante. Ce sera également possible avec les méthodes d'analyse syntaxique ascendante. On en sort l'algorithme :
+\begin{verbatim}
+Algorithme CalculAtt(n, attr hérités de n)
+ Entrée : noeud n de l'arbre de dérivation et ses attributs hérités.
+ Sortie : ses attributs synthétisés.
+   Pour chaque fils m de n, de gauche à droite
+      évaluer les attributs hérités de m
+      att synt de m <- CalculAtt(m, att hérités de m)
+   évaluer les attributs synthétisés de m
+   retourner les valeurs calculées
+\end{verbatim}
+Pour combiner cet algorithme avec l'analyse syntaxique descendante, on a besoin des \red{schémas de traduction} qui sont obtenus à partir des grammaires \textbf{L-attribuées} 
+en venant insérer les règles sémantiques à l'intérieur des règles syntaxiques au vu de l'algorithme \textit{CalculAtt}. \textit{(Voir exemple du cours)} \\
+
+On peut également adapter ce calcul d'attributs à l'analyse syntaxique ascendante, comme vu dans l'exemple du cours, celui-ci s'appuie sur le fait que les attributs à utiliser pour 
+calculer un attribut hérité sont trouvables dans la pile au même endroit à chaque fois. (ce n'est pas toujours le cas, dans ce cas là on utilise des marqueurs pour se ramener à la 
+situation précédente, \textit{cf exemple du cours})
+\end{enumerate}
+\end{document}

@@ -1,0 +1,157 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{algorithm,algorithmic}
+
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}{0cm}{0cm}{0cm}{0cm}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[french]{babel}
+\selectlanguage{french}
+
+\usepackage{color}
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\newcommand{\dred}[1]{\textcolor{darkred}{\textbf{#1}}}
+\newcommand{\dgre}[1]{\textcolor{darkgreen}{\textbf{#1}}}
+\newcommand{\dblu}[1]{\textcolor{darkblue}{\textbf{#1}}}
+\newcommand{\dora}[1]{\textcolor{darko}{\textbf{#1}}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\ora}[1]{\textcolor{darko}{#1}}
+\newcommand{\red}[1]{\textcolor{darkred}{#1}}
+
+\usepackage{listings}
+\lstloadlanguages{Java}
+
+\lstset{
+    basicstyle=\small,
+    keywordstyle=\bfseries,
+    commentstyle=\color{green},
+    stringstyle=\ttfamily,
+    showstringspaces=false,
+    frame=tb,
+    language=Java,
+    defaultdialect=Java}
+
+\usepackage{graphicx}
+
+\title{Conception d'un interpréteur\\Projet de compilation}
+\author{Dubuc Xavier \& Vasseur Cyrielle}
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}
+Il nous a été demandé de concevoir un interpréteur pour un langage de programmation de grammaire donnée (cf. Grammaire de base). Les outils utilisés pour la mise en oeuvre de ce projet sont les suivants :\\
+\begin{itemize}
+\item le langage de programmation \textbf{JFlex} utile à l'analyse lexicale,
+\item le langage de programmation \textbf{JCup} utile à l'analyse syntaxique et sémantique.\\
+\end{itemize}
+
+Des extensions à cette grammmaire sont demandées telles que la gestion des opérations de multiplication et de division, la lecture en console, la gestion des commentaires, \dots
+
+
+
+\section{Grammaire de base}
+\noindent Nous allons tout d'abord rappeler la grammaire de base qui, comme nous le verrons dans la section suivante, a été légèrement modifiée.
+\begin{center}
+\fbox{
+\begin{minipage}{0.85\textwidth}
+$<$\textit{programme}$>$ $\rightarrow$ $\textbf{debut}$ $<$\textit{liste\_instructions}$>$ \textbf{fin}\\
+$<$\textit{liste\_instructions}$>$ $\rightarrow$ $<$\textit{instruction}$>$ $<$\textit{fin\_liste\_instruction}$>$\\
+$<$\textit{fin\_liste\_instruction}$>$ $\rightarrow$ $<$\textit{instruction}$>$ $<$\textit{fin\_liste\_instruction}$>$\\
+$<$\textit{fin\_liste\_instruction}$>$ $\rightarrow$ $\epsilon$\\
+$<$\textit{instruction}$>$ $\rightarrow$ \textbf{ID :=} $<$\textit{expression}$>$ ;\\
+$<$\textit{instruction}$>$ $\rightarrow$ \textbf{lire (}$<$\textit{liste\_id}$>$\textbf{) ;}\\
+$<$\textit{instruction}$>$ $\rightarrow$ \textbf{ecrire (}$<$\textit{liste\_expressions}$>$\textbf{) ;}\\
+$<$\textit{liste\_id}$>$ $\rightarrow$\textbf{ ID} $<$\textit{fin\_liste\_id}$>$\\
+$<$\textit{fin\_liste\_id}$>$ $\rightarrow$ \textbf{, ID} $<$\textit{fin\_liste\_id}$>$\\
+$<$\textit{fin\_liste\_id}$>$ $\rightarrow$ $\epsilon$\\
+$<$\textit{liste\_expressions}$>$ $\rightarrow$ $<$\textit{expression}$>$ $<$\textit{fin\_liste\_expression}$>$\\
+$<$\textit{fin\_liste\_expression}$>$ $\rightarrow$ $<$\textit{expression}$>$ $<$\textit{fin\_liste\_expression}$>$\\
+$<$\textit{fin\_liste\_expression}$>$ $\rightarrow$ \textbf{,} $<$\textit{expression}$>$ $<$\textit{fin\_liste\_expression}$>$\\
+$<$\textit{fin\_liste\_expression}$>$ $\rightarrow$ $\epsilon$\\
+$<$\textit{expression}$> \rightarrow$ $<$\textit{expression\_simple}$>$ $<$\textit{fin\_expression\_simple}$>$\\
+$<$\textit{fin\_expression\_simple}$>$ $\rightarrow$ $<$\textit{operateur}$>$ $<$\textit{expression\_simple}$>$ $<$\textit{fin\_expression\_simple}$>$\\
+$<$\textit{fin\_expression\_simple}$>$ $\rightarrow$ $\epsilon$\\
+$<$\textit{expression\_simple}$>$ $\rightarrow$ \textbf{(}$<$\textit{expression}$>$\textbf{)}\\
+$<$\textit{expression\_simple}$>$ $\rightarrow$ \textbf{ID} \\
+$<$\textit{expression\_simple}$>$ $\rightarrow$ \textbf{INT}\\
+$<$\textit{operateur}$>$ $\rightarrow$ \textbf{+}\\
+$<$\textit{operateur}$>$ $\rightarrow$ \textbf{-}
+\end{minipage}}
+\end{center}
+
+\newpage
+\section{Grammaire étendue}
+
+\begin{center}
+\fbox{
+\begin{minipage}{0.8\textwidth}
+\noindent $<$\textit{programme}$>$ $\rightarrow$ \textbf{\red{debut}} $<$\textit{liste\_instructions}$>$ \textbf{\red{fin}} \\
+$<$\textit{liste\_instructions}$>$ $\rightarrow$ $<$\textit{instruction}$>$ $<$\textit{fin\_liste\_instruction}$>$\\
+$<$\textit{fin\_liste\_instruction}$>$ $\rightarrow$ $<$\textit{instruction}$>$ $<$\textit{fin\_liste\_instruction}$>$\\
+$<$\textit{fin\_liste\_instruction}$>$ $\rightarrow$ $\epsilon$\\
+$<$\textit{instruction}$>$ $\rightarrow$ \textbf{\red{ID :=}} $<$\textit{\blu{expression}}$>$ \red{\textbf{;}}\\
+$<$\textit{instruction}$>$ $\rightarrow$ \textbf{\red{lire (}}$<$\textit{liste\_id}$>$\red{\textbf{);}}\\
+$<$\textit{instruction}$>$ $\rightarrow$ \textbf{\red{ecrire (}}$<$\textit{liste\_expressions}$>$\textbf{\red{);}}\\
+$<$\textit{instruction}$>$ $\rightarrow$ \textit{if\_block}\\
+$<$\textit{liste\_id}$>$ $\rightarrow$ \textbf{\red{ID}} $<$\textit{fin\_liste\_id}$>$\\
+$<$\textit{fin\_liste\_id}$>$ $\rightarrow$ \textbf{\red{, ID}} $<$\textit{fin\_liste\_id}$>$\\
+$<$\textit{fin\_liste\_id}$>$ $\rightarrow$ $\epsilon$\\
+$<$\textit{if\_block}$>$ $\rightarrow$ \textbf{\red{if}} $<$\textit{expression\_booleenne}$>$ \textbf{\red{then \{}}$<$\textit{liste\_instructions}$>$\red{\textbf{\}}} $<$\textit{fin\_if}$>$\\
+$<$\textit{fin\_if}$>$ $\rightarrow$ \textbf{\red{else}} \textbf{\red{\{}}$<$\textit{liste\_instructions}$>$\textbf{\red{\}}}\\
+$<$\textit{fin\_if}$>$ $\rightarrow$ $\epsilon$\\
+$<$\textit{liste\_expressions}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ $<$\textit{fin\_liste\_expression}$>$\\
+$<$\textit{liste\_expressions}$>$ $\rightarrow$ $<$\textit{expression\_booleenne}$>$ $<$\textit{fin\_liste\_expression}$>$\\
+$<$\textit{fin\_liste\_expression}$>$ $\rightarrow$ \textbf{\red{,}} $<$\textit{\blu{expression}}$>$ $<$\textit{fin\_liste\_expression}$>$\\
+$<$\textit{fin\_liste\_expression}$>$ $\rightarrow$ \textbf{\red{,}} $<$\textit{expression\_booleenne}$>$ $<$\textit{fin\_liste\_expression}$>$\\
+$<$\textit{fin\_liste\_expression}$>$ $\rightarrow$ $\epsilon$\\
+$<$\textit{\blu{expression}}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \textbf{\red{+}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{\blu{expression}}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \textbf{\red{-}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{\blu{expression}}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \textbf{\red{*}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{\blu{expression}}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \textbf{\red{/}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{\blu{expression}}$>$ $\rightarrow$ $<$\textit{expression\_simple}$>$ $<$\textit{expression\_simple}$>$\\
+$<$\textit{\blu{expression}}$>$ $\rightarrow$ $<$\textit{expression\_simple}$>$\\
+$<$\textit{expression\_simple}$>$ $\rightarrow$ \textbf{\red{(}}$<$\textit{\blu{expression}}$>$\textbf{\red{)}}\\
+$<$\textit{expression\_simple}$>$ $\rightarrow$ \textbf{\red{ID}} \\
+$<$\textit{expression\_simple}$>$ $\rightarrow$ \textbf{\red{INT}}\\
+$<$\textit{expression\_simple}$>$ $\rightarrow$ \textbf{\red{REAL}}\\
+$<$\textit{expression\_simple}$>$ $\rightarrow$ \textbf{\red{STRING}}\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ $<$\textit{expression\_boolenne}$>$ \textbf{\red{AND}} $<$\textit{expression\_boolenne}$>$\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ $<$\textit{expression\_boolenne}$>$ \textbf{\red{OR}} $<$\textit{expression\_boolenne}$>$\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ \textbf{\red{!}}$<$\textit{expression\_boolenne}$>$\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ $<$\textit{expression\_simple\_booleenne}$>$\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \red{\textbf{$>=$}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \red{\textbf{$<=$}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \red{\textbf{$>$}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \red{\textbf{$<$}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{expression\_boolenne}$>$ $\rightarrow$ $<$\textit{\blu{expression}}$>$ \red{\textbf{$==$}} $<$\textit{\blu{expression}}$>$\\
+$<$\textit{expression\_simple\_booleenne}$>$ $\rightarrow$ \textbf{\red{TRUE}}\\
+$<$\textit{expression\_simple\_booleenne}$>$ $\rightarrow$ \textbf{\red{FALSE}}\\
+$<$\textit{expression\_simple\_booleenne}$>$ $\rightarrow$ \textbf{\red{(}}$<$\textit{expression\_booleenne}$>$\textbf{\red{)}}\\	
+\end{minipage}}
+\end{center}
+
+\section{Regex}
+Le fichier .flex contient des expressions régulières permettant de parser correctement le fichier d'entrée. Nous avons eu besoin de définir les regex suivantes :\\
+\begin{itemize}
+\item un nombre entier : ([1-9][0-9]*) $\vert$ 0
+\item un nombre réel : (-$\vert$+)? entier .? [0-9]*([eE]-?[0-9]+)?
+\item des expressions booléennes : true$\vert$True$\vert$TRUE$\vert$\#t et false$\vert$False$\vert$FALSE$\vert$\#f
+\item un nom de variable en Java : [a-z][a-zA-Z0-9\_]* 
+\item une chaîne de caractères : " [\^\space $\backslash$n"]* "
+\item des commentaires : (("//"[\^\space $\backslash$n]*) $\vert$ ("/*"[\^\space"*/"]*"*/"))* $\vert$ $\backslash$n* $\vert$ $\backslash$r* $\vert$ ' '* $\vert$ $\backslash$t* 
+\end{itemize}
+
+\end{document}
