@@ -1,0 +1,491 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{multicol}
+\usepackage{mathenv}
+
+\def\nbOne{{\mathchoice {\rm 1\mskip-4mu l} {\rm 1\mskip-4mu l}
+{\rm 1\mskip-4.5mu l} {\rm 1\mskip-5mu l}}}
+
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}{0cm}{0cm}{0cm}{0cm}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[french]{babel}
+\selectlanguage{french}
+
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{listings}
+\definecolor{colKeys}{rgb}{0.75,0,0}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.75,0.75,0}
+\definecolor{colString}{rgb}{0,0,0.7}
+
+\lstset{
+basicstyle=\ttfamily\small, %
+identifierstyle=\color{colIdentifier}, %
+keywordstyle=\color{colKeys}, %
+stringstyle=\color{colString}, %
+commentstyle=\color{colComments}
+}
+\lstset{language=java}
+
+% Commandes personnelles %
+
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\newcommand{\dred}[1]{\textcolor{darkred}{\textbf{#1}}}
+\newcommand{\dgre}[1]{\textcolor{darkgreen}{\textbf{#1}}}
+\newcommand{\dblu}[1]{\textcolor{darkblue}{\textbf{#1}}}
+\newcommand{\dora}[1]{\textcolor{darko}{\textbf{#1}}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\ora}[1]{\textcolor{darko}{#1}}
+\newcommand{\red}[1]{\textcolor{darkred}{#1}}
+
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\cdil}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\image}[1]{\includegraphics{#1}}
+\newcommand{\imageR}[2]{\includegraphics[width=#2px]{#1}}
+\newcommand{\imageRT}[2]{\includegraphics[height=#2px]{#1}}
+\newcommand{\img}[1]{\begin{center}\includegraphics[width=400px]{#1}\end{center}}
+\newcommand{\imag}[1]{\begin{center}\includegraphics{#1}\end{center}}
+\newcommand{\imgR}[2]{\begin{center}\includegraphics[width=#2px]{#1}\end{center}}
+\newcommand{\imgRT}[2]{\begin{center}\includegraphics[height=#2px]{#1}\end{center}}
+\newcommand{\point}[2]{\item \ora{\underline{#1}} : \textit{#2}}
+\newcommand{\bfp}[2]{\item \textbf{#1} : \textit{#2}}
+\newcommand{\sumin}[3]{\sideset{}{_{i=#1}^{#2}}\sum{#3}}
+\newcommand{\sumkn}[3]{\sideset{}{_{k=#1}^{#2}}\sum{#3}}
+\newcommand{\stitre}[1]{\noindent\textbf{\underline{#1}} \\}
+
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\title{\textbf{\textcolor{darkblue}{Informatique Temps Réel - Résumé Janvier 2010.}}}
+\author{\textit{Dubuc Xavier}}
+
+\begin{document}
+
+\maketitle
+
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\tableofcontents
+
+$ $ \\
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\newpage
+
+\section*{Introduction}
+
+Il s'agit d'un cours résumé servant uniquement \textbf{à l'étude}, car à l'examen, même si c'est «avec le 
+cours», vous ne pourrez prendre ce pdf. Il est aussi à rappeller la répartition des points : \\
+\begin{itemize}
+\item \dred{$20\%$} pour l'exercice de la taverne,
+\item \dred{$40\%$} pour un exercice sur machine à l'examen (en rapport avec ce qui a été vu en 
+\textbf{TP}),
+\item \dred{$40\%$} pour la partie de l'examen concernant l'application de la théorie (cours ouvert).
+\end{itemize}
+
+\section{Chapitre 1}
+
+\subsection{Definitions}
+
+Un \textbf{système temps réel} est un système dans lequel l'exactitude des applications ne dépend pas 
+seulement de l'exactitude des résultats mais aussi du temps auquel ce résultat est produit. Si les 
+contraintes temporelles de l'application ne sont pas respectées, on parle de défaillance du système. Il est 
+donc essentiel de garantir le respect des containtes temporelles du système. \\
+
+Le système recueille des informations via des \textbf{capteurs} et il agit sur celui-ci via des 
+\textbf{actuateurs}. Un exemple simple est un controleur de débit, on place un \textbf{capteur} calculant
+le débit à l'entrée d'un tuyau et plus loin on place un \textbf{actuateur} (une valve) servant à controler
+l'eau qui sort du tuyau. \\
+
+Le système est un ensemble de \textbf{tâches} autonomes s'exécutant concurremment, le code d'une
+\textbf{tâche} correspondant à un bloc modulaire d'instructions. Chaque \textbf{tâche} possède son propre 
+flot de contrôle à l'exécution et peut communiquer et partager ses ressources avec d'autres \textbf{tâches} 
+du système. On définira donc des tâches associées à un ou des évènements, une ou des réactions, une entité
+externe à calculer, un traitement particulier, ...
+
+L'\textbf{ordonnanceur} est le nom donné au module qui se charge de gérer l'enchaînement et la concurrence
+des tâches en optimisant l'occupation de l'unité centrale.
+
+\subsection{Fonctionnement}
+
+\begin{enumerate}
+\item \underline{Fonctionnement cyclique}
+\begin{lstlisting}
+A chaque top horloge faire
+   - Lecture de la memoire des entrees
+   - Calcul des ordres a envoyer au procede
+   - Emission des ordres
+\end{lstlisting}
+
+\item \underline{Fonctionnement évènementiel}
+
+\begin{lstlisting}
+while(1) {
+   Attendre les evenements signales par interruption
+   A chaque interruption faire {
+      - Lecture information arrivee
+      - Activation du traitement correspondant
+      - Emission des ordres issus du traitement
+   }
+}
+\end{lstlisting}
+
+Que faire si une interruption survient alors que le système est en train de traiter une interruption 
+précédente ? \\
+$\rightarrow$ notion de priorité des interruptions \\
+$\rightarrow$ notion de tâche associée à une ou plusieurs interruptions \\
+$\rightarrow$ mécanisme de préemption (réquisition du processeur) et de reprise de tâche au retour du «vol»
+du \textbf{CPU}. \\
+$\rightarrow$ gestion de l'exécution concurrente des tâches (ordonnancement) \\
+
+\dred{Un système temps-réel fonctionnera de cette façon.}
+
+\item \underline{Fonctionnement mixte} \\
+Mélange des 2 précédents.
+\end{enumerate}
+
+\subsection{Caractéristiques}
+
+Les caractéristiques nécessaires à un système T.R. sont les suivantes : 
+\begin{itemize}
+\item \textbf{Fiabilité} (systèmes critiques)
+\item \textbf{Prédictibilité} (garantir le respect des contraintes temporelles)
+\item \textbf{Préemptibilité des tâches} (nécessaire pour la prédictibilité)
+\item \textbf{Gestion poussée des communications inter-tâches}
+\item \textbf{Prise en compte du non-déterminisme d’ordre d’exécution des tâches} ; on considère souvent le 
+«worst-case» (cas au pire) pour déterminer un temps de réaction.
+\end{itemize}
+
+\section{Chapitre 2 - Développement d'un système temps réel}
+
+\subsection{Capturer les exigences}
+
+Analyse des besoins :
+\begin{itemize}
+\item Les \textbf{entrées} : \textit{Acquisition de grandeurs par des senseurs.}
+\item Les \textbf{sorties} : \textit{Commande de l’environnement par les actuateurs.}
+\item Les \textbf{traitements} : \textit{Mise à jour des sorties en fonction des entrées pour 
+contrôler/commander un processus physique.}
+\item La \textbf{visualisation} : \textit{Présenter à l’utilisateur l’état du procédé et de sa gestion.}
+\item Les \textbf{communications} : \textit{Partager des données avec les systèmes de contrôle commande 
+voisins.}
+\item Les \textbf{sauvegardes} \textit{des états pour des reprises d’exploitation ou des analyses du système 
+a posteriori.}
+\end{itemize}
+
+\begin{enumerate}
+\item \ora{\underline{Les tâches d'entrées}} \\
+Acquérir une donnée physique n'est pas trivial, il y a beaucoup de données de types différents et de 
+capteurs de différentes natures et/ou ayant des fonctionnements différents. 
+\item \ora{\underline{Les tâches de sorties}} \\
+Il y a différents types d'actuateurs permettant au système d'agir sur l'environnement, 
+\begin{itemize}
+\item \textbf{Binaires} : soit on active soit on active pas, soit on ouvre soit on ouvre pas (enclenchement
+d'un ventilateur, ouverture d'une valve, ...),
+\item \textbf{Discrètes} : sur quel type de bus,
+\item \textbf{Continues} : des consignes précises quant à une modification (consigne de vitesse, 
+température,...).
+\end{itemize}
+\item \ora{\underline{Les tâches de traitements}} \\
+Les tâches qui effectuent des analyses, des calculs sur les entrées afin d'en dégager les sorties.
+\item \ora{\underline{Les tâches d'interface utilisateur}} \\
+Gérer un pupitre de commande permettant de visualiser l'état du procédé, les valeurs des consignes et les
+alarmes ainsi que d'agir sur les consignes et les commandes.
+\item \ora{\underline{Les tâches de communication}} \\
+Tâches gérant la communication entre les tâches, elles sont contraintes par des contraintes logicielles et 
+matérielles. (différents moyens de communiquer, différents moyens de formater les informations,...)
+\item \ora{\underline{Les tâches de sauvegarde}} \\
+Elles sauvegardent les états du systèmes régulièrement afin de permettre d'analyser son fonctionnement, les
+erreurs, de permettre des reprises et mises en route ainsi que d'améliorer les performances.
+\end{enumerate}
+
+\noindent Il faut maintenant parvenir à mettre en oeuvre l'ensemble de ces tâches en garantissant la 
+\textbf{synchronisation}, les \textbf{transferts de données} et le \textbf{partage des ressources}. Pour ce
+faire, il y a 2 modèles :
+\begin{itemize}
+\item \red{Synchrone}
+	\begin{itemize}
+	\item Les évènements émis par le procédé peuvent être \textit{différés}.
+	\item Les évènements sont perçus comme \textit{immédiats} par l'informatique.
+	\item Les évènements externes sont \textbf{synchronisés} avec les tâches.
+	\item Non préemptif, ordonnancement \textit{à priori}, \textbf{séquenceur}.
+	\end{itemize}
+\item \red{Asynchrone}
+	\begin{itemize}
+	\item Les évènements émis par le procédé sont traités immédiatement $\rightarrow$ interruptions.
+	\item Les évènements sont perçus comme \textit{immédiats} par l'informatique.
+	\item Les évènements externes ne sont \textbf{pas synchronisés} avec les tâches.
+	\item Préemptif, ordonnancement \textit{en ligne}, noyau \textbf{temps réel}.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Méthodologie stricte de développement}
+
+Il convient d'adopter une méthodologie pour le développement d’applications informatiques :
+\begin{itemize}
+\item L’architecture, la maintenabilité, la lisibilité, le suivi des spécifications, l’évolubilité sont 
+augmentés.
+\item Nécessité de penser au préalable aux tests unitaires (par modules) et globaux.
+\end{itemize}
+
+Une méthodologie répandue, le \textbf{cycle en V} mais pas forcément adaptée au contrôle-commande :
+
+\begin{lstlisting}
+Specification                               Validation
+      Conception Preliminaire         Integration
+          Conception Detaillee   Tests Unitaires
+                            Codage
+\end{lstlisting}
+
+Moins problématique, le \textbf{cycle en W} :
+
+\begin{lstlisting}
+Specification              Simulation                            Validation
+     Conception     Integration  Conception Adaptee         Integration (avec noyau RT)
+                  Tests                                  Tests
+             Codage                       Codage (croise)
+\end{lstlisting}
+
+Nous allons utiliser 2 autres approches, plus complètes. Nous les développons ci-dessous.
+
+\subsubsection{Structured Analysed Real Time (\textit{\red{SART}})}
+
+\stitre{\'{E}léments graphiques}
+
+\imgR{img/ITR_001.png}{400}
+
+\stitre{Les données}
+
+\imgR{img/ITR_002.png}{400}
+
+\stitre{Les processus fonctionnels}
+
+\imgR{img/ITR_003.png}{150}
+
+\stitre{Stockage}
+
+\imgR{img/ITR_004.png}{400}
+
+\stitre{Terminaisons}
+
+\imgR{img/ITR_005.png}{300}
+
+\stitre{Les processus de contrôle}
+
+Le processus de contrôle représente la logique de pilotage des processus fonctionnels. Les processus fonctionnels 
+fournissent tous les évènements aux processus de contrôle qui gèrent les évènements d'(de) (dés)activation des
+processus fonctionnels.
+
+\imgR{img/ITR_006.png}{75}
+
+\stitre{Les flots de contrôle}
+
+Les flots de contrôle transportent les évènements qui conditionnent, directement ou indirectement, l’exécution 
+des processus fonctionnels.
+
+\imgR{img/ITR_007.png}{400}
+
+\noindent Il y a 3 évènements prédéfinis : \dred{E} \textit{enable} (\textbf{activation}), \dred{D} 
+\textit{Disable} (\textbf{désactivation}) et \dred{T} \textit{Trigger} (\textbf{enclenchement}).
+
+\subsubsection{Design Approach for Real Time System (\textit{\red{DARTS}})}
+
+Cette approche permet de mettre l'accent sur la synchronisation et la communication entre les tâches.\\
+
+\stitre{Relations entre tâches}
+
+Une tâche ne peut débuter que lorsqu'une autre tâche s'est exécutée en totalité ou en partie :
+
+\begin{multicols}{2}
+\textbf{Asynchrone ou unilatérale} : \textit{une seule tâche est bloquée/en attente,}
+\imgR{img/ITR_008.png}{150}
+\end{multicols}
+
+\begin{multicols}{2}
+\textbf{Synchrone ou bilatérale} : \textit{les 2 tâches doivent atteindre un point de rendez-vous,}
+\imgR{img/ITR_009.png}{150}
+\end{multicols}
+
+\stitre{Activation des tâches}
+
+\begin{itemize}
+\item Tâche matérielle :
+	\begin{itemize}
+	\item \begin{multicols}{2}
+			périodique : horloge temps réel : \textbf{HTR}\textit{(durée)}
+			\imgR{img/ITR_010.png}{150}
+		  \end{multicols}
+  	\item \begin{multicols}{2}
+			Non-périodique : interruption : \textbf{IT}\textit{(nom)} ou chien de garde : 
+			\textbf{CG}\textit{(nom)}
+			\imgR{img/ITR_011.png}{150}
+		  \end{multicols}
+	\end{itemize}
+\item Tâche logicielle : boîte aux lettres \\
+\imgR{img/ITR_012.png}{225}
+\end{itemize}
+
+\stitre{Tâches}
+
+\begin{multicols}{2}
+Même définition que dans \dred{SART} pour les processus fonctionnel mis à part qu'un signal d'activation est 
+nécessaire en entrée.
+\imgR{img/ITR_013.png}{150}
+\end{multicols}
+
+\stitre{Module de traitement}
+
+\begin{multicols}{2}
+Il s'agit de programmes spécifiques appelés par une ou plusieurs tâches, ils sont ré-entrants et permettent 
+d'alléger le code des tâches tout en améliorant la structure.
+\imgR{img/ITR_014.png}{150}
+\end{multicols}
+
+\stitre{Synchronisation \& Communication}
+
+\begin{itemize}
+\item \dred{Synchronisation}
+	\begin{itemize}
+	\item \begin{multicols}{2}
+		Asynchrone simple, multiple de type \textit{«OU»}
+		\imgR{img/ITR_015.png}{110}
+		\end{multicols}
+	\item \begin{multicols}{2}
+		Synchrone
+		\imgR{img/ITR_016.png}{50}
+		\end{multicols}
+	\end{itemize}
+\item \dred{Communication} : boîte aux lettres (\textbf{BAL})
+	\begin{itemize}
+	\item \textbf{BAL} bloquante en écriture
+		\begin{itemize}
+		\item \begin{multicols}{2}
+			1 message
+			\imgR{img/ITR_017.png}{50}
+			\end{multicols}
+		\item \begin{multicols}{2}
+			FIFO à n messages, simple ou multiples
+			\imgR{img/ITR_018.png}{100}
+			\end{multicols}
+		\item \begin{multicols}{2}
+			FIFO à n messages et priorités
+			\imgR{img/ITR_019.png}{50}
+			\end{multicols}
+		\end{itemize}
+	\item \textbf{BAL} non bloquante ou à écrasement
+		\begin{itemize}
+		\item \begin{multicols}{2}
+			1 message
+			\imgR{img/ITR_020.png}{50}
+			\end{multicols}
+		\item \begin{multicols}{2}
+			FIFO à n messages, simple ou multiples
+			\imgR{img/ITR_021.png}{100}
+			\end{multicols}
+		\end{itemize}	
+	\end{itemize}
+\end{itemize}
+
+\stitre{Stockage}
+
+\begin{multicols}{2}
+Module de données avec protection des accès par exclusion mutuelle
+\imgR{img/ITR_022.png}{200}
+\end{multicols}
+
+\section{Chapitre 3 - Processus \& Threads}
+
+\textit{Useless de résumer une notion vue \& revue 42 fois en 3 ans ...}
+
+\section{Chapitre 4 - L'ordonnancement}
+
+\subsection{Table de correspondance des notations}
+
+\begin{center}
+	\begin{tabular}{|*{2}{c|}}
+	\hline
+	\dred{Notation} & \dred{Signification} \\
+	\hline
+	$\tau_i$ & tâche de nom $\tau_i$\\
+	\hline
+	$\tau_{i,j}$ & job $j$ de la tâche de nom $\tau_i$\\
+	\hline
+	$T_i$ & période de la tâche$\Phi$\\
+	\hline
+	$r_i$ & temps de \textit{release} ou d'arrivée dans le pool des tâches\\
+	\hline
+	$s_i$ & temps de démarrage réel\\
+	\hline
+	$\Phi_i$ & temps de démarrage de la tâche (dans le cas de séparation en plusieurs jobs)\\
+	\hline
+	$C_i$ & temps d'exécution au pire\\
+	\hline
+	$d_i$ & deadline absolu\\
+	\hline
+	$D_i$ & deadline relatif (= $d_i-r_i$)\\
+	\hline
+	$f_i$ & temps maximal de fin d'une tâche (\textbf{contrainte} $f_i\leq d_i$)\\
+	\hline
+	$\max{(0,f_i-d_i)}$ & avance ou retard de la tâche \\
+	\hline
+	$c_i(t)$ & temps maximal restant à exécuter \\
+	\hline
+	$d_i-t-c_i(t)$ & laxité, c'est-à-dire une période creuse d'exécution (\textbf{slack}) \\
+	\hline
+	$p_i$ & Priorité de la tâche \\
+	\hline
+	$R_i$ & Temps de réponse \\
+	\hline
+	$U_i$ & Taux d'utilisation maximale du processeur par période par la tâche ($U_i = \frac{C_i}{T_i}$) \\
+	\hline
+	$U_p$ & Taux d'utilisation totale du processeur $\left(U_p = \sumin{1}{n}{U_i}\right)$ \\
+	\hline
+	\end{tabular}
+\end{center}
+
+\imgR{img/ITR_023.png}{200}
+
+Dans le cours sont développées principalement 2 manières d'ordonnancer,
+
+\subsection{Tâches périodiques}
+
+\subsubsection{EDF : Earliest Deadline First}
+
+\begin{center}$\boxed{p_i = \dfrac{1}{d_i}}$ \textit{(dynamique)}\end{center}
+
+Des tâches sont ordonnançables si : $\boxed{\sideset{}{_{i=1}^n}\sum{\dfrac{C_i}{T_i}} \leq 1}$
+
+Demande du processeur dans $[0,L]$ : $\boxed{g(0,L)\sumin{1}{n}{\cdil{\dfrac{L-D_i+T_i}{T_i}}C_i}}$ \\
+
+\noindent\dred{L'ordonnancement est dès lors acceptable si $\forall L \in D,\ g(0,L) \leq L$}.\\
+\textit{où $D =\{d_k|d_k\leq \min{(H,L^*)}\}$, $H = lcm(T_1,...,T_n)=ppcm(T_1,...,T_n)$ et
+$L^*=\dfrac{\sumin{i}{n}{(T_i-D_i)U_i}}{1-U_p}$}
+
+\subsubsection{RM (Rate Monotonic) (et DM (Deadline Monotonic))}
+
+\begin{center}$\boxed{p_i = \dfrac{1}{D_i}}$ \textit{(statique, souvent $D_i=T_i$)}\end{center}
+
+Des tâches sont ordonnançables si : $\boxed{\sideset{}{_{i=1}^n}\sum{\dfrac{C_i}{T_i}} \leq n(2^{\frac{1}
+{n}}-1)}$
+
+Temps de réponse : $\boxed{R_i = C_i + \sumkn{1}{i-1}{\ceil{\dfrac{R_i}{T_k}} C_k}}$ \\
+Afin de calculer ce temps de réponse $R_i$, il existe une manière itérative d'y parvenir : \\
+$R_{i,0} = C_i \\
+ R_{i,s} = C_i + \sumin{k=1}{i-1}{\ceil{\dfrac{R_{i,s-1}}{T_k}} C_k}$ \\
+ 
+Calcul que l'on itère jusqu'à ce que $R_{i,s} = R_{i,s-1}$ ce qui signifie que l'on a trouvé le temps de réponse
+ou que $R_{i,s} > D_i$ qui signifie que le temps de réponse est plus long que le deadline relatif. \\
+ 
+\noindent\dred{L'ordonnancement est dès lors acceptable si $R_i \leq D_i\ \forall$ tâche $\tau_i$.}
+ 
+\end{document}
