@@ -1,0 +1,1087 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{multicol}
+
+\usepackage{mathenv}
+
+\def\nbOne{{\mathchoice {\rm 1\mskip-4mu l} {\rm 1\mskip-4mu l}
+{\rm 1\mskip-4.5mu l} {\rm 1\mskip-5mu l}}}
+
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}{0cm}{0cm}{0cm}{0cm}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[french]{babel}
+\selectlanguage{french}
+
+\usepackage{color}
+\usepackage{graphicx}
+\graphicspath{{img/}} 
+\usepackage{listings}
+%\definecolor{colKeys}{rgb}{0.75,0,0}
+%\definecolor{colIdentifier}{rgb}{0,0,0}
+%\definecolor{colComments}{rgb}{0.75,0.75,0}
+%\definecolor{colString}{rgb}{0,0,0.7}
+
+%\lstset{
+%basicstyle=\ttfamily\small, %
+%identifierstyle=\color{colIdentifier}, %
+%keywordstyle=\color{colKeys}, %
+%stringstyle=\color{colString}, %
+%commentstyle=\color{colComments}
+%}
+\lstset{language=xml}
+\usepackage{verbatim}
+
+% Commandes personnelles %
+
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\newcommand{\dred}[1]{\textcolor{darkred}{\textbf{#1}}}
+\newcommand{\dgre}[1]{\textcolor{darkgreen}{\textbf{#1}}}
+\newcommand{\dblu}[1]{\textcolor{darkblue}{\textbf{#1}}}
+\newcommand{\dora}[1]{\textcolor{darko}{\textbf{#1}}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\ora}[1]{\textcolor{darko}{#1}}
+\newcommand{\red}[1]{\textcolor{darkred}{#1}}
+
+\newcommand{\image}[1]{\includegraphics{#1}}
+\newcommand{\imageR}[2]{\includegraphics[width=#2px]{#1}}
+\newcommand{\imageRT}[2]{\includegraphics[height=#2px]{#1}}
+\newcommand{\img}[1]{\begin{center}\includegraphics[width=400px]{#1}\end{center}}
+\newcommand{\imag}[1]{\begin{center}\includegraphics{#1}\end{center}}
+\newcommand{\imgR}[2]{\begin{center}\includegraphics[width=#2px]{#1}\end{center}}
+\newcommand{\imgRT}[2]{\begin{center}\includegraphics[height=#2px]{#1}\end{center}}
+\newcommand{\point}[2]{\item \ora{\underline{#1}} : \textit{#2}}
+\newcommand{\bfp}[2]{\item \textbf{#1} : \textit{#2}}
+\newcommand{\sumin}[3]{\sideset{}{_{i=#1}^{#2}}\sum{#3}}
+\newcommand{\stitre}[1]{\noindent\textbf{\underline{#1}}}
+\newcommand{\stitreD}[2]{\noindent\textbf{\underline{#1}} \textit{(#2)}\\}
+
+\newcommand{\neu}{n\oe ud}
+\newcommand{\neuSP}{n\oe ud }
+\newcommand{\neus}{n\oe uds}
+\newcommand{\neuSPs}{n\oe uds }
+
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\title{\textbf{\textcolor{darkblue}{Bases de données II - Résumé Juin 2010.}}}
+\author{\textit{Dubuc Xavier}}
+
+\begin{document}
+
+\maketitle
+
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\tableofcontents
+
+$ $ \\
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\newpage
+
+\section{Xtensible Markup Language (\red{XML})}
+
+L'année précédente, nous avons vu le modèle relationnel, modèle qui était plus stricte. En effet, chaque tupple devait avoir une valeur pour chaque attribut, alors que dans le modèle 
+de données \red{XML}, le fait qu'un tupple possède aucune ou plusieurs valeurs pour un même attribut est acceptable. Etant un modèle de données, il est primordial de savoir 
+comment il faut structurer ces données (les données sont dites \textit{semi-structurées}) et comment on peut les interroger.
+
+\subsection{Syntaxe $\sim$ \textit{«well-formed»}}
+
+On remarque assez aisément une ressemblance avec le langage \textbf{HTML}, la seule différence majeure avec celui-ci étant que l'on a le choix des balises que l'on emploie. 
+Ainsi, si je veux utiliser la balise «$<A> </A>$» (ou «$<A/>$»  si on veut la fermer immédiatement), rien ne m'en empêche. \\
+Pour qu'un fichier soit \textit{«well-formed»}, il doit 
+respecter 2 règles : \\
+\begin{enumerate}
+\item \gre{Si une balise est ouverte, elle doit être fermée et toutes les balises doivent être imbriquées.}
+\begin{multicols}{2}
+\underline{Bon exemple} :
+\begin{verbatim}
+<A>
+  <B>
+    <C>
+    </C>
+  </B
+  <B/>
+</A>
+\end{verbatim}
+\underline{Mauvais exemple} :
+\begin{verbatim}
+<A>
+  <B>
+    <C>
+  </B>
+    </C>
+</A>
+\end{verbatim}
+\end{multicols}
+\item \gre{Une paire de balises doit englober tout le document.}
+\begin{multicols}{2}
+\underline{Bon exemple} :
+\begin{verbatim}
+<A>
+  <B>
+    <C>
+    </C>
+  </B
+  <B/>
+</A>
+\end{verbatim}
+\underline{Mauvais exemple} :
+\begin{verbatim}
+<B>
+  <C>
+  </C>
+</B
+<B/>
+<B/>
+\end{verbatim}
+\end{multicols}
+\end{enumerate}
+
+\noindent Pour insérer des commentaires, il suffit d'entourer le \blu{texte} par une balise spéciale : \textit{«$<$!$--$\blu{texte}$-->$»}. \underline{Exemple} : 
+\begin{verbatim}
+<!-- Ceci est un commentaire -->
+\end{verbatim}
+Dans une balise ouverte, on peut placer des couples \textit{(attributs, valeurs)} comme suit :
+\begin{verbatim}
+<Car price="2000" color="red">Berlingo</Car>
+\end{verbatim}
+
+\noindent Un fichier \textbf{XML} est  associé à une \textit{arborescence} contenant des noeuds de type différents, chacun ayant ses propres caractéristiques.
+\subsubsection{Element nodes}
+Il s'agit des noeuds correspondants aux balises, ainsi le code ci dessous représente un arbre dont le n\oe ud \textbf{A} possède 2 enfants , \textbf{B} et \textbf{C}.
+\begin{verbatim}
+<A>
+  <B/>
+  <C/>
+</A>
+\end{verbatim}
+\subsubsection{Root node}
+Il s'agit du noeud de départ de chaque document (on l'assimile d'ailleurs souvent au document), il est unique et est implémenté d'office par \red{XML}. Le code ci dessous 
+représente un arbre dont le n\oe ud \textit{«root»} possède un fils \textbf{A} qui possède un fils \textbf{B}.
+\begin{verbatim}
+<Catalog>
+  <A>
+    <B>
+    </B>
+  </A>
+</Catalog>
+\end{verbatim}
+\subsubsection{Text nodes}
+Il s'agit des noeuds représentants le texte contenu entre 2 balises, si on place 2 textes, le noeud comportera les 2 textes sauf si ces 2 textes sont sur 2 lignes différentes.
+Le code suivant représente un noeud \textbf{A} contenant un noeud texte enfant «42 is the answer».
+\begin{verbatim}
+<A>
+  42 is the answer.
+</A>
+\end{verbatim}
+\subsubsection{Attribute nodes}
+Il s'agit des noeuds représentants les couples \textit{(attributs,valeurs)} insérés dans une balise. Sur l'arbre, ils sont toujours placés à gauche de l'\textit{element node} auquel ils 
+sont attachés. Le code suivante représente un noeud \textbf{A} ayant comme «enfant» l'\textit{attribute node} «name : value».
+\begin{verbatim}
+<A name=value> </A>
+\end{verbatim}
+
+\subsubsection{Namespace nodes}
+Il s'agit de noeuds pas très importants pour le cours, ils permettent d'utiliser des balises venant de 2 (ou plus) dictionnaires différents sur un même document. Ainsi, pour chaque 
+element node on ajoute un namespace afin de spécifier à quel dictionnaire il appartient ; pour ce faire, il suffit de modifier la valeur de l'attribut définit par le standard 
+\ora{\textit{"xmlns"}} qui spécifiera que par défaut les balises viennent du dictionnaire/namespace spécifié. Pour utiliser un autre, il faut procéder comme suit : 
+\begin{verbatim}
+xmlns:prefix="dico2"
+\end{verbatim}
+une balise précédée par prefix appartiendra donc au namespace «dico2» : 
+\begin{verbatim}
+<prefix:lol cm="42"> </lol>
+\end{verbatim}
+
+\subsubsection{Processing instructions nodes}
+Il s'agit des noeuds d'instructions qui précédent un fichier \red{XML}, comme : 
+\begin{verbatim}
+xml-stylesheet type=”text/xsl” href=”tree-view.xsl”
+\end{verbatim}
+
+\subsubsection{Comment nodes}
+Il s'agit des noeuds de commentaires. Le code ci dessous représente un noeud \textbf{A} possédant un \textit{comment node} enfant «This is a comment» et un \textit{element 
+node} enfant \textbf{B}.
+\begin{verbatim}
+<A>
+  <!-- This is a comment -->
+  <B/>
+</A>
+\end{verbatim}
+\subsubsection{Exemple récapitulatif}
+Voici un fichier \red{XML} et l'arbre correspondant à celui-ci : 
+
+\begin{verbatim}
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl"
+                 href="tree-view.xsl"?>
+<catalog tax="no" city="Mons"
+         xmlns="iURL" xmlns:q="qURL">
+  <!--A comment-->
+  Spaces   are
+  <car EUR="12000">Peugeot Partner</car>
+  not easy
+  <q:bike cm="56"/>
+</catalog>
+\end{verbatim}
+\imgR{CAPT_001.png}{400}
+
+\subsection{Document Type Definition (\red{DTD})}
+
+Il s'agit d'un fichier à part du fichier \red{XML} permettant d'imposer une certaine syntaxe aux balises utilisées dans le fichier \red{XML} qu'il concerne. On peut ainsi :
+\begin{itemize}
+\item imposer les \textit{element nodes} qu'un \textit{element node} peut avoir comme enfant, exemple : 
+\begin{verbatim}
+<!ELEMENT catalog (car|bike|go-kart)*>
+\end{verbatim}
+cette ligne impose que le catalog soit composé d'un nombre aléatoire d'\textit{element nodes} \textit{«car»}, \textit{«bike»} ou \textit{«go-kart»}. * symbolisant un nombre 
+supérieur ou égal à 0, tandis que + symbolise un nombre supérieur ou égal à 1.
+\item imposer les \textit{element nodes} qui doivent être définis comment enfants d'un \textit{element node}, et ceux qui peuvent ne pas l'être, exemple :
+ \begin{verbatim}
+<!ELEMENT car (model,color?,price)>
+\end{verbatim}
+cette ligne impose que le \textit{model} et le \textit{price} soient définis tandis que la couleur n'est pas obligatoire.
+\item imposer qu'un \textit{element node} possède un \textit{text node} comme fils, exemple : 
+\begin{verbatim}
+<!ELEMENT model (#PCDATA)>
+\end{verbatim}
+\item imposer certaines conditions sur les attributs qu'un \textit{element node} possède.
+\begin{verbatim}
+<!ATTLIST price unit (EUR|BEF) #REQUIRED>
+\end{verbatim}
+cette ligne impose que \textbf{price unit} soit \textit{EUR} ou \textit{BEF}, elle impose également que l'attribut soit défini.
+\end{itemize}
+
+\subsection{\red{XPath}}
+
+Il s'agit d'un langage de base permettant d'interroger les bases de données stockées dans des fichiers \red{XML}.
+
+\subsubsection{Location step}
+
+Un \textit{location step} sélectionne des noeuds de l'arborescence à partir d'un \textbf{noeud de contexte} (\textit{«noeud où l'on se trouve»}), il est composé de 3 parties : 
+\begin{enumerate}
+\item un axe, 
+\item un \textit{node test} qui est précédé par «::»
+\item 0,1 ou plusieurs prédicats entre $[\ ]$ qui utilise des expressions pour affiner l'ensemble de noeuds sélectionnés.
+\end{enumerate}
+Par exemple, pour sélectionner tous les fils dont le prix est exprimé en euro : 
+\begin{verbatim}
+                            child::price[attribute::unit="EUR"]
+\end{verbatim}
+On peut également séparer plusieurs \textit{location} par \textit{«/»}, par exemple pour sélectionner tous les petits enfants de type "color" :
+\begin{verbatim}
+                            child::*/child::color
+\end{verbatim}
+(* sélectionne tous les \textit{element nodes}) 
+\subsubsection{Les axes}
+
+Un axe spécifie la relation (au niveau de l'arborescence) existant entre le noeud de contexte et les noeuds à sélectionner. Ils sont au nombre de 13 : 
+\begin{enumerate}
+\item \textbf{self}, sélectionne le noeud de contexte (qui peut être de n'importe quel type (element, text, ... )) ;
+\item \textbf{parent}, sélectionne le noeud parent du noeud de contexte, noeud parent qui est un \textit{element node} ou le \textit{root node} ;
+\item \textbf{child}, sélectionne tous les noeuds enfants du noeud de contexte, ces noeuds peuvent être de n'importe quel type hormis les \textit{attribute nodes} et les 
+\textit{namespace nodes} qui ne sont pas sélectionnés ;
+\item \textbf{attribute}, sélectionne tous les \textit{attribute nodes} du noeud de contexte ;
+\item \textbf{ancestor}, sélectionne tous les ancêtres du noeud de contexte (donc le parent, le parent du parent, ... ), ces noeuds peuvent être de n'importe quel type hormis les
+\textit{attribute nodes} et les \textit{namespace nodes} qui ne sont pas sélectionnés ;
+\item \textbf{descendant}, sélectionne tous les descandants du noeuds de contexte (donc les enfants, les enfants des enfants, ...), ces noeuds peuvent être de n'importe quel type 
+hormis les \textit{attribute nodes} et les \textit{namespace nodes} qui ne sont pas sélectionnés ; 
+\item \textbf{ancestor-or-self}, ancestor $\cup$ self
+\item \textbf{descendant-or-self}, descendant $\cup$ self
+\item \textbf{preceding}, tous les noeuds à gauche (\red{ne pas oublier que \textbf{XML} a un ordre}) du noeud de contexte sauf les éventuels ancêtres rencontrés, ces noeuds 
+peuvent être de n'importe quel type hormis les \textit{attribute nodes} et les \textit{namespace nodes} qui ne sont pas sélectionnés ; 
+\item \textbf{following}, tous les noeuds à droite (\red{ne pas oublier que \textbf{XML} a un ordre}) du noeud de contexte sauf les éventuels descendants rencontrés, ces noeuds 
+peuvent être de n'importe quel type hormis les \textit{attribute nodes} et les \textit{namespace nodes} qui ne sont pas sélectionnés ; 
+\item \textbf{preceding-sibling}, tous les noeuds à gauche du noeud de contexte qui ont le même père que ce dernier (si le noeud de contexte est un \textit{attribute node} ou un
+\textit{namespace node}, alors cet axe est vide ;
+\item \textbf{following-sibling},  tous les noeuds à droite du noeud de contexte qui ont le même père que ce dernier ;
+\item \textbf{namespace}, sélectionne tous les \textit{namespace nodes} du noeud de contexte ;
+\end{enumerate}
+
+Si on effectue l'union des axes \textit{ancestor}, \textit{preceding}, \textit{self}, \textit{following} et \textit{descendant} ; on obtient tout le document. Ces 5 axes forment 
+donc une partition du document, c'est-à-dire que l'intersection entre 2 de ces axes est toujours vide, par exemple si $A\in ancestor$, alors $A\not\in preceding$.
+\begin{verbatim}
+                                       ancestor
+                             preceding  self  following
+                                       descendant
+\end{verbatim}
+
+\subsubsection{Les \textit{node tests}}
+\begin{itemize}
+\item \textbf{node()}, ce test est vrai pour n'importe quel noeud, par exemple pour sélectionner tous les noeuds enfants (sauf attributs et namespaces) :
+\begin{verbatim}
+                             child::node()
+\end{verbatim}
+\item \textbf{mylabel}, ce test est vrai pour tous les noeuds de type \textit{mylabel}, par exemple pour sélectionner tous les noeuds attributs de type \textit{unit} ;
+\begin{verbatim}
+                             attribute::unit
+\end{verbatim}
+\item \textbf{*}, ce test est vrai pour tous les noeuds dont le type est identique au type principal, ce type principal est \textit{attribute} si le noeud de contexte est un 
+\textit{attribute node}, \textit{namespace} si le noeud de contexte est un \textit{namespace node} et \textit{element} sinon ;
+\item \textbf{text(), comment(), processing-instruction()}, ce test est vrai si le noeud est du type spécifié (texte, commentaire ou processing-instruction).
+\end{itemize}
+
+\subsubsection{Les prédicats}
+Les prédicats sont en fait des expressions \textbf{\textit{XPath}} qui peuvent être de 4 types : \textit{«node-set»}, \textit{boolean}, \textit{string} ou \textit{number}.  Les 
+expressions de type \textit{«node-set»}  est totalement identique à une expression \textit{location path}, si le résultat de l'évaluation de cet expression est l'ensemble vide, 
+l'expression est évaluée comme \textbf{false} sinon elle est évaluée à \textbf{true}. Par exemple, sélectionner tous les enfants \textit{element node} de type «car» qui a un 
+descendant \textit{element node} de type «color» : 
+\begin{verbatim}
+                             child::car[descendant::color] 
+\end{verbatim}
+On peut également manipuler ces expressions avec les opérateurs définis par le standard : \begin{verbatim}
+                          and or = != < <= > >= + - * div mod
+\end{verbatim}
+ainsi que certaines fonctions : \begin{verbatim}
+                         count sum position() last() starts-with
+\end{verbatim}
+
+\subsubsection{Raccourcis $\&$ exemples}
+
+\begin{center}
+	\begin{tabular}{|*{2}{c|}}
+	\hline
+	Raccourci & Syntaxe non-raccourcie \\
+	\hline
+	\textit{«rien»} & child$::$ \\
+	\hline
+	// & /descendant-or-self$::$node()/ \\
+	\hline
+	@ & attribute$::$ \\
+	\hline
+	. & self$::$node() \\
+	\hline
+	.. & parent$::$node()\\
+	\hline
+	\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item  \begin{multicols}{2}
+	\begin{verbatim}
+	car[color='blue']
+	\end{verbatim}
+	sélectionner les enfants «car» qui sont de couleur bleue.
+	\end{multicols}
+\item  \begin{multicols}{2}
+	\begin{verbatim}
+	car[count(color)>1] 
+	\end{verbatim}
+	sélectionner les enfants «car» qui ont plus d'une couleur.
+	\end{multicols}
+\item  \begin{multicols}{2}
+	\begin{verbatim}
+	car[not(starts-with(model,’R’))]	
+	\end{verbatim}
+	sélectionner les enfants «car» dont le model ne commence pas par \textbf{R}.
+	\end{multicols}
+\item  \begin{multicols}{2}
+	\begin{verbatim}
+	descendant::car[position()=2]
+	\end{verbatim}
+	sélectionner le descendant «car» en position $2$ dans le résultat.
+	\end{multicols}
+\item  \begin{multicols}{2}
+	\begin{verbatim}
+	descendant::car[position()=last()-1]
+	\end{verbatim}
+	sélectionner le descendant «car» en avant-dernière position dans le résultat.
+	\end{multicols}
+\item  \begin{multicols}{2}
+	\begin{verbatim}
+	descendant::car[(price*40.3399>500000 
+   and price/@unit=’EUR’) or
+  (price>500000 and price/@unit=’BEF’)]
+	\end{verbatim}
+	sélectionner les descendants «car» dont le prix est supérieur à 50000 BEF.
+	\end{multicols}
+\end{itemize}
+
+\begin{multicols}{2}
+\begin{verbatim}
+<A>
+  <B>
+    <C/>
+    <A>
+      <B>
+        <A/><C/><A/>
+      <B/>
+    </A>
+    <C/>
+  </B>
+  <B>
+    <C/>
+  </B>
+</A>
+\end{verbatim}
+\imageR{CAPT_002.png}{250}
+\end{multicols}
+
+\subsubsection{Remarques}
+
+Il faut faire attention aux opérateurs relationnels tels que l'égalité, en effet l'égalité se fait généralement entre un ensemble et un autre ensemble ou un nombre/une chaine de 
+caractères. Le langage procède comme suit : soit $A$ et $B$ 2 ensembles, $A = B$ si et seulement si $\exists a \in A, \exists b \in B$ tels que $a = b$. A cause de cela, 
+l'égalité n'est pas transitive (en effet $\{1,2\} = \{2,3\}$ et $\{2,3\} = \{3,4\}$ mais $\{1,2\} \not = \{3,4\}$).
+
+\subsection{Xtensible Stylesheet Language Transformation (\red{XSLT})}
+
+Un \textit{«programme»} \red{XSLT} permet de prendre un fichier \red{XML} en entrée et de produire un autre fichier en sortie. Un programme \red{XSLT} consiste en une 
+succession de \textit{\textbf{template}} qui sont executés si le \gre{match pattern} est «matché» (il utilise la politique du «best match», c'est-à-dire qu'il cherche le meilleur 
+match pattern pour un noeud donné). Disons que le \gre{match pattern} = «$p$», on dit que $p$ match $n$ si on trouve un noeud $c$ tel que si j'exécute $p$ avec $c$ comme 
+noeud de contexte, $n$ est dans le l'ensemble résultant. Un \gre{match pattern}  est un chemin de location restreint dans le sens  que les seuls axes possibles sont 
+\textbf{child} et \textbf{attribute}. On peut y utiliser $|$ pour un ou logique, ainsi "/$|$*" permet de matcher la racine et tous les elements nodes. Exemple de template :
+\begin{verbatim}
+               <xsl:template match="child::car//attribut::price">
+                *instructions*
+               </xsl:template>
+\end{verbatim}
+
+\noindent Le programme \red{XSLT} fonctionne de la manière suivante :
+\begin{verbatim}
+program xslt
+   procedure process(aNode)
+   begin
+      trouver le template qui match le mieux aNode
+      executer ce template avec aNode comme noeud de contexte
+   end
+begin
+process(theRootNode)
+end
+\end{verbatim}
+
+Voici un tableau des \textit{«matchs»} possibles et les noeuds qu'ils \textit{«matchent»} (+ = match, - = match pas) :
+\imgR{CAPT_003.png}{400}
+
+Les instructions typiques des templates sont : 
+\begin{enumerate}
+\item \begin{verbatim}
+<xsl:apply-templates select="node-set"/>\end{verbatim}
+permet d'appliquer les templates sur tous les noeuds sélectionnés (modulo les match's).
+\item \begin{verbatim}
+<xsl:copy-of select="node-set"/>\end{verbatim}
+permet de faire une copie des noeuds sélectionnés (lors de la copie d'un noeud, ses attributs, namespaces et autres noeuds enfants sont copiés également).
+\item \begin{verbatim}
+<xsl:value-of select="node-set"/>
+\end{verbatim}
+permet de créer une valeur textuelle pour le noeud sélectionné (la concaténation de tous les noeuds textes disponibles).
+\item \begin{verbatim}
+<xsl:variable name="eurtobef" select="round(40.3399*sum(.//price[@unit=’EUR’]))"/>
+\end{verbatim}
+permet de créer une variable du nom de \textit{«eurtobef»} et d'y placer le résultat de la sélection.
+\item \begin{verbatim}
+<xsl:value-of select="$eurtobef"/>
+\end{verbatim}$
+permet d'afficher la valeur de la variable «eurtobef».
+\end{enumerate}
+
+Il est à savoir que par défaut, \red{XSLT} imprime la valeur textuelle de chaque noeud, donc si aucun template ne concerne un noeud, sa valeur textuelle sera affichée dans le 
+fichier de sortie. Il faut aussi savoir que le noeud de contexte est donné par $self::node()$ tandis que le noeud courrant est donné par \textit{current()} et qu'il ne faut pas 
+confondre les 2, car dans un match, mettre $self::node()$ et \textit{current()} sera différent vu que dans le premier cas le noeud de contexte aura changé.
+
+\subsection{\red{XQuery}}
+
+Il s'agit d'un second langage permettant de manipuler des fichiers \red{XML}. Le langage \red{XSLT} avait été développé par des documentalistes tandis que \red{XQuery} a été 
+développé par des chercheurs en bases de données. Il est surtout indiqué lorsque les balises reviennent plusieurs fois et il s'appuie également sur \red{XPath}. Il possède les axes 
+self, child, descendant, attribute, parent, descendant-or-self de manière permanente (les autres sont facultatifs) et l'axe namespace n'existe pas. Pour commencer un 
+programme \red{XQuery}, il faut ouvrir le fichier \red{XML} à utiliser, pour ce faire il faut appeler la fonction \textbf{doc("catalog.xml")} qui retourne le \textit{root node} du 
+document spécifié en paramètre. \red{XQuery} permet l'utilisation de séquences d'\textit{items} qui sont soit des valeurs atomiques (String, entier, booléen, ... ) soit des noeuds 
+(element node, attribute node, ... ) (une valeur seule étant considérée comme une séquence de taille 1). Une séquence comportant une séquence résultera en une seule séquence, par 
+exemples :  \begin{verbatim}
+{(3 to 5, ((6,7),8))} -> 3 4 5 6 7 8
+{(<i>{(1,<two/>,3)}</i>,4 to 7)} -> <i>1<two/>3</i>4 5 6 7
+\end{verbatim}
+Entourer une expression par des accolades indique que l'expression doit être évaluée. Le \textit{direct element constructor} «$<$seq-expr$>$» construit un \textit{element node} du 
+nom de «seq-expr» tandis que le \textit{sequence constructor} «( , ,  ... )» permet de construire une séquence d'\textit{items}. 
+
+\newpage
+
+On peut également utiliser des variables et créer des \textit{element nodes} avec des noms spécifiés : 
+\begin{verbatim}
+let $bef:=1000000, $p:="prix"
+return
+<convertisseur>
+{ element {$p} { attribute unit {"BEF"}, $bef } }
+{ element {$p} { attribute unit {"CHF"}, round($bef div 26.0019) } }
+{ element {$p} { attribute unit {"EUR"}, round($bef div 40.3399) } }
+</convertisseur>
+
+Le résultat étant : 
+
+<convertisseur>
+   <prix unit="BEF">1000000</prix>
+   <prix unit="CHF">38459</prix>
+   <prix unit="EUR">24789</prix>
+</convertisseur>
+
+\end{verbatim}
+
+\subsubsection{Les opérateurs de comparaisons}
+\stitre{Les comparateurs généraux}
+\begin{verbatim}
+                                    =, !=, <, <=, >, >=
+\end{verbatim}
+ces comparateurs permettent de comparer tout ce qui est manipulable en \red{XQuery} (des \textit{element nodes}, entiers, séquences, ..) mais ont la même particularité que les
+prédicats de \textbf{XPath}, c'est-à-dire que l'expression les incluant est évaluée à vrai dès lors qu'il existe 2 élements (un de chaque coté de l'opérateur) qui vérifie la condition
+appliquée par l'opérateur. Dis autrement, soit $\theta$ un opérateur et 2 séquences $A$ et $B$ (vu que tout est séquence en \red{XQuery}, ce cas est général) :
+\[ A\theta B \Leftrightarrow \left(\exists  a\in A, \exists b \in B\right) |\ a\theta b\]
+
+\stitre{Les comparateurs de valeurs}
+\begin{verbatim}
+                                    eq, ne, lt, le, gt, ge
+\end{verbatim}
+ces comparateurs permettent de comparer des valeurs atomiques (sauf les noeuds) et déclenche une erreur si un des 2 opérandes est une séquence de plus d'un élément.\\
+
+\stitre{Les comparateurs de noeuds}
+\begin{verbatim}
+                                    is, is not
+\end{verbatim}
+ces comparateurs permettent de comparer l'identité de 2 noeuds (attention 2 noeuds peuvent avoir le même nom et la même valeur mais une identité différente).\\
+
+\stitre{Les comparateurs d'ordre}
+\begin{verbatim}
+                                    >>, <<
+\end{verbatim}
+ces comparateurs permettent de caractériser le fait qu'un opérande précède l'autre dans l'ordre d'apparition dans le document. \\
+
+\noindent \textbf{\underline{Remarque} :} il faut tenir compte de l'atomisation, ainsi une valeur $<i>3</i>$ sera atomisé en $3$, dès lors la comparaison $<i>3</i> = 3$ sera vraie.
+\\
+
+\noindent\underline{Exemple} : 
+
+\begin{verbatim}
+<comparison>
+   (3)=3 is true.
+   (3,4,5)=(5,6,7) is true.
+   ()=() is false!
+   (<i>3</i>)=(3) is true due to atomization.
+</comparison>
+\end{verbatim}
+
+\subsubsection{FLWOR}
+\begin{verbatim}
+FLWOR <- (ForClause | LetClause)+ WhereClause? OrderByClause? "return" ExprSingle
+ExprSingle <- quantifiedExpression|conditionnalExpression|FLWOR
+quantifiedExpression <- "every" .. "in" .. "satisfies" .. | "some" .. "in" .. "satisfies" ..
+conditionalExpression <- "if" .. "then" .. "else"
+\end{verbatim}
+Il s'agit d'un type d'expression utilisable en \red{XQuery} et qui est proche du sens de \textbf{SQL}, c'est d'ailleurs un langage \textbf{Turing-complet}, c'est-à-dire que l'on 
+peut tout faire avec.
+
+\section{Requêtes conjonctives}
+
+Classement par ordre de puissance des différents types de requêtes possibles sur les bases de données : 
+\begin{verbatim}
+                              datalog avec négation
+                          /                                            \
+                         /                                           datalog
+              SPJRUD & calcul relationnel
+      /                                        \
+  SPJRU (Union + requêtes conjonctives)    requêtes conjonctives + différence
+      |
+  Requêtes conjonctives
+\end{verbatim}
+
+\subsection{Interêt}
+
+\begin{center}
+	\begin{tabular}{r|cc}
+	R&A&B\\
+	\hline
+	& & \\
+	& & \\
+	\end{tabular}
+\end{center}
+
+\noindent Il n'est pas difficile de se rendre compte que $\pi_{\{A,B\}} R \equiv R$ et ce, quelque soit la table $R$. Un programme peut être implémenter pour le vérifier, 
+cependant si on désire comparer l'équivalence de 2 requêtes, \textbf{si celles-ci ne sont pas des requêtes conjonctives, c'est impossible}.
+
+\subsection{Rule Based CQ}
+
+\noindent Nous allons formaliser une base de données telle que celle ci : 
+\begin{center}
+\begin{multicols}{2}
+	\begin{tabular}{r|cc}
+	R&A&B\\
+	\hline
+    & 1 & 2\\
+	& 2 & 3 \\
+	\end{tabular}
+	\begin{tabular}{r|cc}
+	S&C&D\\
+	\hline
+	& 5 & 6\\
+	& 7 & 1\\
+	\end{tabular}
+\end{multicols}
+\end{center}
+
+comme un ensemble de tupple : $I= \left\{ R(1,2),R(2,3),S(5,6),S(7,8)\right\}$. Ces 4 éléments sont des \textbf{ground atoms} aussi appelés \textbf{facts}, c'est-à-dire des 
+\textbf{atoms} qui ne contiennent pas de variables.\\
+
+On effectue une requête comme ceci : $Answer(y)\leftarrow\left\{R(x,y),S(z,x)\right\}$ pour spécifier que l'on cherche les $y$ tels que $R(x,y)$ et $S(z,x)$ sont dans la base 
+de données. On a donc ici comme réponse $\left\{ Answer(2) \right\}$ car on peut faire une \textit{valuation} de la requête en remplaçant $x$ par $1$, $z$ par $7$ et $y$ par 
+$2$, on obtient alors $R(1,2)$ et $S(7,1)$, ces 2 tupples étant dans la table, on a une réponse à la requête. \\
+Une \textbf{valuation} est une \textit{substitution} $\theta$ telle que pour toute variable $x$, $\theta(x) = constante$, une \textbf{substitution} étant un mapping $\theta$ 
+allant de l'union des ensembles des variables et des constantes vers cette même union d'ensembles tel que pour toute constante $a$, $\theta(a) = a$. De manière plus claire :
+\[
+var = \left\{x,y,z,...\right\}\ (variables),\ dom = \left\{a,b,c,...\right\}\ (constantes) \Rightarrow \boxed{\mathbf{sym = var \cup dom}}
+\]
+\[
+\text{\textbf{substitution} } \mu : sym\rightarrow sym \text{ telle que } a \in dom \Rightarrow \theta(a) = a
+\]
+\[
+\text{\textbf{valuation} } \theta : sym\rightarrow dom \text{ telle que } a \in dom \Rightarrow \theta(a) = a \text{ et } \forall x \in var, \theta(x) \in dom
+\]
+\newpage
+\noindent Une requête est donc de la forme \[\boxed{q:H\leftarrow B}\]
+où $B$ est le \textit{«body»} et $H$ est le \textit{«head»} ; chaque variable apparaissant dans $H$ doit apparaître dans $B$. On définit également une base de données comme 
+un ensemble de \textit{«ground atom»} :
+\[
+q(I) = \left\{\theta(H)|\theta \text{ substition telle que } \theta(B)\subseteq I \right\}
+\]
+\underline{Exemple} :
+\[
+I = \left\{ Emp("Ed","10K","UMH"), Loc("UMH","Mons"), Loc("UMH","Charleroi") \right\}
+\]
+\[
+q : Ans_2(x,y) \leftarrow \left\{ Emp(x,y,z), Loc(z,"Mons")\right\}
+\]
+\[
+\text{application de la requête sur la base de données I : } q(I) = \left\{Ans_2(Ed,"10K")\right\}
+\]
+Prenons 2 requêtes $q_1$ et $q_2$ et essayons de prouver que le résultat d'une est inclu dans l'autre. On introduit pour cela une notation : 
+\[
+\boxed{q_1 \sqsubseteq q_2 \Leftrightarrow \forall I : q_1(I)\subseteq q_2(I)}  \qquad \boxed{q_1 \equiv q_2 \Leftrightarrow q_1 \sqsubseteq q_2\text{ et } q_2 \sqsubseteq 
+q_1}
+\]
+
+On se rend immédiatement compte qu'on ne peut implémenter un programme qui utiliserait la définition car celle-ci comporte un $\forall$, nous allons donc développer une autre
+approche pour pouvoir prouver qu'une requête est inclue dans une autres.
+
+Prenons la même base de données $I$, on définit : 
+\[
+q_1 : Ans_1(x) \leftarrow \left\{ Emp(x,y,z), Loc(z,"Mons"), Loc(z,"Charleroi")\right\} \]\[
+q_2 : Ans_2(u) \leftarrow \left\{ Emp(u,v_1,w_1), Loc(w_1,"Mons"),Emp(u,v_2,w_2),Loc(w_2,"Charleroi") \right\}
+\]
+On peut appliquer une substitution : $ \mu = \{ u \mapsto x, v_1 \mapsto y, w_1 \mapsto z, w_2 \mapsto z, v_2 \mapsto y\}$, et si on applique $\theta$ après $\mu$, càd 
+$\theta\circ\mu$, on aura la même réponse. C'est ce que l'on appelle \dred{homomorphisme}. \\
+Un \dred{homomorphisme} $\mu$ de $q_2$ vers $q_1$ est une \textbf{substitution} telle que $\mu(H_2) = H_1$ et $\mu(B_2) \subseteq B_1$. \\
+
+\stitre{Théorème de l'homomorphisme} : s'il existe un homomorphisme de $q_1$ vers $q_2$, alors $q_2 \sqsubseteq q_2$. \\
+
+\noindent\textbf{Preuve ($\Leftarrow$)} \\
+\noindent Supposons $\theta : \theta(H_2) = H_1$ et $\theta(B_2) \subseteq B_2$, \\
+soit $I$ une base de données, \\
+soit $L$ un \textit{ground atom} tel que $L\in q_1(I)$.\\
+Il existe une valuation $\nu:\nu(B_1) \subseteq I$ et $\nu(H_1) = L$, a-t-on $\nu \circ \theta(B_2)\subseteq I$ et $\nu \circ \theta(H_2) = L$ ? \\
+Oui, car $\theta(B_2) \subseteq B_1$ donc $ \nu \circ \theta(B_2) \subseteq \nu(B_1) \subseteq I$ et $\theta(H_2)=H_1$ donc $\nu \circ \theta(H_2) = \nu(H_1) = L$.\\
+
+\noindent\textbf{Preuve $\sim$ idée ($\Rightarrow$)} \\
+\noindent L'idée c'est de faire une substitution $\theta : \left\{x \mapsto a_x, y \mapsto a_y, z \mapsto a_z\right\}$, c'est-à-dire remplacer les variables par des constantes et 
+on prend comme base de données : $I : \theta(B_1)$ (et donc $\theta(B_1) \subseteq I$). \\
+On a donc $\theta(H_1) \in q_1(I)$ et $\theta(H_1) \in q_2$ vu que $q_1 
+\sqsubseteq q_2$ par hypothèse. \\ On trouve ensuite par quelques applications de définitions un \textbf{homomorphisme}.\\
+
+\underline{Exemple} : 
+\[
+q_A : Ans(x) \leftarrow R(x,y), R(y,x)\]\[
+q_B : Ans(u) \leftarrow R(u,u)
+\]
+On voit qu'il existe un homomorphisme de $q_A$ vers $q_B$ $\mu = \left\{ x \mapsto u, y \mapsto u \right\}$ $\Rightarrow \boxed{q_B \sqsubseteq q_A}$.
+
+\newpage
+\subsubsection{Application}
+
+Peut-on trouver une requête équivalente à la suivante avec au maximum une seule jointure ?
+\[
+\pi_{AB} \left(\sigma_{B=5}(R)\right) \Join \pi_{BC} \left[ \pi_{AB}(R) \Join \left( \pi_{AC}(\sigma_{B=5}(R)\right)\right]
+\]
+Les 3 projections (sauf $\pi_{BC}$) correspondent dans l'ordre à $W(x,S)$, $T(x,y)$ et $S(x,y)$. La jointure sur l'attribut commun de $T(x,y)$ et $S(x,y)$ peut ainsi s'écrire
+$U(x,y,z)$ et la projection de celà sur $BC$ donne $V(x,y)$. Au final on a la jointure de $W(x,S)$ avec $V(x,y)$ ce qui nous donne $A(x,y,z)$. \\
+
+\noindent(1) $S(x,y) \leftarrow R(x,5,y)$ \\
+(2) $T(x,y) \leftarrow R(x,y,z) \text{  z est une variable liée à un quantificateur (} \exists z ...)$\\
+(3) $U(x,y,z) \leftarrow T(x,y), S(x,z)$ \\
+(4) $V(x,y) \leftarrow U(z,x,y)$ \\
+(5) $W(x,5) \leftarrow R(x,5,z)$ \\
+(6) $A(x,y,z) \leftarrow W(x,y), V(y,z)$\\
+$\Rightarrow A(x,5,z) \leftarrow W(x,5), V(5,z)$ \\
+$\Rightarrow A(x,5,z) \leftarrow R(x,5,z_1), V(5,z)$ (par (5)) \\
+$\Rightarrow A(x,5,z) \leftarrow R(x,5,z_1), U(z_2,5,z)$ (par (4)) \\
+$\Rightarrow A(x,5,z) \leftarrow R(x,5,z_1), T(z_2,5), S(z_2,z)$ (par (3))\\
+$\Rightarrow A(x,5,z) \leftarrow R(x,5,z_1),  R(z_2,5,z_3), R(z_2,5,z)$ (par (1) et (2)) \\
+$ \boxed{\sigma:z_3 \mapsto z}$ (homomorphisme) \\
+$\Rightarrow A(x,5,z) \leftarrow R(x,5,z_1), R(z_2,5,z)$ \\
+$\Rightarrow \pi_{AB} \left( \sigma_{B=5}(R)\right) \Join \pi_{BC}\left(\sigma_{B=5}(R)\right)$\\
+
+$\Rightarrow$ \red{on gagne une jointure !}
+
+\section{Union de requêtes conjonctives}
+
+On définit l'union de 2 tables d'arité $2$ $R$ et $S$ comme suit : \\
+$\left\{ \begin{array}{c}
+Ans(x,y) \leftarrow R(x,y)\\
+Ans(x,y) \leftarrow S(x,y)\\
+\end{array}\right.$ \\
+Plus généralement : 
+$\left\{ \begin{array}{l}
+p_1 : Ans(\bar{x}_1) \leftarrow B_1 \\
+p_2 : Ans(\bar{x}_2) \leftarrow B_2 \text{ On utilise le même prédicat.}\\
+... \\
+p_n : Ans(\bar{x}_n) \leftarrow B_n \\
+\end{array}\right.$ \\
+$ p = \left\{P_1,P_2,...,P_n\right\} \rightarrow $ union des requêtes conjonctives. \\
+
+\noindent Ainsi, sur une base de données $BD$, on aura :
+\[ p(BD)  := p_1(BD) \cup p_2(BD) \cup ... \cup p_n(BD)\] \textit{(union des réponses)}
+
+Supposons $Q = \{q_1,...,q_m\}$ tq $\left\{ \begin{array}{l}
+q_1 : Ans(\bar{x}_1) \leftarrow B_1 \\
+q_2 : Ans(\bar{x}_2) \leftarrow B_2 \\
+... \\
+q_m : Ans(\bar{x}_m) \leftarrow B_m \\
+\end{array}\right.$ \\
+Est-ce que \gre{$P\equiv Q$} ? i.e. $P\subseteq Q$ et $Q\subseteq P$ ?  \\
+Il existe un théorème qui affirme que \gre{$P\equiv Q$}  $\Leftrightarrow$\red{$\forall i \in \{1,...,n\}, \exists j \in \{1,...,m\} \text{ tel que } p_i \sqsubseteq q_j$}. \\
+Ce théorème, s'il est vrai, signifierait que l'on ne peut pas avoir une requête $p_1$ à cheval sur $q_1$ et $q_2$ (par exemple) mais que cette requête $p_1$ est inclu totalement 
+dans $q_1$ ou $q_2$. \\
+\textbf{Preuve ($\Rightarrow$) ($\Leftarrow$ trivial)}  \\
+Supposons $P\subseteq Q$ et $\exists i \in \{1...n\}, \exists j \in \{1...m\}$ tels que $p_i \sqsubseteq q_j$,\\
+Prenons $i=1$, on aura $p_1$ de la forme : $p_1:Ans(\bar{x}) \leftarrow \red{\{} R_1(\bar{x}_1), R_2(\bar{x}_2), ..., R_n(\bar{x}_n)\red{\} = I}$ \red{(Valuation 
+appliquant des variables distinctes sur des constantes distinctes, en gros on considère que les variables sont des constantes)} \\
+$ $ \\
+$ $ \\
+$\Rightarrow P(I) \supseteq P_1(I) \ni Ans(\bar{x})$ c'est-à-dire que $Ans(\bar{x}) \in Q(I)$ par hypothèse. \\
+Alors $\exists k$ tel que $Ans(\bar{x} \in q_k(I)$ et $q_k$ sera de la forme $q_k : Ans(\bar{y}) \leftarrow B_k$ \\
+i.e $\exists \theta \left\{\begin{array}{l}
+	\theta(\bar{y}) = \bar{x} \\
+	\theta(B_k)  \subseteq  I
+	\end{array}\right.$, il existe donc un homomorphisme, ce qui implique que $p_1 \sqsubseteq q_k$ \red{$\Rightarrow$ contradiction !}
+
+\section{\red{Datalog}}
+\textit{(Bases de données déductives)} \\
+
+L'objectif est d'ajouté une certaine récursivité dans un langage de base permettant d'interroger les bases de données. Voici un problème inrésolvable sans récursion,
+\underline{la fermeture transitive} : \\ Soit une relation binaire tq : $\forall x,y,z,\ \left( R(x,y) \wedge R(y,z) \Rightarrow R(x,z)\right)$ (en \gre{vert} les tupples rajoutés)
+\begin{center}
+	\begin{tabular}{r|cc}
+	R&1&2\\
+	\hline
+	& a & b\\
+	& b & c\\
+	& c & d\\
+	\hline
+	& \gre{a} & \gre{c}\\
+	& \gre{b} & \gre{d}\\
+	& \gre{a} & \gre{d}\\
+	\end{tabular}
+\end{center}
+
+Au niveau de l'encodage, on peut voir ça comme un graphe, $P = \left\{ \begin{array}{l}
+S(x,y) \leftarrow G(x,y) \\
+S(x,z) \leftarrow G(x,y), S(y,z) \end{array}\right.$ 
+
+\noindent La différence fondamentale avec les requêtes conjonctives est que l'on peut réutiliser un calcul effectué dans une autre règle.
+
+\subsection{Prédicats}
+
+Il existe 2 types de prédicats, les 2 prédicats ensemble forment le schéma de la requête \\ $\rightarrow Schema(P) = edb(P)\cup idb(P) = \{S,G\}$: 
+\begin{itemize}
+\item \textbf{extensional} \textit{(body)} : dans la base de données $\rightarrow edb(P) : \{G\}$
+\item \textbf{intensional} \textit{(head)} : ce qui peut se trouver dans la tête $\rightarrow idb(P) : \{S\}$ \\
+\end{itemize}
+\underline{Retour à l'exemple} : \\
+ base de données sur $edb(P) \rightarrow$ 
+	\begin{tabular}{r|cc}
+	G& & \\
+	\hline
+	& a & b\\
+	& b & c\\
+	& c & d\\
+	\end{tabular} \\
+base de données sur $Schema(P) \rightarrow$
+	\begin{tabular}{r|cc}
+	G& & \\
+	\hline
+	& a & b\\
+	& b & c\\
+	& c & d\\
+	\end{tabular}
+	\begin{tabular}{r|cc}
+	S& & \\
+	\hline
+	& a & b\\
+	& b & c\\
+	& c & d\\
+	& a & c\\	
+	& a & d\\
+	& b & d\\
+	\end{tabular}
+\newpage
+\subsection{Sémantique}
+
+Soit $T_p$ le \textit{«immediate consequence operator»}, soit $I$ une base de données sur $Schema(P)$, $T_p(I)$ contient \textbf{tous les faits de $I$} ainsi que 
+\textbf{les réponses à chaque règle comme si c'était une requête conjonctive}. \\
+
+\noindent\textbf{\underline{Exemple} : } \\
+
+1) 	\begin{tabular}{r|cc}
+	G& & \\
+	\hline
+	& a & b\\
+	& b & c\\
+	& c & d\\
+	\end{tabular}   \begin{tabular}{r|cc}
+	S & &\\
+	\hline
+	& &
+	\end{tabular}$\ \ \ $ On applique l'opérateur $T_p$ : 
+	
+2)  \begin{tabular}{r|cc}
+	G& & \\
+	\hline
+	& \red{a} & \red{b}\\
+	& \blu{b} & \blu{c}\\
+	& c & d\\
+	\end{tabular}   \begin{tabular}{r|cc}
+	S & &\\
+	\hline
+	& a & b\\
+	& \red{b} & \red{c}\\
+	& \blu{c} & \blu{d}\\
+	\end{tabular} $\ \ \ $ On applique à nouveau l'opérateur $T_p$ : 
+
+3) \begin{tabular}{r|cc}
+	G& & \\
+	\hline
+	& \red{a} & \red{b}\\
+	& \blu{b} & \blu{c}\\
+	& c & d\\
+	\end{tabular}   \begin{tabular}{r|cc}
+	S & &\\
+	\hline
+	& a & b\\
+	& \red{b} & \red{c}\\
+	& \blu{c} & \blu{d}\\
+	& a & c \\
+	& \red{b} & \red{d}
+	\end{tabular} $\ \ \ $ On applique à nouveau l'opérateur $T_p$ : 
+
+4) \begin{tabular}{r|cc}
+	G& & \\
+	\hline
+	& a & b\\
+	& b & c\\
+	& c & d\\
+	\end{tabular}   \begin{tabular}{r|cc}
+	S & &\\
+	\hline
+	& a & b\\
+	& b & c\\
+	& c & d\\
+	& a & c \\
+	& b & d \\
+	& a & d 
+	\end{tabular} \\  
+
+\noindent Si on applique à nouveau l'opérateur $T_p$, on retrouve la même chose qu'en 4), on a donc atteint un \dred{point fixe}, ce qui signifie que $T_p(J)=J$.
+	
+On arrêtera donc d'appliquer l'opérateur $T_p$ jusqu'à ce que l'on trouve le point fixe ou que l'on retrouve la base de données en $S$.\\
+Le \textbf{théorème de la monotonicité} nous dit que $J_1 \subseteq J_2 \Rightarrow T_p(J_1) \subseteq T_p(J_2)$. \\
+Soit $I$, une base de données sur $edb(P)$, le point fixe minimum de $I$, noté $P(I)$, est la plus petite base de données $J$ tq $\left\{\begin{array}{l} I \subseteq J \\ Tp(J) 
+= J\end{array}\right.$. Un \red{modèle} est une base de données minimale qui respectent toutes les règles, le plus petit modèle contenant $I$ correspond exactement au point 
+fixe de $T_p$. Ce point fixe est unique, comme le prouve cette preuve : \\
+Supposons qu'il existe un autre point fixe $k$ tel que $\left\{\begin{array}{l} I \subseteq k \\ Tp(k) = k\end{array}\right.$, par le théorème de la monoticité, on a : 
+$T_p(I) \subseteq T_p(k)=k$ (car point fixe), $T_p(T_p(I)) \subseteq T_p(k)=k$, ..., $\gre{T_p^{(k)}(I)} \subseteq k \rightarrow$ \gre{il s'agit du premier point fixe, il existe
+donc un point fixe minimal}. \\
+	
+\noindent\textbf{\underline{Remarque} : } on ne peut pas résoudre le problème de la fermeture transitive avec \textbf{SPJRUD}, \red{Datalog} est donc plus puissant.
+
+\newpage 
+\subsection{Program Dependency Graph (\red{PDG})}
+
+Il s'agit d'un graphe permettant de déterminer quel prédicat dépend de quel prédicat pour être calculé (on n'y dessine que les prédicats ne faisant pas partie de la base de données).
+\\
+\textbf{\underline{Exemple général} : }
+\begin{center}
+$\begin{array}{l}
+R() \leftarrow S(), T(), V() \\
+S() \leftarrow R(), V() \\
+V() \leftarrow S()
+\end{array}$
+\image{CAPT_004.png}
+\end{center}
+
+Le programme est dit syntaxiquement récursif si il y a une boucle dans le \red{PDG}. S'il ne contient pas de cycle, $P$ est équivalent à un ensemble de requêtes conjonctives. 
+Cependant, un \red{PDG} avec cycle n'implique pas que $P$ n'est pas équivalent à un ensemble de requêtes conjonctives, la preuve en est faite sur ce 
+\textbf{\underline{contre exemple} :} \\
+
+\noindent $Buys(x,y)\leftarrow Trendy(x), Buys(z,y)$ \textit{«On achète si on suit la mode et que quelqu'un l'a acheté»} \\
+$Buys(x,y)\leftarrow Likes(x,y)$ \textit{«On achète si on aime»} \\
+
+\noindent Le \red{PDG} est constitué que de $Buys$ qui dépend de lui même, le programme est donc syntaxiquement récursif, cependant il n'est pas récursif. En effet, il est 
+équivalent à : \\
+
+\noindent$Buys(x,y)\leftarrow Trendy(x), Likes(z,y)$ \\
+$Buys(x,y)\leftarrow Likes(x,y)$\\
+
+\noindent et dans ce cas-ci, le \red{PDG} se compose que de $Buys$ qui ne dépend plus de lui même.\\
+$\rightarrow$ \textit{Savoir si un programme \red{Datalog} est équivalent à un ensemble de requêtes conjonctives est un problème indécidable.}
+
+\section{\red{Datalog$\urcorner$}}
+
+\textbf{\underline{Exemple} : } \\
+\begin{center}
+	\begin{tabular}{r|c}
+	Person & 1\\
+	\hline
+	& Andy \\
+	& \\
+	\end{tabular}
+	$\qquad \rightarrow I = \{Person(Andy)\}$
+\end{center}
+
+\noindent On écrit un programme pour savoir si $X$ est un homme ou une femme : 
+$\left\{ \begin{array}{l}
+Female(x) \leftarrow Person(x), \urcorner Male(x) \\
+Male(x) \leftarrow Person(x), \urcorner Female(x)
+\end{array} \right.$\\
+
+\noindent On voit clairement que $Female$ et $Male$ dépendent l'un de l'autre, on a donc un \red{PDG} avec cycle. \\
+On applique l'opérateur $T_p$ :  \\
+$T_p(I) = \{Person(Andy), Male(Andy), Female(Andy)\}$ \\
+$T_p(T_p(I)) = \{Person(Andy)\}\qquad \Rightarrow$ on obtient la base de données \textit{(en effet on peut appliquer aucune des 2 règles car on a $Female(Andy)$ et 
+$Male(Andy)$.)}  \\
+Si on réapplique $T_p$ encore une fois, on retombe sur $T_p(I)$. \\
+On cherche un point fixe, il y en a en fait 2 : \red{$\{Person(Andy), Male(Andy)\}$} et \gre{$\{Person(Andy), 
+Female(Andy)\}$} ; mais aucun de ces 2 points fixes n'est atteignable en appliquant $T_p$ sur $I$ plusieurs fois. \\
+
+Pour lever cette ambiguïté, nous allons modifier notre \red{PDG}, lorsqu'un prédicat dépend d'un autre de manière négative (comme ici \textbf{Female} dépend négativement de 
+\textbf{Male} et inversément) nous placerons une flèche avec un $-$ dessus. On imposera alors que si il y a des boucles, aucune d'entre elles ne pourra comporter de flèche $-$. 
+De cette façon, le programme sera \textit{\textbf{stratifié}}, c'est-à-dire que l'on peut le diviser en \red{stratum} (nombre de négations possibles sur un chemin partant des 
+élements du \red{stratum}) et ceci n'est possible que si il n'y a pas de cycle comportant une flèche $-$. \\ $ $\\ 
+
+\textbf{\underline{Exemples généraux} : } \\
+
+\image{CAPT_005.png} \image{CAPT_006.png}
+
+\section{Full dependencies}
+
+Une \textit{full dependencies} (\red{FD}) peut prendre 2 formes : 
+\begin{center}
+	$\begin{array}{l}
+	(1) B \rightarrow H \\
+	(2) B \rightarrow s_1 = s_2
+	\end{array}$
+\end{center}
+où $B$ est un ensemble d'\textit{atoms}, $H$ est un \textit{atom} et, comme pour \red{Datalog} et autres, toutes variables apparaissant à gauche de la flèche doit apparaître à 
+droite (Tous les prédicats sont $edb$).  \\
+On dit qu'une base de données $I$ : 
+\begin{itemize}
+\item satisfait $(1)$ si $\forall$ \textit{valuation} $\nu$, $\nu(B)\subseteq I \Rightarrow \nu(H)\in I$, 
+\item satisfait $(2)$ si  $\forall$ \textit{valuation} $\nu$, $\nu(s_1) = \nu(s_2)$.
+\end{itemize}
+\underline{Formalisme} \textit{($\sigma$ est une \red{FD} et $\Sigma$ est un ensemble de \red{FD})}: 
+\begin{itemize}
+\item on écrit $I \models \sigma$ pour spécifier que $I$ satisfait $\sigma$,
+\item on écrit $I \models \Sigma$ pour spécifier que $I$ satisfait toutes les \red{FD} de $\Sigma$,
+\item on écrit $\Sigma \models \sigma$ pour spécifier que $\sigma$ est une \textbf{conséquence logique} de $\Sigma$, \\ 
+c'est-à-dire que $\forall$ base de données $I$, $I \models \Sigma \Rightarrow I \models \sigma$. \\
+\end{itemize}
+
+\textbf{\underline{Exemple} : } \\
+
+\noindent $P (x, y_1 , z_1 , w_1 ), P (x, y_2 , z_2 , w_2 ) \rightarrow y_1 = y_2 \\
+P (x, y_1 , z_1 , w_1 ), P (x, y_2 , z_2 , w_2 ) \rightarrow z_1 = z_2 \\
+P (x, y_1 , z_1 , w_1 ), P (x, y_2 , z_2 , w_2 ) \rightarrow w_1 = w_2 \\
+                         P (x, y, z, w) \rightarrow N (w)$
+
+\begin{center}
+	\begin{tabular}{r|cccc}
+	P & SS\# & Name & Birth & Nat\\
+	\hline
+	& 123 & Smith & 1964 & USA\\
+	& 456 & Jones & 1970 & GB\\
+	\end{tabular}
+	\begin{tabular}{r|c}
+	N&Nat\\
+	\hline
+	& USA\\
+	& GB \\
+	& NL 
+	\end{tabular}
+\end{center}
+
+\subsection{La chasse}
+
+Soit $L\rightarrow r$ et $L'\rightarrow r'$ des \red{FD}, soit $\Sigma$ un ensemble de \red{FD}, alors on écrit $L\rightarrow r \vdash_\Sigma L' \rightarrow r'$ si $L' 
+\rightarrow r'$ peut être dérivé à partir de $L \rightarrow r$ suite à l'application d'une de ces 2 règles de chasse : 
+\begin{enumerate}
+\item $\exists B \rightarrow H \in \Sigma$ telle qu'$\exists$ une substitution $\theta$ telle que $\theta(B) \subseteq L, L' = L\cup \theta(H)$ et $r'=r$,
+\item $\exists B \rightarrow s_1=s_2 \in \Sigma$ telle qu'$\exists$ une substitution $\theta$ telle que $\theta(B) \subseteq L$, $\theta(s_1)$ et $\theta(s_2)$ ne sont pas 
+des constantes distinctes et (posons $\mu$ comme la substition qui identifie $\theta(s_1)$ et $\theta(s_2)$)  $L'=\mu(L)$ et $r' = \mu(r)$.
+\end{enumerate}
+On écrit $L \rightarrow r \vdash_\Sigma \square$ si $\exists B \rightarrow s_1=s_2 \in \Sigma$, $\exists$ une substitution $\theta$ telle que $\theta(B) \subseteq L$, 
+$\theta(s_1)$ et $\theta(s_2)$ sont des constants distinctes.
+\noindent Une \textbf{\textit{chasse}} de $L\rightarrow r$ par $\Sigma$ est une séquence maximale $L\rightarrow r = \sigma_0,\sigma_1, ..., \sigma_n$ telle que $\forall i 
+\in \{1,2,...,n\}, \sigma_{i-1} \vdash_\Sigma \sigma_i$ et $\sigma_{i-1} \neq \sigma_{i}$. On appelle $\sigma_n$ le résultat de la \textbf{\textit{chasse}}. \\
+
+\noindent \textbf{\underline{Théorème} : } Soit $\Sigma$ un ensemble de \red{FD}, soit $L\rightarrow r$ une \red{FD}, alors $\Sigma \models L\rightarrow r 
+\Leftrightarrow$ la chasse de $L\rightarrow r$ par $\Sigma$ aboutit à $\square$ ou à une \red{FD} triviale. \\
+
+\noindent \textbf{\underline{Exemple} : } \\
+
+\noindent$\sigma_1 : R(x, y',z, w'), R(x, y, z', w) \rightarrow R(x, y, z, w) \\
+\sigma_2 : R(x_1 , y, z_1 , w_1 ), R(x_2 , y, z_2 , w_2 ) \rightarrow z_1 = z_2 \\
+\sigma_3 : R(x, y_1 , z_1 , w_1 ), R(x, y_2 , z_2 , w_2 ) \rightarrow z_1 = z_2 \\$
+
+\noindent On chasse $\sigma_3$ par $\Sigma = \{\sigma_1,\sigma_2\}$ : \\
+
+\noindent $ \sigma_3 : R(x, y_1 , z_1 , w_1 ), R(x, y_2 , z_2 , w_2 ) \rightarrow z_1 = z_2 \\
+$Application de $\sigma_1 : R(x, y_1 , z_1 , w_1 ), R(x, y_2 , z_2 , w_2 ), R(x, y_2 , z_1 , w_2 ) \rightarrow z_1 = z_2\\
+$Application de $\sigma_2 : R(x, y_1 , z_1 , w_1 ), R(x, y_2 , z_1 , w_2 ) \rightarrow z_1 = z_1 \\$
+
+\noindent $\rightarrow$ Vu que la dernière \red{FD} est triviale, on peut conclure que $\{\sigma_1,\sigma_2\} \models \sigma_3$. \\
+
+\noindent \textbf{De manière plus simple, pour prouver par exemple $\Sigma = \{\sigma_1,\sigma_2\} \models \sigma_3$, il suffit d'essayer de construire un exemple 
+respectant $\sigma_1$ et $\sigma_2$ mais pas $\sigma_3$, si on y parvient, c'est que $\Sigma \not \models \sigma_3$, sinon c'est que $\Sigma \models \sigma_3$.}
+
+\appendix
+
+\section{Documents}
+
+\subsection{catalog.xml}
+\begin{verbatim}
+<?xml version="1.0"?>
+<!--The name of this file is catalog.xml-->
+<catalog>
+   <car>
+               <model>Renault CLIO</model>
+               <color>blue</color>
+               <price unit="BEF">115000</price>
+   </car>
+   <bike>   
+               <height>56</height>
+               <price unit="EUR">500</price>
+   </bike>
+   <go-kart>
+               <price unit="BEF">3000</price>
+   </go-kart>
+   <car>       
+               <model>Peugeot Partner</model>
+               <color>red</color>
+               <price unit="EUR">12000</price>
+   </car>
+</catalog>
+\end{verbatim}
+\end{document}
