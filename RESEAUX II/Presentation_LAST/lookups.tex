@@ -1,0 +1,663 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage[french]{babel}
+\selectlanguage{french}
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\definecolor{maintitle}{rgb}{0.66,0,0.22}
+\definecolor{title}{rgb}{0,0.5,0.5}
+\definecolor{greyy}{rgb}{0.6,0.6,0.6}
+
+\newcommand{\image}[1]{\includegraphics{#1}}
+\newcommand{\imageR}[2]{\includegraphics[width=#2px]{#1}}
+\newcommand{\imageRT}[2]{\includegraphics[height=#2px]{#1}}
+\newcommand{\img}[1]{\begin{center}\includegraphics[width=400px]{#1}\end{center}}
+\newcommand{\imag}[1]{\begin{center}\includegraphics{#1}\end{center}}
+\newcommand{\imgR}[2]{\begin{center}\includegraphics[width=#2px]{#1}\end{center}}
+\newcommand{\imgRT}[2]{\begin{center}\includegraphics[height=#2px]{#1}\end{center}}
+\newcommand{\term}[1]{\textit{\textcolor{maintitle}{#1}}}
+\newcommand{\cerm}[1]{\textcolor{maintitle}{#1}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\red}[1]{\textcolor{darkred}{#1}}
+
+\usetheme{Warsaw}
+\usecolortheme{beaver}
+%\setbeamercolor{section in head/foot}{bg=black}
+\setbeamercolor{title}{bg=maintitle,fg=white}
+
+\title[IP Address Lookup]{IP Address Lookup \\ $\sim$ \\ Structures et algorithmes}
+\author{Destercq Lionel \& Dubuc Xavier}
+
+\institute{\imageR{UMONS.jpg}{100}}
+
+\addtobeamertemplate{footline}{\insertframenumber/\inserttotalframenumber}
+
+\begin{document}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Plan}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Plan}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+\begin{frame}{Introduction}
+
+Pour commencer, quelques définitions afin de bien situer notre sujet :
+
+\begin{block}{Lookup}
+Le \term{lookup} d'une adresse IP est l'opération qu'effectue un routeur lorsqu'il consulte sa \textbf{table de forwarding} à la
+recherche de l'entrée correspondant à cette adresse IP afin d'obtenir l'interface de sortie surlaquelle il doit placer le paquet
+qu'il désire envoyer ainsi que le next-hop. Pour effectuer ce look-up, le routeur a recours à la méthode du \textbf{longest match 
+prefix} qui sélectionne l'entrée de la table de forwarding qui a le plus de bits en commun avec le préfixe recherché.
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Exemple}
+\begin{figure}
+	\begin{center}
+	\imageR{CN_001.png}{200}
+	\caption{Exemple de table de forwarding.}
+	\end{center}	
+\end{figure}
+\end{frame}
+
+\begin{frame}{CIDR et agrégation}
+
+\begin{block}{CIDR}
+Le plan d'adressage "\textit{\term{C}lassless \term{I}nter-\term{D}omain \term{R}outing}" permet plus de flexibilité dans 
+l'adressage des adresses IPv4 mais il occasionne une expansion de la taille des tables de forwarding \textit{(même si l'on peut 
+contenir en partie cette expansion avec l'\textbf{agrégation de préfixes IP} mais pas dans tous les cas)}.
+\end{block}
+
+\begin{exampleblock}{Exemple : Agrégation impossible}
+Imaginons qu'un client détenant le préfixe 208.12.21/24 change de provider sans changer de préfixe. Après ce changement, on ne 
+peut plus agréger les préfixes allant de 208.12.16/24 à 208.12.31/24 car 208.12.21/24 n'est plus joignable via le même provider
+que les autres préfixes.
+\end{exampleblock}
+
+\end{frame}
+
+\begin{frame}{Implémentation}
+
+Les \textbf{tables de forwarding} peuvent être implémentées de différentes manières, chacune de ces manières possèdant ses 
+avantages et ses inconvénients. Nous allons voir quelques-unes de ces méthodes et nous allons les comparer selon les critères 
+suivants : \\
+\begin{itemize}
+\pause \item \cerm{Vitesse de lookup} : \textit{au moins assez pour suivre la fréquence d'entrée des paquets}.
+\pause \item \cerm{Exigence de stockage} : \textit{moins de données stockées implique :}
+	\begin{itemize}
+	\item \textbf{accès mémoire rapides,}
+	\item \textbf{diminution de l'utilisation d'énergie}.
+	\end{itemize}
+\pause \item \cerm{Temps d'update} : \textit{les routeurs doivent être capables de supporter 1000 BGP-Update par seconde}.
+\pause \item \cerm{Extensibilité} : \textit{la taille de la table de forwarding peut augmenter de 25000 entrées par an}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Implémentation}
+
+Nous avons classés ces algorithmes en 3 catégories :
+\begin{enumerate}
+\pause \item les algorithmes basés sur les arbres de préfixes,
+\item les algorithmes de recherches binaires (ou par bissection),
+\item les algorithmes/schémas basés sur le hardware.
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TRIE BASED ALGORITHMS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Algorithmes basés sur les arbres de préfixes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BINARY TRIE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Arbres binaires (Binary Trie)}
+
+\begin{frame}{Définition de la structure}
+
+Il s'agit de la méthode la plus intuitive, on stocke les préfixes de la base de données dans un arbre binaire dont le parcours de 
+chaque branche correspond à lire un 1 ou un 0. On choisit l'une de ces 2 branches en fonction du préfixe que l'on cherche à
+résoudre.
+
+\begin{figure}
+	\begin{center}
+	\imageR{CN_002.png}{100}
+	\caption{Exemple d'arbre binaire.}
+	\end{center}	
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Exemple de lookup}
+
+\begin{figure}
+	\begin{center}
+	\imageR{CN_003.png}{100}
+	\caption{Exemple d'arbre binaire.}
+	\end{center}	
+\end{figure}
+
+Si l'adresse de destination donnée est \textbf{11101000}, le \cerm{lookup} commence à la racine, puis se poursuit à 
+droite, puis encore à droite, ... jusqu'à atteindre le noeud contenant le préfixe P7 qui est retourné comme résultat du lookup.\\
+\textit{(Ce noeud contient les informations de next-hop)}
+\end{frame}
+
+\begin{frame}{Exemple de lookup 2}
+
+\begin{figure}
+	\begin{center}
+	\imageR{CN_002.png}{100}
+	\caption{Exemple d'arbre binaire.}
+	\end{center}	
+\end{figure}
+
+Si l'adresse de destination donnée est \textbf{111000}, que se passe-t-il ?
+
+\end{frame}
+
+\begin{frame}{Exemple de lookup 2}
+
+\begin{figure}
+	\begin{center}
+	\imageR{CN_004.png}{100}
+	\caption{Exemple d'arbre binaire.}
+	\end{center}	
+\end{figure}
+
+L'algorithme doit tenir en mémoire le dernier préfixe visité dans le cas où son chemin ne l'emmène pas vers un noeud contenant un 
+préfixe.
+
+\end{frame}
+
+\begin{frame}{Complexités}
+Soit \gre{$W$} la taille maximale d'un préfixe et \red{$N$} le nombre de préfixes contenu dans la table de forwarding, \\
+\imageR{good.png}{15}
+\begin{itemize}
+\item Intuitive, simple.
+\item Les complexités d'un \cerm{lookup} et d'un \cerm{update} en temps dans le pire des cas sont en \gre{$O(W)$}. \\
+\end{itemize}
+\imageR{bad.png}{15}
+\begin{itemize}
+\item Dans le pire des cas, il faut \red{$32$ accès mémoire} par lookup.
+\item Dans le pire des cas, l'ajout d'un préfixe nécessite l'ajout de \red{$32$ noeuds}.
+\item La mémoire nécessaire est en \red{$O(N\times W)$}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Variantes}
+\begin{enumerate}
+\item L'arbre peut être étendu à un arbre complet de telle sorte à ce que les préfixes soient tous stockés dans les feuilles, la 
+structure devient en fait une structure plate. \\ \red{Si les adresses font 32bits, $2^{32}$ entrées sont 
+nécéssaires ! \\ $\Rightarrow$ Impraticable.}
+\item Le "\cerm{\textbf{leaf pushing}}".
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Idées clés du Leaf pushing}
+\begin{enumerate}
+\item Transformer un ensemble donné de préfixes en un ensemble de préfixes disjoints.
+\item L'arbre correspondant comportera ses préfixes dans les feuilles et aucun dans les noeuds internes \textit{(d'où le nom de la 
+technique, les préfixes étant "poussés" vers les feuilles)}.
+\item Pour créer l'arbre, on ajoute une feuille à chaque noeud ne possédant qu'un seul fils et on y stocke le préfixe de l'ancètre 
+le plus proche. On supprime également tous les préfixes stockés dans les noeuds internes.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Exemple de Leaf pushing}
+
+\begin{figure}
+	\begin{center}
+	\imageR{CN_005.png}{225}
+	\caption{Exemple d'arbre "leaf pushed".}
+	\end{center}	
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Différences avec les arbres binaires}
+Les seules différences notables sont :
+\begin{enumerate}
+\pause \item \gre{on n'utilise pas la règle \textit{"longest match prefix"} mais on trouve tout de même le préfixe le 
+plus spécifique,}
+\item \red{certains préfixes doivent être stockés plusieurs fois \\ $\Rightarrow$ augmentation de la mémoire nécessaire.}
+\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PATH-COMPRESSED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Arbres aux chemins compressés (Path-compressed)}
+
+\begin{frame}{Introduction de la structure}
+
+L'idée de ces arbres est de réduire la hauteur en enlevant quelques noeuds internes et en stockant 2 infos supplémentaires par 
+noeud restant : la \red{skip value} et \blu{segment}.
+
+\begin{block}{Skip value}
+Nombre indiquant le nombre de bits qui ont été passés sur le chemin.
+\end{block}
+
+\begin{block}{Segment}
+Chaîne de caractères de longueur variable indiquant la chaîne de digits passés sur le chemin.
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Exemple}
+
+\begin{figure}
+	\begin{center}
+	\imageR{CN_006.png}{225}
+	\caption{Exemple d'arbre "path compressed".}
+	\end{center}	
+\end{figure}
+
+En \textbf{P9} la \red{skip value} est de 2 car on a passé les deux bits "1" sur le chemin vers ce noeud (\blu{segment} est donc 
+égal à "11", il faudra matcher cette chaîne pour atteindre \textbf{P9}).
+
+\end{frame}
+
+\begin{frame}{Complexités}
+
+\imageR{good.png}{15} \\
+Le stockage ne dépend plus de la longueur maximale de préfixe mais uniquement du nombre de noeuds de l'arbre, dénoté \textbf{N}.
+$\Rightarrow \gre{O(N)}$\\$ $\\
+\imageR{bad.png}{15}\\
+Dans le cas d'un arbre plein, l'arbre binaire n'est pas modifié.\\ $\Rightarrow$ \red{mêmes complexités}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BINARY SEARCH SUR LA LG DES PREFIXES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Recherche binaire sur la longueur des préfixes}
+
+\begin{frame}{Introduction de la structure}
+
+On peut diviser l'opération du \textbf{longest match prefix} en une succession de \term{matching} \textbf{exacts}. \\
+La structure de données utilisée est un ensemble de sous-tables $H_1$, $H_2$, ..., $H_W$ de telle sorte que $H_i$ contienne tous
+les préfixes de taille $i$. Le matching va consister alors en une recherche dichotomique sur ces tables (et donc sur l'espace des 
+longueurs de préfixe).
+
+\end{frame}
+
+\begin{frame}{Matching exact}
+Afin de réduire le temps pris par le \term{matching exact}, on utilise une \textbf{fonction de hashage} \textit{(chaque sous-table 
+utilise sa propre fonction)}. \\
+
+Pour simplifier, nous considérerons qu'il n'y a pas de \textbf{hash collision} \textit{(2 préfixes hashés sur la même valeur)}.
+\end{frame}
+
+\begin{frame}{Lookup}
+Le \term{lookup} commence par considérer d'abord la table $H_{\frac{W}{2}}$, de là 2 cas possibles :
+\begin{itemize}
+\item \gre{un noeud correspondant au préfixe est trouvé}, dans ce cas on peut ignorer toutes les sous-tables $H_i$ avec $i < 
+\frac{W}{2}$ \textit{(longest matching prefix)}, on continue donc la recherche dans les sous-tables $H_j$ avec $j > \frac{W}{2}$.
+\item \red{aucun noeud n'est trouvé}, dans ce cas on peut ignorer toutes les sous-tables $H_i$ avec $i > \frac{W}{2}$, on continue 
+donc la recherche dans les sous-tables $H_j$ avec $j < \frac{W}{2}$.
+\end{itemize}
+etc...
+\end{frame}
+
+\begin{frame}{Exemple}
+\begin{figure}
+	\begin{center}
+	\imageR{CN_008.png}{50}$\qquad$
+	\imageR{CN_007.png}{200}
+	\caption{Exemple de structure.}
+	\end{center}	
+\end{figure}
+
+$H_{16}$ contient un \term{marqueur}, c'est-à-dire un préfixe n'existant pas dans la \textbf{FIB}, il est utilisé pour aider à 
+déterminer la branche à choisir lors de la recherche.
+
+\end{frame}
+
+\begin{frame}{Complexités}
+Soit \gre{W} la taille maximale d'un préfixe, \\$ $ \\
+\imageR{good.png}{15}
+\begin{itemize}
+\item Update en \gre{$O(\log_2 W)$}
+\item Lookup en \gre{$O(\log_2 W)$}
+\end{itemize}
+\imageR{bad.png}{15}
+\begin{itemize}
+\item Mémoire nécessaire en \red{$O(N \log_2 W)$}\\ \textit{(naïvement c'est en $O(NW)$ car il peut y avoir jusqu'à $W$ marqueurs 
+par préfixe de la \textbf{FIB} mais au final seul $\log_2 W$ d'entre eux sont nécessaires (ceux qui seront testés par 
+l'algorithme))}
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HARDWARE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Schéma basé sur le hardware: TCAM}
+\subsection{Ternary CAM} 
+\begin{frame}{Ternary CAM}
+
+\begin{itemize}
+\item \textbf{T}ernary \textbf{C}ontent-\textbf{A}dressable \textbf{M}emory
+\item C'est un type de mémoire utilisée pour des recherches à haute vitesse. \\
+Plus connu en tant que mémoire associative.
+\pause \item Dispose de 3 états de matching: 
+\begin{itemize}
+\item OK
+\item KO
+\item X (valeur "don't care")
+\end{itemize}
+\end{itemize}
+\pause
+\begin{exampleblock}{Exemple 1}
+10XX1 'match' les mots 10001, 10011, 10101, 10111. 
+\end{exampleblock}
+\end{frame}
+\begin{frame}{TCAM: Fonctionnement}
+TCAM sauve chaque entrée comme un couple (valeur, mask). \\
+La valeur mask est utile car elle sert à savoir si un bit 
+est à considérer ou non dans la comparaison. \\
+\pause
+\begin{exampleblock}{Exemple 2}
+Pour un mot de taille = 6, le préfixe 110* est noté comme étant le couple 
+(110000,111000)
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{TCAM: dans un routeur}
+\begin{figure}
+	\begin{center}
+	\imageR{TCAM.png}{250}
+	\caption{Schéma d'une table de forwarding utilisant TCAM.}
+	\end{center}	
+\end{figure}
+\end{frame}
+
+\begin{frame}{TCAM: dans un routeur}
+Le fonctionnement est semblable : 
+\begin{itemize}
+\item Comparaison de l'adresse IP destination avec toutes les entrées (bit à bit et simultanément)
+\pause \item Plusieurs matchs possibles:
+\begin{itemize}
+\item Notion de priorité selon la localisation dans la mémoire
+\item Entrées classées selon les longueurs de préfixes
+\end{itemize}
+\end{itemize}
+
+Ainsi le match dont le préfixe est le plus grand est selectionné. \\
+\end{frame}
+
+\begin{frame}{TCAM: dans un routeur}
+\begin{itemize}
+\item Espaces de la mémoire vide en cas d'ajout de préfixes.
+\item Route par défaut: 
+\begin{itemize}
+\item Stockée au début de la mémoire
+\item Valeur du mask = 0
+\item Empruntée seulement s'il n'y a aucun autre match
+\end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}{TCAM: performances}
+\imageR{good.png}{15}
+\begin{itemize}
+\item TCAM n'a besoin que d'un accès mémoire pour son lookup 
+\item Souvent utilisé car assez simple d'implémentation
+\item $\sim$133 millions de lookup par seconde 
+\end{itemize}
+\pause
+\imageR{bad.png}{15} \\
+Néanmoins, TCAM souffre d'un haut ratio coût/densité et d'une consommation 
+énergétique assez élevée (10-15W/puce). \\
+$\rightarrow$ On va tenter de réduire la taille de la TCAM.
+\end{frame}
+
+\subsection{Réduction du coût mémoire}
+\begin{frame}{Prefix Pruning}
+Littéralement "élagage de préfixe"; on va tenter de supprimer les informations redondantes. \\
+Mise en situation : 
+\begin{figure}
+	\begin{center}
+	\imageR{prunning_ex.png}{150}
+	\caption{Exemple de préfixes redondants.}
+	\end{center}	
+\end{figure}
+\end{frame} 
+\begin{frame}{Prefix Pruning}
+Si on suppose que P1 et P2 ont la même information de forwarding (ie. P1 et P2 forwardent sur le même port), 
+alors P2 est redondant. \\
+$\rightarrow$ pour un longest match prefix qui devait se terminer en P2 elle se terminera en P1 si 
+P2 est 'élagué'. \\
+En réalité, les tables de forwarding ont un certain nombre de préfixes redondants. \\
+$\rightarrow$ on élague et donc on réduit les entrées. \\
+
+$\sim$20-30 \% de préfixes redondants
+\end{frame}
+
+\begin{frame}{Mask Extension}
+On va utiliser la propriété principale des TCAM: 
+\begin{itemize} 
+\item Jusqu'à présent: 
+\begin{itemize}
+\item Uniquement utilisées pour des préfixes (ce qui implique?)
+\item Voir le second exemple 
+\end{itemize}
+\pause \item Maintenant:
+\begin{itemize}
+\item On veut étendre le type 'prefix-match' à un type 'ternary-match'
+\item Voir le premier exemple
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Mask Extension}
+On va maintenant voir par un exemple comment passer d'un prefix-match à un 
+ternary-match: 
+\begin{figure}
+	\begin{center}
+	\imageR{mask.png}{200}
+	\caption{Exemple de table de forwarding.}
+	\end{center}	
+\end{figure}
+\end{frame}
+\begin{frame}{Performances}
+Grâce à ces deux techniques, typiquement, la taille des tables de forwarding est de 
+$\sim$ 50-60\% par rapport à celle des tables sans optimisation.  \\
+\pause Conséquences de ces deux techniques : 
+\begin{itemize}
+\item Prefix Pruning: aucun problème
+\pause \item Mask Extension: \begin{itemize}
+\item augmente la complexité des mises à jours
+\item beaucoup de préfixes sont associés avec d'autres \pause $\rightarrow$ 
+cela constitue un obstacle aux mises à jour incrémentales. 
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Pruning \& Mask Extension: Exemple}
+\begin{figure}
+	\begin{center}
+	\imageR{norm_to_prun.png}{200}
+	\caption{Exemple de réduction d'une table.}
+	\end{center}	
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Pruning \& Mask Extension: Exemple}
+\begin{figure}
+	\begin{center}
+	\imageR{prun_to_mask.png}{200}
+	\caption{Exemple de réduction d'une table.}
+	\end{center}	
+\end{figure}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% IPv6 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Un mot sur les lookups IPv6}
+
+\subsection{Caractéristiques}
+
+\begin{frame}{IPv6 : Rappel}
+\begin{figure}
+	\begin{center}
+	\imageR{CN_009.png}{200}
+	\caption{Structure d'une adresse IPv6}
+	\end{center}	
+\end{figure}
+
+\begin{itemize}
+\item les adresses seront données par préfixe /48 (une très grosse organisation pourra éventuellement avoir des /47 ou plus 
+petit encore voire plusieurs /48),
+\item les /64 seront donnés lorsqu'il sera certain qu'un seul sous-réseau sera nécéssaire,
+\item les /128 seront données lorsqu'il sera certain qu'un seul appareil sera nécéssaire.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Caractéristiques intéressantes}
+
+Des informations précédentes, on peut tirer les caractéristiques suivantes : 
+\begin{enumerate}
+\item \textbf{Aucun préfixe} de longueur comprise entre \textbf{64} et \textbf{128} bits ne sera utilisé.
+\pause \item La plupart des préfixes seront des \textbf{/48} et, dans une moindre mesure des \textbf{/64}.
+\pause \item Très peu de préfixes \textbf{/128} \textit{(tout comme les /32 pour \term{IPv4})}.
+\end{enumerate}
+
+\end{frame}
+
+\subsection{Les TCAM pour IPv6}
+
+\begin{frame}{IPv6 : TCAM}
+
+Les TCAM supportent des mots de longueurs 36, 72, 144, 288 et 576 bits. \\
+On est tenté d'utiliser des mots de longueurs = 144 bits. \\
+Cependant, on a vu que dans IPv6 beaucoup de préfixes ont une longueur inférieure à 64 bits \\
+\pause $\rightarrow$ plus de 50\% d'un mot stockera la valeur 'don't care'. 
+
+On va présenter une approche afin de gagner 40\% d'espace. 
+
+\end{frame}
+
+\begin{frame}{IPv6 : TCAM}
+
+Dans cette approche: 
+\begin{itemize}
+\item les préfixes sont divisés en deux groupes, $G_S$ et $G_L$.
+\begin{itemize}
+\item $G_S$ contient les préfixes avec moins de 72 bits. 
+\item $G_L$ le reste
+\end{itemize}
+\pause \item Les blocs TCAM sont divisés en deux partitions, $P_S$ et $P_L$
+\begin{itemize}
+\item Les préfixes dans $G_S$ sont stockés dans $P_S$
+\item Les préfixes dans $G_L$ sont stockés dans $P_S$ (les 72 premiers bits) et servent de marqueur
+ et dans $P_L$, les bits restants concaténés à un tag de 16 bits. 
+\end{itemize}
+\pause \item Stockage sous forme d'un 6-uplet (préfixe, p, m, v, Next Hop, T) où p et m désignent si l'entrée
+est un préfixe, un marqueur ou les deux, v si le nexthop est valide (v=1) ou pas (v=0) et T un tag qui désigne un 
+sous groupe. 
+\end{itemize} 
+
+\end{frame}
+
+\begin{frame}{IPv6 : TCAM - Algorithme}
+\begin{enumerate}
+\item Les 72 bits significatifs d'une adresse destination A sont extraites et on cherche avec ces 72 bits dans $P_S$.
+\pause \item Si le meilleur match n'est pas un marqueur, alors on a le next hop.
+\pause \item Sinon on extrait les 56 bits restant de A et on recherche ces 56 bits concaténés avec le tag
+de 16 bits associé dans $P_L$. 
+\pause \item Si le résultat de la recherche est invalide (v = 0), alors le paquet est forwardé au next hop 
+trouvé à l'étape 2.
+\pause \item Sinon, le paquet est forwardé en utilisant le next hop trouvé à l'étape 3. 
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{IPv6 : TCAM - Un exemple}
+Soit la table suivante dont les adresses sont sur 12 bits, 8 bits pour $P_S$, 
+et le tag est sur 4 bits. \\
+Considérons que l'on veuille chercher l'adresse destination 1011.0110.1000 dans cette table.
+\begin{figure}
+	\begin{center}
+	\imageR{CN_010.png}{200}
+	\caption{Exemple de table de forwarding.}
+	\end{center}	
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{IPv6 : TCAM - Un exemple}
+Soit la table suivante dont les adresses sont sur 12 bits, 8 bits pour $P_S$, 
+et le tag est sur 4 bits. \\
+Considérons que l'on veuille chercher l'adresse destination 1011.0110.1000 dans cette table.
+\begin{figure}
+	\begin{center}
+	\imageR{CN_011.png}{200}
+	\caption{Exemple de table de forwarding.}
+	\end{center}	
+\end{figure}
+
+\end{frame}
+\section{Références}
+\begin{frame}{Références (1/3)}
+\begin{itemize}
+
+\item V. Fuller, T. Li, J. Yu, and K. Varadhan, “Classless inter-domain routing (CIDR): an address
+assignment and aggregation strategy,” RFC 1519 (Proposed Standard), Sept. 1993. [Online].
+Available at: http://www.ietf.org/rfc/rfc1519.txt
+\item D. Knuth, Fundamental Algorithms Vol. 3: Sorting and Searching. Addison-Wesley,
+Massachusetts, 197
+\item V. Srinivasan and G. Varghese, “Faster IP lookups using controlled prefix expansion,” in Proc.
+ACM SIGMATICS, Madison, Wisconsin, pp. 1–10 (June 1998)
+\item D. R. Morrison, “PATRICIA - Practical algorithm to retrieve information coded in alfanumeric,”
+IEEE/ACM Transactions on Networking, vol. 17, no. 1, pp. 1093–1102 (Oct. 1968).
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Références (2/3)}
+\begin{itemize}
+
+\item M. Waldvogel, G. Varghese, J. Turner, and B. Plattner, “Scalable high-speed IP routing lookups,”
+in Proc. ACM SIGCOMM, Cannes, France, pp. 25–36 (Sept. 1997).
+\item CYNSE10512 Network Search Engine, CYPRESS, Nov. 2002. [Online]. Available at: http://
+www.cypress.com
+\item Ultra9M – Datasheet from SiberCore Technologies. [Online]. Available at: http://www.
+sibercore.com
+\item P. Gupta, “Algorithmic search solutions: features and benefits,” in Proc. NPC-West 2003,
+San Jose, California (Oct. 2003).
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Références (3/3)}
+\begin{itemize}
+
+\item H. Liu, “Routing table compaction in ternary CAM,” IEEE Micro, vol. 22, no. 1, pp. 58–64
+(Jan. 2002)
+\item D. Pao, “TCAM organization for IPv6 address lookup,” in Proc. IEEE Int. Conf. on Advanced 
+Communications Technology, Phoenix Park, South Korea, vol. 1, pp. 26–31 (Feb. 2005).
+
+\end{itemize}
+\end{frame}
+\end{document}
