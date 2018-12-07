@@ -1,0 +1,369 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{multicol}
+
+\usepackage{mathenv}
+
+\def\nbOne{{\mathchoice {\rm 1\mskip-4mu l} {\rm 1\mskip-4mu l}
+{\rm 1\mskip-4.5mu l} {\rm 1\mskip-5mu l}}}
+
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}{0cm}{0cm}{0cm}{0cm}
+
+\usepackage[utf8]{inputenc}
+\usepackage{algorithm,algorithmic}
+
+\usepackage[french]{babel}
+\selectlanguage{french}
+
+\usepackage{color}
+\usepackage{graphicx}
+\graphicspath{{img/}} 
+\usepackage{listings}
+\definecolor{colKeys}{rgb}{0.75,0,0}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.75,0.75,0}
+\definecolor{colString}{rgb}{0,0,0.7}
+
+\lstset{
+basicstyle=\ttfamily\small, %
+identifierstyle=\color{colIdentifier}, %
+keywordstyle=\color{colKeys}, %
+stringstyle=\color{colString}, %
+commentstyle=\color{colComments}, %
+showspaces=false,
+}
+\lstset{language=java}
+
+% Commandes personnelles %
+
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\newcommand{\dred}[1]{\textcolor{darkred}{\textbf{#1}}}
+\newcommand{\dgre}[1]{\textcolor{darkgreen}{\textbf{#1}}}
+\newcommand{\dblu}[1]{\textcolor{darkblue}{\textbf{#1}}}
+\newcommand{\dora}[1]{\textcolor{darko}{\textbf{#1}}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\ora}[1]{\textcolor{darko}{#1}}
+\newcommand{\red}[1]{\textcolor{darkred}{#1}}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\cdil}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\image}[1]{\includegraphics{#1}}
+\newcommand{\imageR}[2]{\includegraphics[width=#2px]{#1}}
+\newcommand{\imageRT}[2]{\includegraphics[height=#2px]{#1}}
+\newcommand{\img}[1]{\begin{center}\includegraphics[width=400px]{#1}\end{center}}
+\newcommand{\imag}[1]{\begin{center}\includegraphics{#1}\end{center}}
+\newcommand{\imgR}[2]{\begin{center}\includegraphics[width=#2px]{#1}\end{center}}
+\newcommand{\imgRT}[2]{\begin{center}\includegraphics[height=#2px]{#1}\end{center}}
+\newcommand{\point}[2]{\item \ora{\underline{#1}} : \textit{#2}}
+\newcommand{\bfp}[2]{\item \textbf{#1} : \textit{#2}}
+\newcommand{\sumparam}[3]{\sideset{}{_{#1}^{#2}}\sum{#3}}
+\newcommand{\sumin}[3]{\sideset{}{_{i=#1}^{#2}}\sum{#3}}
+\newcommand{\sumkn}[3]{\sideset{}{_{k=#1}^{#2}}\sum{#3}}
+\newcommand{\intin}[3]{\sideset{}{_{#1}^{#2}}\int{#3}}
+\newcommand{\stitre}[1]{\noindent\textbf{\underline{#1}} \\}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\title{\textbf{\textcolor{darkblue}{Structures de Données - Rapport de conception.}}}
+\author{\textit{Dubuc Xavier \& Hannecart Aurore}}
+
+\begin{document}
+
+\maketitle
+
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\tableofcontents
+
+$ $ \\
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\newpage
+
+\section{Introduction}
+
+Dans le cadre du cours de \textit{Structures de données II}, nous avons été amenés à mener à bien un 
+projet concernant les arbres \textbf{BSP}\textit{(Binary Space Partition)}. Ces arbres sont des 
+arbres binaires de recherche spéciaux permettant de partitionner une scène constituée de segments. 
+Notre projet consiste à afficher ce que voit un \oe il d'une scène en 2 dimensions sur une droite en 
+utilisant l'\textbf{algorithme du peintre}. Pour ce faire, nous devons construire un arbre 
+\textbf{BSP} selon une heuristique fournie et interroger celui-ci.
+
+\section{Classes utilisées}
+
+\subsection{Couleur.java}
+
+Cette classe est une classe plus utile que nécessaire, en effet, elle permet simplement de faire la 
+correspondance entre une chaîne de caractères et un objet \textit{Color}. Ainsi, on crée des objets 
+contenant par exemple «Bleu» et \textit{Color.\blu{BLUE}} et on implémente des méthodes utiles comme 
+\textit{equals()} et \textit{toString()} afin de faciliter la correspondance décrite ci-dessus.
+
+\subsection{Palette.java}
+
+Cette classe \textit{abstraite} représente simplement la palette de couleurs que l'on utilise dans 
+ce projet. Elle contient un tableau d'objet \textit{Couleur} et implémente quelques méthodes de 
+classe permettant d'obtenir l'objet \textit{Couleur}, l'objet \textit{Color} ou la chaine de 
+caractères caractérisant une couleur en fonction d'une chaine de caractères d'un objet 
+\textit{Couleur} ou d'un objet \textit{Color}.
+
+\subsection{EquationDroite.java}
+
+Cette interface permet de symboliser l'équation d'une droite, elle demande comme méthode 
+\textit{eval(double x, double y)}. Elle nous servira pour calculer $ax+by+c$ pour un point désiré.
+
+\subsection{Segment.java}
+
+Cette classe permet de symboliser un segment, un segment étant caractérisé par 2 points 
+(classe java \textit{Point2D.Double}), une couleur (classe \textit{Couleur}) et l'équation de la 
+droite qui le porte (interface \textit{EquationDroite}). On y implémente la méthode 
+\textit{equals()} de manière à ce que 2 segments soient égaux si ils sont de même couleur et ont les 
+2 mêmes points les définissant. On implémente également une méthode \textit{hasIntersectionWith()} 
+ainsi que \textit{getIntersectionPointWith()} qui prennent toutes 2 une \textbf{EquationDroite} en 
+paramètre. La première permet de savoir si la droite portant le segment possède un et un seul point 
+d'intersection avec la droite passée en paramètre et la seconde permet de calculer ce point.
+
+\subsection{SceneReader.java}
+
+Cette classe permet de lire un fichier \textit{.txt} représentant une scène et de convertir les 
+informations en un Arraylist de segments tout en conservant également le nombre de segments, 
+l'abscisse maximale et l'ordonnée maximale.
+
+\subsection{BSPTree.java}
+
+Cette classe représente la structure de données des arbres \textbf{BSP}, nous avons décidé 
+d'utiliser une seule classe, classe pouvant représenter une feuille contenant un seul segment, vide 
+ou un noeud ayant 1 ou 2 fils. Elle possède un ArrayList contenant tous les segments qui sont 
+contenus dans le séparateur, séparateur représenté par une \textbf{EquationDroite}. Elle possède 
+également 2 booléens spécifiant si le noeud est une feuille et si celui-ci est vide ainsi que 2 
+\textbf{BSPTree} symbolisant les 2 fils du noeud. (Ces 2 fils pouvant ne pas exister)
+
+\subsection{Heuristic.java}
+
+Interface permettant de définir un heuristique. Elle demande la méthode 
+\textit{getDroite(ArrayList$<$Segments$>$ a)}, méthode qui est appellée à chaque séparation 
+effectuée. Celle-ci permet donc de définir quelle droite utiliser pour séparer la scène. Comme 
+exemple simple, l'heuristique consistant à choisir la droite portant le premier segment de 
+l'ensemble consiste à simplement retourner $a.get(0)$.
+
+\subsection{BSPTreeBuilder.java}
+
+Cette classe \textit{abstraite} permet de construire un arbre \textbf{BSP} en fonction d'une 
+heuristique prédéfinie. Elle consiste en l'application de l'algorithme vu dans le livre en 
+permettant de spécifier l'heuristique à utiliser, cette classe est donc totalement générale et 
+pourra être utilisée pour toutes les heuristiques que l'on aura à implémenter.
+
+\subsection{Vue.java}
+
+Définie par 2 points, un point de situation et un point d'atteinte. Le premier est le point où se 
+situe l'\oe il et le second permet de définir dans quel sens regarde cet \oe il.
+
+\subsection{DrawPanel.java}
+
+Classe étendant la classe \textbf{JPanel} de java et qui permet de dessiner le segment vu par un
+\oe il défini.
+
+\subsection{Painter.java}
+
+Cette classe abstraite permet d'appliquer l'algorithme du peintre et d'afficher la réponse demandée 
+par l'énoncé, c'est-à-dire le segment représentant ce que voit la \textbf{Vue} via un 
+\textbf{DrawPanel}. Elle possède 3 méthodes importantes, 
+\begin{itemize}
+\item \textit{getDepthOrder(BSPTree \red{tree}, Vue \red{v})} qui renvoie un ensemble de segments 
+triés par ordre d'apparition inversé face à l'oeil (le dernier segment de la liste est le premier 
+devant l'\oe il)
+\item \textit{getProjectedSegment(Vue \red{v}, Segment \red{a})} qui renvoie un \textbf{Segment} 
+correspondant à la projection de \red{a} sur la droite perpendiculaire au vecteur définissant l'\oe 
+il.
+\item \textit{getViewedSegment(Vue \red{v}, ArrayList$<$Segment$>$ \red{a})} qui appelle la méthode 
+précédente pour chaque segment de l'ensemble de segments triés par ordre d'apparition afin de 
+dessiner une droite représentant ce que voit l'oeil. Il reste ensuite à convertir les coordonnées 
+afin que la droite soit horizontale et bien centrée pour l'afficher sans problème.
+\end{itemize}
+Cette manière de faire n'est pas très optimale car on parcoure 3 fois l'arbre ou la liste des 
+segments pour effectuer un travail que l'on peut faire en parcourant une seule fois l'arbre (en se 
+collant complètement à l'algorithme explicité dans le livre). Nous avons cependant décidé dans un 
+premier temps de tout séparer afin que le code soit plus clair et plus compréhensible pour nous, 
+lors de l'implémentation, le code sera optimisé.
+
+
+\section{Algorithmes}
+
+\subsection{Algorithme 1 : Création d'un arbre BSP}
+
+\begin{algorithm}
+\caption{BuildBSPTree(S,h)}
+\textbf{Entrée} : \textit{\red{S}, une liste de segment de taille $n$ représentant une scène, 
+\red{h}, l'heuristique à suivre pour construire l'arbre.} \\
+\textbf{Sortie} : \textit{\red{T}, l'arbre BSP correspondant.}
+\begin{algorithmic}
+\IF{($n=0$)}
+\STATE $T_{separator} \leftarrow $ vide
+\STATE $T_{left} \leftarrow $ vide
+\STATE $T_{right} \leftarrow $ vide
+\STATE $T_{segments} \leftarrow $ vide
+\STATE $T_{isLeaf} \leftarrow $ vrai
+\STATE $T_{isEmpty} \leftarrow $ vrai
+\ELSE
+	\IF{($n=1$)}
+		\STATE $T_{separator} \leftarrow \red{S}[0]_{equation}$
+		\STATE $T_{left} \leftarrow$ vide
+		\STATE $T_{right} \leftarrow$ vide
+		\STATE $T_{isLeaf} \leftarrow$ vrai
+		\STATE $T_{isEmpty} \leftarrow$ faux
+		\STATE $Ajout(\red{S}[0],T_{segments})$
+	\ELSE
+		\STATE $T_{separator} \leftarrow$ \textit{GetDroite(\red{S},\red{h})}
+		\STATE $T_{isLeaf} \leftarrow$ faux
+		\STATE $T_{isEmpty} \leftarrow$ faux
+		\STATE $S^+ \leftarrow nouvelleListe()$
+		\STATE $S^- \leftarrow nouvelleListe()$
+		\FOR{$i$ allant de $0$ à $n-1$}
+		\STATE s $\leftarrow$ \red{S}[i]
+		\STATE $valBegin \leftarrow Evaluation(T_{separator}, s_{begin})$
+		\STATE $valEnd \leftarrow Evaluation(T_{separator}, s_{end})$
+		\IF{($valBegin = 0$ ET $valEnd = 0$)}
+			\STATE $Ajout(s,T_{segment})$
+			\IF{($valBegin \leq 0$ ET $valEnd \leq 0$)}
+				\STATE $Ajout(s,S^-)$
+			\ELSE
+				\IF{($valBegin \geq 0$ ET $valEnd \geq 0$)}
+					\STATE $Ajout(s,S^+)$
+				\ELSE
+					\STATE $m \leftarrow Intersection(T_{separator},s)$
+					\STATE $s_1 \leftarrow (s_{begin}, m, s_{color})$
+					\STATE $s_2 \leftarrow (m,s_{end}, s_{color})$
+					\IF{($valBegin \leq 0$)}
+						\STATE $Ajout(s_1,S^-)$
+						\STATE $Ajout(s_2,S^+)$
+					\ELSE
+						\STATE $Ajout(s_1,S^+)$
+						\STATE $Ajout(s_2,S^-)$
+					\ENDIF
+				\ENDIF
+			\ENDIF
+		\ENDIF
+		\ENDFOR
+		\STATE $T_{left} \leftarrow$ \textbf{BuildBSPTree$(S^-,h)$}
+		\STATE $T_{right} \leftarrow$ \textbf{BuildBSPTree$(S^+,h)$}
+		\STATE \textbf{retourner} T
+	\ENDIF
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Algorithme 2 : Heuristique}
+
+\noindent \underline{Rappel de l'heuristique} : heuristique numéro $4$, l'heuristique de 
+\textit{Teller} ; l'idée est de choisir la droite $d$ qui :
+\begin{itemize}
+\item \textbf{maximise} $\sigma_d$ \textit{(la proportion de segments coupés par $d$)} si $\sigma_d$ 
+est $\geq$ qu'un certain seuil donné représenté par un nombre réel,
+\item \textbf{minimise} $f_d$ \textit{(le nombre de segments coupés par $d$)} sinon.
+\end{itemize}
+
+\begin{algorithm}
+\caption{GetDroite($I_v$,$\tau$)}
+\textbf{Entrée} : \textit{\red{$I_v$}, une liste de segment de taille $n$ représentant une scène, 
+\red{$\tau$} un nombre réel représentant le seuil.} \\
+\textbf{Sortie} : \textit{\red{d}, l'équation de la droite à utiliser comme séparateur.}
+\begin{algorithmic}
+\STATE $(max_{\sigma_d}, segmentMax_{\sigma_d}) \leftarrow (0,(+\infty,+\infty))$
+\STATE $(min_{F_d}, segmentMin_{F_d}) \leftarrow (+\infty,(+\infty,+\infty))$
+\FORALL{les segments $s$ de $I_v$}
+	\STATE $d \leftarrow$ \textit{droite supportant s}
+	\STATE $f_d \leftarrow 0$
+	\STATE $\sigma_d \leftarrow 0$
+	\FORALL{les segments $s'$ de $I_v$ (sauf s)}
+		\IF{\textit{d intersecte s'}}
+			\STATE $f_d \leftarrow f_d + 1$
+		\ENDIF
+	\ENDFOR
+	\STATE $\sigma_d \leftarrow \dfrac{f_d}{|I_v|}$
+	\IF{$\sigma_d \geq max_{\sigma_d}$}
+		\STATE $(max_{\sigma_d}, segmentMax_{\sigma_d}) \leftarrow (\sigma_d,s)$
+	\ENDIF
+	\IF{$f_d \geq min_{f_d}$}
+		\STATE $(min_{f_d}, segmentMin_{f_d}) \leftarrow (f_d,s)$
+	\ENDIF
+\ENDFOR
+\IF{$\sigma_d \geq \red{\tau}$} 
+	\STATE \textit{\textbf{retourner} la droite portant $segmentMax_{\sigma_d}$}
+\ELSE
+	\STATE \textit{\textbf{retourner} la droite portant $segmentMin_{f_d}$}
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Algorithme 3 : algorithme du peintre}
+
+L'idée ici est de parcourir l'arbre selon un ordre défini et de travailler sur chaque segment 
+considéré. Le travail consiste à projeter le segment sur une droite derrière la scène, de vérifier 
+s'il n'est pas caché et de le dessiner sur la droite (avec sa couleur). Comme nous avons séparé le 
+travail, l'algorithme du peintre tel que nous l'avons utilisé est très léger et simple, il nous 
+permet uniquement de récupérer les segments dans l'ordre dans lequel l'\oe il les voit. Voici donc 
+cet algorithme, qui est pratiquement identique à celui du livre.
+
+\begin{algorithm}
+\caption{GetDepthOrder($T$,$v$)}
+\textbf{Entrée} : \textit{\red{$T$}, un arbre BSP, $v$ une vue (telle que décrite plus haut).}\\
+\textbf{Sortie} : \textit{\red{$A$}, un arraylist contenant les segments dans l'ordre décrit ci-
+haut.}
+\begin{algorithmic}
+\IF{\textit{T est vide}}
+\STATE \textit{\textbf{retourner} arraylist vide}
+\ELSE
+	\IF{\textit{T est une feuille}}
+		\STATE $Ajout(\red{A}, T_{segments}[0])$
+		\STATE \textit{\textbf{retourner} $\red{A}$}
+	\ELSE
+		\STATE $\red{A} \leftarrow$ \textit{arraylist vide}
+		\STATE $d \leftarrow T_{separator}$
+		\STATE $val \leftarrow Evaluation(d,v)$
+		\STATE $Right \leftarrow$ \textbf{GetDepthOrder}$(T_{right},v)$
+		\STATE $Left \leftarrow$ \textbf{GetDepthOrder}$(T_{left},v)$
+		\IF{$val = 0$}
+		\FORALL{\textit{segments \textbf{s} dans $Right$}}
+			\STATE $Ajout(\red{A},s)$
+		\ENDFOR
+		\FORALL{\textit{segments \textbf{s} dans $Left$}}
+			\STATE $Ajout(\red{A},s)$
+		\ENDFOR
+		\ELSE
+			\IF{$val \leq 0$}
+				\FORALL{\textit{segments \textbf{s} dans $Right$}}
+					\STATE $Ajout(\red{A},s)$
+				\ENDFOR
+				\FORALL{\textit{segments \textbf{s} dans $T_{segment}$}}
+					\STATE $Ajout(\red{A},s)$
+				\ENDFOR				
+				\FORALL{\textit{segments \textbf{s} dans $Left$}}
+					\STATE $Ajout(\red{A},s)$
+				\ENDFOR
+			\ELSE
+				\FORALL{\textit{segments \textbf{s} dans $Left$}}
+					\STATE $Ajout(\red{A},s)$
+				\ENDFOR
+				\FORALL{\textit{segments \textbf{s} dans $T_{segment}$}}
+				\STATE $Ajout(\red{A},s)$
+				\ENDFOR				
+				\FORALL{\textit{segments \textbf{s} dans $Right$}}
+					\STATE $Ajout(\red{A},s)$
+				\ENDFOR
+			\ENDIF
+		\ENDIF
+	\ENDIF
+	\STATE \textit{\textbf{retourner} \red{A}}
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\end{document}
