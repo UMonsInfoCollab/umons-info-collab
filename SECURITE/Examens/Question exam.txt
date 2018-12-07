@@ -1,0 +1,4 @@
+-Est-ce que c'est mieux d'avoir accès aux sources de logiciel point de vue sécurité ?
+
+-> Non car on peut voir le code source et donc les failles du logiciel (ex. Heartbleed) et les exploiter.
+-> Oui car on peut résoudre les failles plus vite... (BadGuy VS GoodGuy) 

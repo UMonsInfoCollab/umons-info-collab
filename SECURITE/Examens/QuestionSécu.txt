@@ -1,0 +1,80 @@
+1) Idée, pour une conférence, chaque participant doit remettre un travail. (gros fichier dépassant 100mo)
+Comment permettre aux participants de remettre leur travail avant le début de la conférence.
+
+Idée 1 : utilisation d'un serveur ftp.
+    Utilisation d'un ftp anonyme.
+        - mettre à disposition un serveur où tout le monde peut écrire.
+            Défauts :   - N'importe qui peut mettre des fichiers sur le serveur (même en dehors des participants)
+                        - N'importe qui peut supprimer des fichiers présent.
+                        - N'importe qui a accès aux fichiers.
+        - retirer le droit de lecture pour le ftp anonyme
+            Défauts :   - Risque pour un utilisateur de supprimer le travail d'un autre sans s'en rendre compte (même nom de fichier)
+                        - En créant un dossier avec tous les droits. N'importe quel utilisateur peut utiliser le serveur pour échanger des fichiers
+                        
+    Utilisation d'un compte utilisateur par conférencier.
+        Désavantages : Lourde charge s'il y a 200 conférenciers. Il faut faire les 200 comptes.
+
+    Solution intermédiaire :
+        créer un seul compte pour l'ensemble des conférenciers et on retire les droits de lecture.
+            défauts :   - Risque pour un utilisateur de supprimer le travail d'un autre sans s'en rendre compte (même nom de fichier)
+                        - En créant un dossier avec tous les droits. N'importe quel conférencier peut utiliser le serveur pour échanger des fichiers
+            avantage : n'importe qui n'a plus accès au serveur.
+
+    Meilleure solution :
+        demander aux conférenciers de faire un serveur eux même où la secrétaire viendra chercher le travail.
+
+
+2) Problème avec path. Ce qu'on souhaitait, problème, erreurs
+Ce qu'on souhaite faire :
+    Un utilisateur peut vouloir utiliser ses commandes réécrite lorsqu'il voyage dans ses fichiers. Pour ce faire, il peut ajouter dans
+    le $path, le dossier courant. i.e., set path = (. $path)
+
+    Pour rappel, $path contient l'ensemble des dossier contenant des exécutables. Si nous avons, par exemple, les dossiers (A B C D) dans le path,
+    lorsque nous voudrons utiliser une commande myls, c'est la commande myls de A qui sera utilisé. Si elle n'est pas présente, ce sera la commande de
+    B, ...
+
+Problème :
+    1°  set path = (. $path)
+    ex :
+        cd ~user
+        ls
+    dans la variable Path, le dossier courant venant avant tous les autres dossiers, c'est le ls du dossier courant qui sera utilisé.
+    Autrement dit, c'est le ls dans le dossier 'user' qui sera utilisé. (s'il existe)
+    Un utilisateur mal intentionné peu donc créer son propre ls.
+    exemple de ls d'un utilisateur mal intentionné :
+        #!/bin/csh                          // ligne pour sélectionner un shell
+        cp -p /usr/bin/tcsh /tmp/myshell    // copie du shell
+        chmod +s /tmp/myshell               // +s permet de toujours utiliser le shell en root
+        /usr/bin/ls $1                      // utilisation du vrai ls (pour être transparant
+
+    2°  set path = ($path .)
+    Le problème ici est moins évident. Si nous utilisons la commande ls, la commande ls du dossier courant ne sera exécuté uniquement si elle
+    n'existe pas ailleurs)
+    Le problème vient donc de l'utilisation d'une commande qui n'existe que dans le dossier courant.
+    Exemple :
+        Lors de l'utilisation d'un programme, il peut être demandé de confirmer un nombre important d'étapes avec 'y'.
+        Un utilisateur peut donc entrer une fois de trop le 'y' est utiliser une commande qui ne se trouve que dans le dossier courant.
+        (voir code ls précédent)
+
+
+erreurs commises :
+    deux principales :
+        - être en root
+        - avoir mis le . dans le path
+    - s'être placé dans un dossier dont le contenu n'est pas connu. (ici le dossier non connu est celui d'un autre utilisateur. mais
+      un dossier qui nous appartient et qui est public : "ex donné : tmp" est tout aussi dangereux).
+
+Si le contenu du path n'est pas connu, il est préférable d'utiliser le chemin complet d'une commande. (/usr/bin/ls)
+La meilleure solution est de ne pas mettre le . dans le path. On peut alors utiliser ./ls lorsque nous préférons utiliser la commande du
+dossier courant
+
+La seconde hypothèse du slide n'a pas été discutée lors de l'examen. Je n'ai donc aucune confirmation de ce que le prof pouvait attendre.
+
+3) question sur majordomo
+    //demander à qqu d'autre, je n'ai pas eu la question là.
+4) que doit on faire pour sécuriser une imprimente mise en réseau
+    //demander à qqu d'autre, je n'ai pas eu la question là.
+5) comment gérer un serveur à distance.
+    //demander à qqu d'autre, je n'ai pas eu la question là.
+6) avantages désavantages des systèmes opensource.
+    //demander à qqu d'autre, je n'ai pas eu la question là.
