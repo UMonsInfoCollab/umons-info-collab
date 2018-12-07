@@ -1,0 +1,12 @@
+graph g {
+	1 [label="0 <= 3"];
+	2 [label="7 <= 9"];
+	3 [label="0+7 <= 3+9"];
+	4 [label="7+0 <= 0+7"];
+	5 [label="7+0 <= 3+9"];
+	6 [label="7 <= 7+0"];
+	7 [label="7 <= 3+9",fillcolor=forestgreen,style=filled,fontcolor=white];
+	7 -- {5 6};
+	5 -- {3 4};
+	3 -- {1 2};
+}

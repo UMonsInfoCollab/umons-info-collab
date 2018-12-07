@@ -1,0 +1,7 @@
+graph g{
+	1[label="7 <= 3 + 9"];
+	2[label="7 <= 7 + 0",fillcolor=forestgreen,style=filled,fontcolor=white];
+	3[label="7 + 0 <= 3 + 9",fillcolor=firebrick4,style=filled,fontcolor=white];
+	1--2;
+	1--3;
+}

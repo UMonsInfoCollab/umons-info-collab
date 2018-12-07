@@ -1,0 +1,5 @@
+CHAP 3 - P61 : INSERT(successors,n) * (ou modifier la P60)
+CHAP 3 - P62 : enlever frontier <- ou ajouter sucessors <- P61
+CHAP 3 - P80 : "(comme de le GS générique .."
+
+

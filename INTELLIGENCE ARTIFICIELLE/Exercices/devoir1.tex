@@ -1,0 +1,278 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{multicol}
+
+\usepackage{mathenv}
+
+\def\nbOne{{\mathchoice {\rm 1\mskip-4mu l} {\rm 1\mskip-4mu l}
+{\rm 1\mskip-4.5mu l} {\rm 1\mskip-5mu l}}}
+
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}{0cm}{0cm}{0cm}{0cm}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[french]{babel}
+\selectlanguage{french}
+
+\usepackage{color}
+\usepackage{hyperref}
+\hypersetup{pdfborder={0 0 0}, colorlinks=true, urlcolor=blue, linkcolor = darkred}
+\usepackage{graphicx}
+\graphicspath{{img/}} 
+\usepackage{listings}
+\definecolor{colKeys}{rgb}{0.75,0,0}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.75,0.75,0}
+\definecolor{colString}{rgb}{0,0,0.7}
+
+\usepackage{verbatim}
+\usepackage{moreverb}
+
+\lstset{
+basicstyle=\ttfamily\small, %
+identifierstyle=\color{colIdentifier}, %
+keywordstyle=\color{colKeys}, %
+stringstyle=\color{colString}, %
+commentstyle=\color{colComments}, %
+showspaces=false,
+}
+\lstset{language=java}
+
+% Commandes personnelles %
+
+\definecolor{darkred}{rgb}{0.85,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darko}{rgb}{0.93,0.43,0}
+\definecolor{maintitle}{rgb}{0.66,0,0.22}
+\definecolor{title}{rgb}{0,0.5,0.5}
+\newcommand{\maintitlecolor}[1]{\textcolor{maintitle}{#1}}
+\newcommand{\titre}[1]{\textcolor{title}{#1}}
+\newcommand{\tsect}[1]{\titre{\section{#1}}}
+\newcommand{\tssect}[1]{\titre{\subsection{#1}}}
+\newcommand{\tsssect}[1]{\titre{\subsubsection{#1}}}
+\newcommand{\vect}[1]{\overrightarrow{#1}}
+\newcommand{\dred}[1]{\textcolor{darkred}{\textbf{#1}}}
+\newcommand{\dgre}[1]{\textcolor{darkgreen}{\textbf{#1}}}
+\newcommand{\dblu}[1]{\textcolor{darkblue}{\textbf{#1}}}
+\newcommand{\dora}[1]{\textcolor{darko}{\textbf{#1}}}
+\newcommand{\gre}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\blu}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\ora}[1]{\textcolor{darko}{#1}}
+\newcommand{\rouge}[1]{\textcolor{darkred}{#1}}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\cdil}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\term}[1]{\textit{\textcolor{maintitle}{#1}}}
+\newcommand{\image}[1]{\includegraphics{#1}}
+\newcommand{\imageR}[2]{\includegraphics[width=#2px]{#1}}
+\newcommand{\imageRT}[2]{\includegraphics[height=#2px]{#1}}
+\newcommand{\img}[1]{\begin{center}\includegraphics[width=400px]{#1}\end{center}}
+\newcommand{\imag}[1]{\begin{center}\includegraphics{#1}\end{center}}
+\newcommand{\imgR}[2]{\begin{center}\includegraphics[width=#2px]{#1}\end{center}}
+\newcommand{\imgRT}[2]{\begin{center}\includegraphics[height=#2px]{#1}\end{center}}
+\newcommand{\point}[2]{\item \ora{\underline{#1}} : \textit{#2}}
+\newcommand{\bfp}[2]{\item \textbf{#1} : \textit{#2}}
+\newcommand{\sumparam}[3]{\sideset{}{_{#1}^{#2}}\sum{#3}}
+\newcommand{\sumin}[3]{\sideset{}{_{i=#1}^{#2}}\sum{#3}}
+\newcommand{\sumkn}[3]{\sideset{}{_{k=#1}^{#2}}\sum{#3}}
+\newcommand{\intin}[3]{\sideset{}{_{#1}^{#2}}\int{#3}}
+\newcommand{\stitre}[1]{\noindent\textbf{\underline{#1}} \\}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ualpha}{\vect{u_\alpha}}
+\newcommand{\valpha}{\vect{v_\alpha}}
+\newcommand{\palpha}{\vect{\Psi_\alpha}}
+\newcommand{\npcomp}{\term{$\mathcal{NP}$-complet}}
+\newcommand{\npcompl}{\term{$\mathcal{NP}$-complet} }
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\begin{sffamily}
+
+\title{$ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\\begin{Huge}\maintitlecolor{Intelligence Artificielle}\end{Huge} \\ 
+   $ $ \\ \begin{LARGE}\textit{Devoir 1}\end{LARGE}}
+\author{\textit{Xavier Dubuc} \\ \blu{Xavier.DUBUC@student.umons.ac.be} \\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ $\\ $ 
+$ \\ 
+\includegraphics{UMONS.jpg}}
+%\date{}
+\end{sffamily}
+
+\begin{document}\begin{sffamily}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\hbox{\raisebox{0.4em}{\vrule depth 0.4pt height 0.4pt width 10cm}}
+
+\newpage
+
+\section{Question 1}
+
+\term{Parcourez la littérature portant sur l'\textbf{IA} pour savoir si les tâches suivantes peuvent être actuellement
+résolues par ordinateur : }
+\begin{itemize}
+\item \textbf{jouer un bon niveau au tennis de table,} le robot \textbf{Topio} développé par \textbf{TOSY} (firme de robotique 
+vietnamienne) permet de jouer au tennis de table de manière assez convaicante, on peut voir la version \textbf{2.0} en oeuvre ici 
+: \href{http://www.youtube.com/watch?v=SE6tFX5QM\_U}{http://www.youtube.com/watch?v=SE6tFX5QM\_U} , on l'aperçoit même en train de 
+battre son adversaire. De plus, on peut apprendre sur \href{http://en.wikipedia.org/wiki/TOPIO}{wikipédia} \textit{(entre autres)} 
+qu'une version \textbf{3.0} a été développée et qu'il apprend constamment en jouant, ce qui laisse à penser que cette version joue
+bien mieux que la version \textbf{2.0}. La réponse est donc \gre{OUI}.
+\item \textbf{conduire à Victorville, en Californie,}
+Je cite \href{http://www.cs.kuleuven.ac.be/~dannyd/CrashlessCars.pdf}{ce pdf} : \textit{«In 2007 a tricked-out Chevrolet Tahoe 
+nicknamed “Boss” and several similar driverless vehicles successfully navigated through a realistic city streetscape in 
+Victorville, Calif., one complete with other cars and even traffic jams. The autonomous cars and trucks were competing in the 
+Defense Advanced Research Projects Agency’s Urban Challenge, arace designed to demonstrate that robot road vehicles can become 
+practical. Soon afterward General Motors CEO G.Richard Wagoner, Jr., predicted his company will market autonomous vehicles within 
+10 years. That prognostication may be a bit optimistic, but his statement surely points the way to real robotic cars in the not 
+too distant future.»} $\Rightarrow$ La réponse est donc \gre{OUI}.
+\item \textbf{jouer au Bridge \textit{(niveau compétition)},}
+l'article le plus récent, 
+\href{http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6TYF-3TP12X4-3&_user=532109&_coverDate=04/30/1998&_rdoc=1&_fmt=high&_orig=search&_origin=search&_sort=d&_docanchor=&view=c&_searchStrId=1508536596&_rerunOrigin=scholar.google&_acct=C000026718&_version=1&_urlVersion=0&_userid=532109&md5=1fc89a599671794b51c6346da562e219&searchtype=a}
+{\textit{«Search in games with incomplete information: a case study using Bridge card play»}}, écrit par
+\textbf{Ian Frank} et \textbf{David Basin}, fait état d'une intelligence artificielle qu'ils ont développé et qui permet de jouer 
+au \textbf{Bridge} avec la tactique \textit{«Best Defense»}. On en déduit que le niveau compétition n'est pas atteint par cette
+intelligence artificielle, la réponse est donc \rouge{NON}.
+\item \textbf{découvrir et prouver de nouveaux théorèmes mathématiques,}
+malgré de longues recherches, le peu que j'ai pu trouver fut quelques articles 
+\href{http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6TYF-47YJHBM-7&_user=532109&_coverDate=08/31/1979&_alid=1508526304&_rdoc=1&_fmt=high&_orig=search&_origin=search&_zone=rslt_list_item&_cdi=5617&_sort=r&_st=13&_docanchor=&view=c&_ct=109&_acct=C000026718&_version=1&_urlVersion=0&_userid=532109&md5=90dc57b7279c2f524a73f59c197bb90d&searchtype=a}
+{des années 70} spécifiant comment prouver/réfuter un large nombre de résolution linéaire \textit{(même avec la VPN je n'ai pas pu 
+avoir accès au fichier PDF)}. Rien n'est trouvable quant à la découverte de théorèmes par contre, ce qui oriente ma réponse vers 
+le \rouge{NON}.
+\end{itemize}
+
+\section{Question 2}
+
+\newcommand{\valeur}[1]{\gre{\textit{#1}}}
+
+\begin{itemize}
+\item \term{Décrire une fonction pour un agent rationnel dans le cas où chaque mouvement coûte un point (pour le 
+reste les hypothèses sont identiques à celles données au transparent 22 du chapitre 2, y compris le gain d'un point
+par carré néttoyé). Le programme de l'agent correspondant exige-t-il de conserver un état interne (agent avec 
+modèle)?}\\
+
+
+$\Rightarrow$\textbf{ Première ébauche}\\
+
+\begin{center}\fbox{
+\begin{minipage}{0.7\textwidth}
+\blu{function} \rouge{MODEL-VACUUM-AGENT} ([\valeur{location},\valeur{status}]) \blu{returns} an action \\
+\indent $\qquad$\blu{persistent} : \valeur{action}, l'action la plus récente (initialement vide) \\
+\indent $\qquad$\blu{if} \valeur{status} = \valeur{Sale} \blu{then} \valeur{action} $\leftarrow$ \valeur{Aspire} \\
+\indent $\qquad$\blu{else} \\
+\indent $\qquad\qquad$\blu{if} \valeur{location} = \valeur{A} \blu{then} \\
+\indent $\qquad\qquad\qquad$\blu{if} \valeur{action} = \valeur{Gauche} \blu{then} \valeur{action} $\leftarrow$ 
+\valeur{Stop} \\
+\indent $\qquad\qquad\qquad$\blu{else} \valeur{action} $\leftarrow$ \valeur{Droite} \\
+\indent $\qquad\qquad$\blu{else} \\
+\indent $\qquad\qquad\qquad$\blu{if} \valeur{action} = \valeur{Droite} \blu{then} \valeur{action} $\leftarrow$ 
+\valeur{Stop} \\
+\indent $\qquad\qquad\qquad$\indent \blu{else} \valeur{action} $\leftarrow$ \valeur{Gauche} \\
+\indent $\qquad$\blu{return} \valeur{action}
+\end{minipage}
+}
+$ $\\ 
+$ $\\ 
+\end{center}
+
+Le robot se comporte de la manière suivante :
+\begin{itemize}
+\item si le carré où il se trouve est sale, quoi qu'il arrive, il l'aspire ;
+\item si ce carré n'est pas sale, il consulte la dernière action qu'il a effectué, s'il vient de se déplacer, c'est que
+le précédent carré était propre, il peut donc s'arrêter, son travail est terminé ;
+\item sinon, dans tous les autres cas, (c'est-à-dire que le carré est propre et il ne vient pas de se déplacer), il 
+doit changer de carré. \\
+\end{itemize}
+
+\textbf{Avec cette fonction d'agent}, le score maximal atteignable est 0 (par exemple, départ en A, il aspire (+1) il va 
+en B (-1), il aspire (+1) puis retourne en A (-1) et s'arrête) ; pour maximiser ce score il faudrait empêcher le retour 
+en A à la fin ; autrement dit stocker l'état du "monde". On va donc stocker l'état de cette manière : 
+(\valeur{statusA},\valeur{statusB}). Ceci nous permettra d'éviter le dernier retour en A car \valeur{state} contiendra 
+(\valeur{Propre},\valeur{Propre}) (cette variable contient (\valeur{Sale},\valeur{Sale}) initialement). \\
+
+Voici cette fonction :\\
+
+\newcommand{\fesp}{\indent $\qquad$}
+\begin{center}\fbox{
+\begin{minipage}{0.8\textwidth}
+\blu{function} \rouge{MODEL-VACUUM-AGENT} ([\valeur{location},\valeur{status}]) \blu{returns} an action \\
+\indent $\qquad$\blu{persistent} : \valeur{action}, l'action la plus récente (initialement vide) \\
+\indent $\qquad\qquad\ \qquad$ \valeur{state}, contenant un couple représentant l'état de l'environnement \\
+\fesp \blu{if} \valeur{status} = \valeur{Sale} \blu{then} \valeur{action} $\leftarrow$ \valeur{Aspire}\\
+\fesp \blu{else} \\
+\fesp $\qquad$ \blu{if} \valeur{location} = \valeur{A} \blu{then} \\
+\fesp $\qquad\qquad$ \valeur{state} = (\valeur{Propre},\valeur{state}[1])\\
+\fesp $\qquad\qquad$ \blu{if} \valeur{state} = (\valeur{Propre},\valeur{Propre}) then \valeur{action} $\leftarrow$ \valeur{Stop} \\
+\fesp $\qquad\qquad$ \blu{else} \valeur{action} $\leftarrow$ \valeur{Droite}\\
+\fesp $\qquad$ \blu{else} \\
+\fesp $\qquad\qquad$ \valeur{state} = (\valeur{state}[0],\valeur{Propre})\\
+\fesp $\qquad\qquad$ \blu{if} \valeur{state} = (\valeur{Propre},\valeur{Propre}) then \valeur{action} $\leftarrow$ \valeur{Stop} \\
+\fesp $\qquad\qquad$ \blu{else} \valeur{action} $\leftarrow$ \valeur{Gauche}\\
+\fesp \blu{return} \valeur{action}
+\end{minipage}
+}
+$ $\\ 
+$ $\\ 
+$ $\\ 
+\end{center}
+
+Dans ce cas-ci, le robot ne se déplacera que s'il n'est pas sûr que l'autre carré n'est pas propre. Ainsi, dans l'exemple employé 
+précédemment :
+\begin{itemize}
+\item il commence en \textbf{A}, \valeur{state} = (\valeur{Sale},\valeur{Sale}) et \valeur{status} = \valeur{Sale}, donc il aspire 
+(+1)
+\item \valeur{state} = (\valeur{Sale},\valeur{Sale}) et \valeur{status} = \valeur{Propre}, il met \valeur{state} à jour et se 
+déplace en \textbf{B} (-1)
+\item il arrive en \textbf{B}, \valeur{state} = (\valeur{Propre},\valeur{Sale}) et \valeur{status} = \valeur{Sale}, donc il aspire
+(+1)
+\item \valeur{state} = (\valeur{Propre},\valeur{Sale}) et \valeur{status} = \valeur{Propre}, il met \valeur{state} à jour et 
+s'arrête car \valeur{state} = (\valeur{Propre},\valeur{Propre})
+\end{itemize}
+
+$\Rightarrow$ Le robot obtiendra donc un score compris entre $-1$ (les 2 carrés étaient propres) et $1$ (les 2 carrés étaient 
+sales).
+
+\textbf{Comme l'explication précédente le pointe, le robot nécessite la conservation d'un état interne lui permettant de savoir
+à tout instant la dernière action effectuée.} \\
+
+\item \term{Discutez des conceptions possibles d'un agent pour les cas où des carrés propres peuvent devenir sales
+(par exemple, pour chaque unité de temps, chaque carré propre à 10\% de chances de devenir sale) et où la géographie
+de l'environnement est inconnue. Est-il judicieux pour l'agent d'apprendre de son expérience dans ces cas ? Si oui,
+que devrait-il apprendre ? Si non, pourquoi pas ?} \\
+
+$\Rightarrow$ Il est très judicieux d'apprendre de son environnement, ne fusse que pour la géographie, le fait de savoir comment se
+découpe son environnement peut l'amener à optimiser sa performance. Si on prend le même exemple que ci-dessus, sans connaître la
+géographie de l'endroit où il évolue, ses décisions ne peuvent être aussi précises, il devra scruter son environnement à l'aveugle.
+Quant au fait que les carrés redeviennent propres à 10\% de chances, il peut, en apprenant ça se dire qu'il ne revisite un carré 
+que si ça fait $n \geq 10$ unités de temps qu'il ne l'a pas visité, minimisant ainsi ses déplacements (s'il y a 3 carrés et qu'il 
+revisite sans cesse les carrés pour vérifier qu'ils sont toujours propres, il fait énormément de déplacements inutiles, alors que 
+s'il aspire les 3 à la suite toutes les 10 unités de temps, il ne fait pas de déplacements inutiles).
+\end{itemize}
+
+\section{Question 3}
+
+\term{Considérons un simple thermostat qui allume un four lorsque la température est d'au moins 3 degrés en dessous 
+du réglage, et qui l'éteint lorsque la température est d'au moins 3 degrés au dessus du réglage. Un thermostat est-il 
+une instance d'un simple agent réflexe, d'un agent réflexe basé sur un modèle ou d'un agent basé sur des objectifs ? 
+Justifiez.} \\
+
+$\Rightarrow$ Il s'agit d'un simple agent réflexe, sa décision ne dépend que de la perception courante. En effet, à chaque 
+unité de temps, il obtient une perception de la température du four, si elle est supérieur au réglage il coupe le four, si elle 
+est inférieur il l'allume sinon il ne fait rien.
+
+\section{Répartition du temps}
+
+\begin{enumerate}
+\item entre $1$ et $2$h, certains sujets sont difficiles à trouver et les articles sur le bridge et Topio m'ont assez bien 
+captivés, j'ai donc passé pas mal de temps à les lire (ou à regarder des vidéos).
+\item $1$h environ, en comptant la mise en page LaTeX.
+\item $5$ minutes.
+\end{enumerate}
+
+\end{sffamily}\end{document}
