@@ -1,0 +1,241 @@
+\documentclass[a4paper,11pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{hyperref}
+\hypersetup{pdfauthor={Julien Delplanque},
+            pdftitle={Calcul des probabilités : Synthèse des formules},
+            pdfsubject={probas},
+            pdfkeywords={résumé}}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\renewcommand{\thesection}{}
+\renewcommand{\thesubsection}{}
+
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[C]{}
+\fancyhead[L]{}
+\fancyhead[R]{}
+
+\renewcommand{\footrulewidth}{1pt}
+\fancyfoot[C]{\textbf{\thepage}}
+\fancyfoot[L]{\textsc{Delplanque} Julien}
+\fancyfoot[R]{Version 2.1 - 2014-2015}
+
+\begin{document}
+\renewcommand{\labelitemi}{$\cdot$}
+\renewcommand{\labelitemii}{$\diamond$}
+\renewcommand{\labelitemiii}{$\cdot$}
+\begin{Large}\begin{center}
+   \underline{\textbf{Calcul des probabilités : Synthèse des formules}}
+\end{center}\end{Large}
+
+%%%%%
+\section{Séance I : Introduction}
+\begin{itemize}
+	\item \textbf{Événement} : Un événement $A$ lié à une expérience aléatoire est un sous-ensemble des résultats possibles. Il est souvent défini par une proposition.
+	\item \textbf{Probabilité d'un événement} : La probabilité d'un événement $A$ est définie comme $P(A)=$ nombre de cas favorables$/$nombre de cas possibles
+	\item \textbf{Arbre pondéré} : Un arbre pondéré est un schéma permettant de résumer une expérience aléatoire en connaissant des probabilités conditionnelles.
+	\item \textbf{Opérations ensemblistes :}
+		\begin{itemize}
+			\item \textbf{Événements contraires} : $A^C$ l'événement $A$ ne se produit pas.
+			\item \textbf{Réalisation simultanée de deux événements} : $A \cap B$
+			\item \textbf{Réalisation d'un événement au moins} : $A \cup B$
+			\item \textbf{Événements indépendants} : $P(A \cap B) = P(A) P(B)$
+			\item \textbf{Événements dépendants} : $P(A|B)$ (probabilité de B si A est arrivé)
+			\item $A - B = A \cap B^C$
+			\item $A \oplus B = A \cup B - A \cap B$
+			\item $P(A \cup B) = P(A)+P(B)-P(A \cap B)$
+			\item $P(A \cap B) = P(A)P_A(B)$
+		\end{itemize}
+	\item \textbf{Lois de De Morgan} :
+		\begin{align*}
+			\overline{A} \cap \overline{B} =& \overline{A \cup B} \\
+			\overline{A} \cup \overline{B} =& \overline{A \cap B}
+		\end{align*}
+	\item \textbf{Espérance mathématique (ou moyenne)} :
+		\[
+			E(X)=\bar{X}=\sum\limits_{i=1}^{n}{x_ip_i}
+		\]
+	\item \textbf{Variance} :
+		\[
+			V(X)=\sum\limits_{i=1}^{n}{(x_i-\bar{X})^2p_i}
+			\text{ avec }\bar{X} = E(X)
+		\]
+	\item \textbf{Écart-type} :
+		\[
+			\sigma(X) = \sqrt{V(X)}
+		\]
+\end{itemize}
+
+%%%%%
+\section{Séance II : Densité de probabilité}
+\begin{itemize}
+	\item \textbf{Densité de probabilité} : Une densité de probabilité est une fonction $f$ qui permet de représenter une loi de probabilité sous forme d'intégrale. Elle vérifie deux conditions :
+		\[
+			\forall x \in \mathbb{R} : f(x) \ge 0 \quad \quad
+			\int\limits_{-\infty}^{+\infty}{f(x)dx}=1
+		\]
+	\item \textbf{Fonction de répartition} : Une fonction de répartition $F_X(x)$ d'une variable aléatoire $X$ représente la loi de probabilité de cette variable aléatoire. Elle est définie comme :
+		\[
+			F_X(x)=\int\limits_{-\infty}^{x}{f(x)dx}
+		\]
+\end{itemize}
+
+%%%%%
+\section{Séance III : Loi de probabilité - Moments}
+\begin{itemize}
+	\item Une loi de probabilité est définie par :
+		\[
+			\forall k : P_X\{k\} \ge 0 \quad\quad
+			\sum\limits_{k=0}^{n}{P_X\{k\}} = 1
+		\]
+	\item \textbf{Loi continue ($\mathbb{R}$)} :
+	\begin{itemize}
+		\item \textbf{Moment d'ordre r} :
+			\begin{align*}
+				\alpha_r(X) =& \int\limits_{\mathbb{R}}{x^rf(x)dx} \\
+				\bar{X} =& \alpha_1
+			\end{align*}
+		\item \textbf{Moment centré d'ordre r} :
+			\begin{align*}
+				\mu_r(X) =& \int\limits_{\mathbb{R}}{\left(x-\bar{X}\right)^rf(x)dx} \\
+				\mu_1 =& 0 \\
+				V=\mu_2 =& \sigma^2 = \alpha_2 - \alpha_1^2 \\
+				\mu_3 =& \alpha_3 - 3\alpha_2 \alpha_1 + 2\alpha_1^3
+			\end{align*}
+	\end{itemize}
+	\item \textbf{Moment factoriel d'ordre $r$ en loi discrète ($\mathbb{Z}$)} :
+		\begin{align*}
+			\alpha_{[r]}(X) =& \sum\limits_{i = 0}^{n}{\frac{x!}{(x-r)!}} \\
+			P(x) =& E\left(\frac{X!}{(X-r)!}\right) \\
+			\alpha_1 =& \alpha_{[1]} \\
+			\alpha_2 =& \alpha_{[2]} + \alpha_{[1]} \\
+			\alpha_3 =& \alpha_{[3]} + 3\alpha_{[2]} + \alpha_{[1]}
+		\end{align*}
+\end{itemize}
+
+%%%%%
+\section{Séance IV : Moments-Fonction caractéristique}
+\begin{align*}
+	\phi(t) =& \int\limits_{\mathbb{R}}{e^{itx}dp(x)} =
+		\int\limits_{\mathbb{R}}e^{itx}f(x)dx \\
+	|\phi(t)| \le& 1 \\
+	\phi(0) =& 1 \\
+	\phi(t) =& 1 + it\alpha_1 + \frac{(it)^2}{2!}\alpha_2 + \dots + \frac{(it)^r}{r!}\alpha_r \\
+	\alpha_k =& \frac{\partial^k \phi(0)}{i^k}
+\end{align*}
+
+%%%%%
+\section{Séance V : Sommes de variables aléatoires réelles}
+\begin{itemize}
+	\item Soient deux v.a.r. $X$ et $Y$ respectivement données par les densités de probabilité $f_X(k)$ et $f_Y(l)$ et soit $Z = X+Y \implies z = k+l$, on a alors par le produit de convolution que :
+	\begin{itemize}
+		\item Pour une densité continue :
+			\[
+				f_Z(Z) = \int\limits_{-\infty}^{+\infty}{f_X(k)f_Y(z-k)dk} = \int\limits_{-\infty}^{+\infty}{f_X(z-l)f_Y(l)dl}
+			\]
+		\item Pour une densité discrète :
+			\[
+				f_Z(Z) = \sum\limits_{k=-\infty}^{+\infty}{f_X(k)f_Y(z-k)} = \sum\limits_{l=-\infty}^{+\infty}{f_X(z-l)f_Y(l)}
+			\]
+	\end{itemize}
+	\item Soit $f_X(x) = ae^{-ax}$ alors $\overline{x} = \alpha_1 = \frac{1}{\alpha}$ et $V = \mu_2 = \frac{1}{\alpha^2}$
+\end{itemize}
+
+%%%%%
+\section{Séance VI : Théorème de la limite centrale et loi des grands nombres}
+\begin{itemize}
+	\item \textbf{Théorème de la limite centrale} \\
+	Soit $X_i$, $i>1$ une suite de v.a.r. :
+	\begin{itemize}
+		\item indépendantes
+		\item de même loi
+		\item de variance finie $\sigma^2$
+	\end{itemize}
+	Alors,
+	\[
+		Z_n = \frac{\sum\limits_{i=0}^{n}{(x_i-E(X_i))}}{\sigma\sqrt{n}}
+	\]
+	est telle que
+	\[
+		P(Z_n \le x) \underset{n\rightarrow \infty}\longrightarrow
+		\frac1{\sqrt{2\pi}}
+		\int\limits_{-\infty}^{x}{e^{-y^2/2}dy}
+	\]
+	\[
+		Z_n \underset{n\to+\infty}{\longrightarrow} N(0,1)
+	\]
+	\item \textbf{Loi des grands nombres} :
+	\begin{itemize}
+		\item \textbf{Loi faible} :
+		Soit $X_n$, $n \in \mathbb{N}$, une suite de v.a.r. indépendantes :
+		\begin{itemize}
+			\item soit de même loi et $E(X_1^2) < \infty$
+			\item soit de lois quelconques et $\frac{1}{n^2}\sum\limits_{i}{\sigma^2(X_i) \rightarrow 0}$ (critère de Markov)
+		\end{itemize}
+		Alors :
+		\[
+			\forall \epsilon>0 : \lim\limits_{n\rightarrow \infty}
+			{P\left(\left|\frac{1}{n}\sum\limits_{i}{X_i}-E(X_1)\right|
+			>\varepsilon\right)} = 0
+		\]
+		Autrement dit, la moyenne arithmétique de $X_n$ converge vers l'espérance de $X_1$.
+		\item \textbf{Loi forte} :\\
+		Soit $X_n$, $n \in \mathbb{N}$, une suite de v.a.r. indépendantes :
+		\begin{itemize}
+			\item soit de même loi et $E(|X_1|) < \infty$ (critère de Kolmogorov)
+			\item soit de lois quelconques et $\sum\limits_{i}{}\frac{1}{i^2}\sigma^2(X_i) < \infty$
+		\end{itemize}
+		Alors, presque pour toute réalisation $w$ :
+		\[
+			\lim\limits_{n \rightarrow \infty}
+			\frac1n\sum\limits_i{X_i} = E(X_1)
+		\]
+	\end{itemize}
+	On parle de convergence presque sûre.
+	Autrement dit, la moyenne arithmétique de $X_n$ converge,
+	pour presque chaque réalisation, vers l'espérance de $X_1$.
+\end{itemize}
+
+%%%%%
+\section{Formules utiles}
+\begin{itemize}
+\item \textbf{Intégrales spéciales} :
+	\begin{align*}
+		\int\limits_{-\infty}^{+\infty}{e^{-\alpha x^2}dx}=&
+			\sqrt{\frac{\pi}{\alpha}} \\
+			\int\limits_{-\infty}^{0}{x^ne^xdx}=&(-1)^nn!
+		\end{align*}
+\item \textbf{Symétrie et intégrales} :
+	\begin{align*}
+		f(-x) = -f(x) \implies&
+			\int\limits_{-\infty}^{+\infty}{f(x)dx}=0 \\
+		f(-x) = f(x) \implies&
+			\int\limits_{-\infty}^{+\infty}{f(x)dx} =
+			2\int\limits_{-\infty}^{0}{f(x)dx} =
+			2\int\limits_{0}^{+\infty}{f(x)dx}
+	\end{align*}
+\item \textbf{Sommes} :
+	\begin{align*}
+		\sum\limits_{i=1}^{n}{i} =& \frac{n(n+1)}{2} \\
+		\sum\limits_{i=1}^{n}{i^2} =& \frac{(2n+1)(n+1)n}{6} \\
+		\sum\limits_{i=1}^{n}{i^3} =& \left(\sum\limits_{i=1}^{n}{i}\right)^2 \\
+		\sum\limits_{i=1}^{n}{i^4} =& \frac{n}{30}(n+1)(2n+1)(3n^2+3n-1)
+	\end{align*}
+\item \textbf{La fonction gamma}, prolongement de la factorielle :
+	\begin{align*}
+		\forall n>0 \quad&
+		\Gamma(n)=\int\limits_{0}^{+\infty}{t^{n-1}e^{-t}dt} \\
+		&\Gamma(n+1)=n\Gamma(n) \\
+		&\Gamma(1/2)=\sqrt{\pi} \\
+		&\Gamma(n+1/2)=\frac{(2n)!}{2^{2n}n!}\sqrt{\pi}
+	\end{align*}
+\end{itemize}
+\end{document}

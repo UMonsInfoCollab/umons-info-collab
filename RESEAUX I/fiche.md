@@ -28,7 +28,7 @@ Q2 :
 * Oral 70%, Projet 30% (le projet ne se fait pas en seconde session). Réussir les deux
 * 30h cours + 30h projet
 
-(http://applications.umons.ac.be/web/fr/pde/2018-2019/ue/US-M1-SCINFO-028-M.htm)
+(http://applications.umons.ac.be/web/fr/pde/2018-2019/ue/US-B2-SCINFO-010-M.htm)
 
 ## Professeur
 
