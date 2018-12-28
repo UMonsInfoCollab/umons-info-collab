@@ -1,0 +1,71 @@
+\section{Opérations sur les signaux}
+    \subsection{Opérations élémentaires}
+        Les opérations suivantes sont simples à faire subir à des signaux (discrets ou continus) :
+        \begin{itemize}
+            \item Décalage temporel (ou time-shift)\index{Décalage temporel}\index{Time-shift|see {Décalage temporel}} : $f(t) \longrightarrow f(t-t_0)$ (on décale simplement le signal dans le temps).
+            \item Réflexion (ou time-reversal)\index{Réflexion}\index{Time-reversal|see {Réflexion}} : $f(t) \longrightarrow f(-t)$ (on change le sens du temps).
+            \item Changement d'échelle\index{Changement d'échelle} : $f(t) \longrightarrow f(\alpha t)$. Si $\alpha > 1$, le signal est contracté (selon l'axe temporel). Si $\alpha < 1$, le signal est dilaté (selon l'axe temporel).
+            \item Somme : $\forall t, z(t) = x(t) + y(t)$, avec $x$ et $y$ deux signaux.
+            \item Produit : $\forall t, z(t) = x(t)\,y(t)$, avec $x$ et $y$ deux signaux.
+        \end{itemize}
+
+        \begin{remarque}
+            A partir d'un signal non périodique $f(t)$, on peut créer un signal périodique $f_{T_0}(t)$ en utilisant la somme et le décalage temporel comme suit :
+            $$
+                f_{T_0}(t) = \sumInfty{k} f(t - kT_0)
+            $$
+        \end{remarque}
+
+    \subsection{Produit scalaire}
+        Le produit scalaire de deux signaux complexes $f(t)$ et $g(t)$ tels que $f$ et $g$ ne sont pas périodiques est :
+        $$
+            < f(t), g(t) > = \intInfty f(t)g^*(t)\,dt
+        $$
+        
+        La notation $g^*(t)$ indique qu'on prend le conjugué des valeurs complexes de $g(t)$.
+
+        Si $f$ et $g$ sont périodiques :
+        $$
+            <f_{T_0}(t), f_T(t)> = \begin{cases}
+                \frac{1}{T_0} \int\limits_{-\frac{T_0}{2}}^{\frac{T_0}{2}} f_{T_0}(t)g_T^*(t)\,dt & \mbox{si } \exists k \in \N, T = \frac{T_0}{k}\\
+                0 & \mbox{sinon}
+            \end{cases}
+        $$
+
+        L'énergie d'un signal est $E = <f(t), f(t)> = \intInfty|f(t)|^2\,dt$. Un signal périodique a une énergie infinie. Pour un signal périodique, $<f_{T_0}(t), f_{T_0}(t)>$ donne sa puissance $P$.
+
+    \subsection{Convolution}
+        \begin{remarque}
+            Cette sous-section traite de la convolution en temps continu. La convolution en temps discret est donnée dans la \autoref{subsec:convolution}.
+        \end{remarque}
+        
+        Soient $x(t)$ et $y(t)$ à temps continu et à énergie finie. La convolution est donnée par :
+        $$
+            z(t) = x(t) * y(t) = \intInfty x(\tau)y(t-\tau)\, d\tau
+        $$
+
+        Si $x(t)$ et $y(t)$ sont périodiques :
+        $$
+            z_{T_0}(t) = x_{T_0}(t) * y_T(t) = \frac{1}{T_0} = \int_{-\frac{T_0}{2}}^{\frac{T_0}{2}} x(\tau)y(t-\tau)\,d\tau
+        $$
+        avec $T_0 = kT$  pour un certain $k \in \N_0$. Si les fréquences ne sont pas multiples, la convolution est nulle.
+
+        Convoluer un signal avec une impulsion de Dirac\index{Impulsion de Dirac} revient à déplacer l'origine de ce signal à l'origine de l'impulsion :
+        $$
+            f(t)*\delta(t-t_0) = f(t-t_0)
+        $$
+
+        Spécifiquement, on a $f(t) * \delta(t) = f(t)$.
+
+        On a vu précédemment qu'on peut créer un signal périodique à partir d'un signal non périodique (en utilisant la somme et le décalage temporel). Voici une autre façon de faire en convoluant avec un train d'impulsions de Dirac :
+        $$
+            f(t)*\delta_{T_0}(t) = \intInfty f(\tau)\delta_{T_0}(t-\tau)\,d\tau = f_{T_0}(t)
+        $$
+
+    \subsection{Convolution circulaire}
+        La \textit{convolution circulaire}\index{Convolution!Circulaire} est définie par :
+        $$
+            f(n) \otimes g(n) = \sum_{i=0}^{N-1} f(i)g((n-i) \mod{N})
+        $$
+
+        Elle correspond à la convolution entre deux signaux périodiques sous-jacents. Elle n'est donc calculée que sur une période ($N$ échantillons) et les indices des échantillons sont calculés $modulo\ N$.

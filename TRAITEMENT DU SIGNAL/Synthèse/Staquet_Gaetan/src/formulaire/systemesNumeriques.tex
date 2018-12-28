@@ -1,0 +1,24 @@
+\section{Systèmes numériques}
+    \subsection{Stabilité}
+        Il faut que $\forall i, |h(n-i)| < \infty$.
+
+    \subsection{Convolution}\label{subsec:convolution}
+        \begin{align*}
+            y(n) = x(n) * h(n) &= \sumInfty{i} x(i) h(n-i)\\
+                               &= \sum_{i=0}^{+\infty} h(i) x(n-i) 
+        \end{align*}
+
+    \subsection{Transformée en Z}
+        \subsubsection{Signaux usuels}
+            \begin{itemize}
+                \item L'exponentielle décroissante avec $|a| < 1$ :
+                $$\{a^n \epsilon(n)\} \xLeftrightarrow{Z} \sum_{i=0}^{+\infty} a^i z^{-i} = \frac{1}{1 - az^{-1}}$$
+                On a un pôle réel en $z = a$ et un zéro en $0$.
+                \item L'exponentielle décroissante complexe avec $|\rho| < 1$
+                $$\{\rho^n e^{jn\phi} \epsilon(n)\} \xLeftrightarrow{Z} \sum_{i=0}^{+\infty} \rho^i e^{ji\phi} z^{-i} = \frac{1}{1-\rho e^{j\phi} z^{-1}}$$
+                On a un pôle en $z = \rho$ et un zéro en $0$.
+                % TODO: ? \item Cosinus amorti
+            \end{itemize}
+
+        \subsubsection{$H(z)$}
+            $H(z) = \frac{\sum\limits_{i=0}^m b_iz^{-i}}{\sum\limits_{i=0}^N a_iz^{-i}}$

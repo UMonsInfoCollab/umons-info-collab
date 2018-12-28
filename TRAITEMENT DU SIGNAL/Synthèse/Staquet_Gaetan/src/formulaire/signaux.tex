@@ -1,0 +1,39 @@
+\section{Signaux usuels}
+    Par convention, quand $n$ est la variable, le temps est discret tandis que, quand $t$ est la variable, le temps est continu. Pour les signaux usuels, il est facile de passer du temps discret au temps continu.
+
+    \begin{remarque}
+        Les graphiques ne sont pas donnés ici mais sont présents dans le cours.
+    \end{remarque}
+
+    \smallskip
+    \begin{itemize}
+        \setlength{\itemsep}{1em} % Augmente l'écart vertical entre deux items
+        \item Impulsion de Dirac\index{Impulsion de Dirac}\nomenclature{$\delta(n)$}{Impulsion de Dirac} : $\delta(n) = \begin{cases}
+            1 & \mbox{si } n = 0\\
+            0 & \mbox{si } n \not= 0
+        \end{cases}$
+        \item Train d'impulsions de Dirac (ou peigne de Dirac)\index{Impulsion de Dirac!Train}\index{Train d'impulsions de Dirac|see {Impulsion de Dirac, Train}}\index{Peigne de Dirac|see {Impulsion de Dirac, Train}}\nomenclature{$\delta_{n_0}(n)$}{Train d'impulsions de Dirac de période $n_0$} : $\delta_{n_0}(n) = \begin{cases}
+            1 & \mbox{si } \exists k \in \N, n = k\,n_0\\
+            0 & \mbox{sinon}
+        \end{cases}$
+        \item Echelon unité\index{Échelon unité}\nomenclature{$\epsilon(n)$}{Echelon unité} : $\epsilon(n) = \begin{cases}
+            1 & \mbox{si } n \geq 0\\
+            0 & \mbox{si } n < 0
+        \end{cases}$
+        \item Rectangle\index{Rectangle}\nomenclature{$rect(t)$}{Fonction rectangle} : $rect(t) = \begin{cases}
+            1 & \mbox{si } \frac{-1}{2} \leq t \leq \frac{1}{2}\\
+            0 & \mbox{sinon}
+        \end{cases}$
+        \item Triangle\index{Triangle}\nomenclature{$tri(t)$}{Fonction triangle} : $tri(t) = \begin{cases}
+            1 - |t| & \mbox{si } |t| \leq 1\\
+            0 & \mbox{sinon}
+        \end{cases}$
+        \item Exponentielle imaginaire (ou phaseur) \index{Exponentielle imaginaire}\index{Phaseur|see {Exponentielle imaginaire}} : $A e^{j\omega_0 t}$ où $A$ est une constante complexe donnant le rayon de l'hélice et $\omega_0$ est la vitesse angulaire.
+        \item Sinus cardinal (ou fonction pieuvre)\index{Fonction pieuvre}\index{Sinus cardinal|see {Fonction pieuvre}}\nomenclature{$sinc(t)$}{Fonction pieuvre} : $sinc(t) = \frac{\sin(\pi t)}{\pi t}$. Ce signal est complexe.
+        \item Signal sinusoïdal\index{Sinusoïdal} : $a\cos(\omega_0 t + \phi)$ avec $a$ la valeur de crête, $\omega_0$ la pulsation (en $rad/s$) et $\phi$ la phase à l'origine (en $rad$). On peut citer deux cas particuliers :
+        \begin{itemize}
+            \item $a\sin(\omega_0 t)$, la projection d'un phaseur sur l'axe imaginaire
+            \item $a\cos(\omega_0 t)$, la projection d'un phaseur sur l'axe réel
+        \end{itemize}
+        \item Exponentielle complexe : $A e^{(\sigma + j\omega)t}$ avec $A$ l'amplitude, $\sigma$ l'amortissement du signal, $\omega = 2\pi f$ et $f$ la fréquence de rotation de l'exponentielle imaginaire autour de l'origine. Le signal est amorti si $\sigma$ est négatif. L'inverse de $\sigma$ est $\tau$ et appelé constante de temps.
+    \end{itemize}

@@ -1,0 +1,41 @@
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\newcommand{\N}{\mathbb{N}\xspace}
+
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\phi}{\varphi}
+
+\allowdisplaybreaks % Autorise les environnements à faire un page break
+
+% J'ai suivi les recommandations de http://mirror.koddos.net/CTAN/macros/latex/required/amscls/doc/amsthdoc.pdf
+\theoremstyle{plain}
+\newtheorem{thm}{Théorème}[section]
+\newtheorem{theorem}[thm]{Théorème} % Parce qu'à chaque fois, je me trompe
+\newtheorem{lemme}{Lemme}[section]
+\newtheorem{corollaire}{Corollaire}[section]
+
+\theoremstyle{definition}
+\newtheorem{definition}{Définition}[section]
+\newtheorem{propriete}{Propriété}[section]
+\newtheorem{exemple}{Exemple}[section]
+
+\theoremstyle{remark}
+\newtheorem{note}{Note}[section]
+\newtheorem{rem}{Remarque}[section]
+\newtheorem{remarque}[rem]{Remarque}
+\newtheorem{illustration}{Illustration}[section]
+
+\newenvironment{demonstration}{\begin{proof}[\textnormal{\textbf{Preuve}}]}{\end{proof}}
+\newenvironment{preuve}{\begin{demonstration}}{\end{demonstration}\ignorespacesafterend}
+
+% Traductions
+\newcommand{\thmautorefname}{Théorème}
+\renewcommand{\theoremautorefname}{Théorème}
+\newcommand{\proprieteautorefname}{Propriété}
+\newcommand{\exempleautorefname}{Exemple}
+\newcommand{\lemmeautorefname}{Lemme}
+\newcommand{\definitionautorefname}{Définition}
+\newcommand{\algorithmautorefname}{Algorithme}

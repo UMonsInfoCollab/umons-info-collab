@@ -1,0 +1,160 @@
+\chapter{Transformée de Fourier Discrète}
+    On a vu la transformée de Fourier pour un signal à temps continu et la TFTD pour un signal à temps discret. Cependant, ces transformées sont compliquées à calculer. En pratique, on utilise la \textit{transformée de Fourier Discrète} (TFD)\index{Transformée de Fourier!Discrète}\nomenclature{TFD}{Transformée de Fourier Discrète}\nomenclature{DFT}{Transformée de Fourier Discrète}.
+
+    \section{Transformée de Fourier Discrète}
+        Considérons une suite finie de $N$ échantillons $\{x(n)\} = \{x(0), x(1), \dots, x(N-1)\}$. On définit sa \textit{transformée de Fourier Discrète} comme la suite $\{X(k)\}$ avec $k \in [[0, N-1]]$ :
+        $$
+            X(k) = \sum_{n=0}^{N-1} x(n)e^{-jnk\frac{2\pi}{N}}
+        $$
+
+        Il s'agit en réalité de la TFTD d'un signal numérique dont on ne considère que les $N$ premiers échantillons, calculée pour les $N$ pulsations normalisées $\phi \{0, \frac{2\pi}{N}, \frac{4\pi}{N}, \dots, \frac{2(N-1)\pi}{N}\}$, c'est-à-dire pour les $N$ fréquences normalisées $F \in \{0, \frac{1}{N}, \frac{2}{N}, \dots, \frac{N-1}{N}\}$. A ce titre, la TFD a le mêmes interprétations que le TFTD.
+
+        La \textit{transformée de Fourier Discrète inverse}\index{Transformée de Fourier!Discrète!Inverse} est donnée par :
+        $$
+            x(n) = \frac{1}{N}\sum_{k=0}^{N-1} X(k)e^{jnk\frac{2\pi}{N}}
+        $$
+        avec $n \in [[0, N-1]]$.
+
+        \subsection{Interprétation géométrique}
+            Voir page 132 du syllabus (important ! Contrairement à l'interprétation vectorielle).
+
+        \subsection{Interprétation spectrale}
+            Les valeurs des coefficients $\{X_k\} = \{X(0), X(1), \dots, X(N-1)\}$ de la TFD d'une suite $\{x(n)\} = \{x(0), x(1), \dots, x(N-1)\}$ ne sont rien d'autre que les raies $F_k$ de la TFTD du signal périodique de période $N$ ayant $\{x(n)\}$ comme période, corrigées par un facteur multiplicatif $T_0 = NT_e$.
+
+        \subsection{Convolution circulaire}
+            La \textit{convolution circulaire}\index{Convolution!Circulaire} est définie par :
+            $$
+                f(n) \otimes g(n) = \sum_{i=0}^{N-1} f(i)g((n-i) mod N)
+            $$
+
+        \subsection{Propriétés}
+            Voici les propriétés intéressantes de la TFD :
+
+            \begin{align*}
+                \text{Linéarité} && \sum_i a_if_i(n) &\fourier \sum_i a_i F_I(F)\\
+                \text{Retard}  && f((n-n_0) mod N) &\fourier F(k) e^{-jkn_0\frac{2\pi}{N}}\\
+                \text{Convolution \textbf{circulaire}} && f(n)\otimes g(n) &\fourier F(k)G(k)\\
+                \text{Produit} && f(n)g(n) &\fourier \frac{1}{N}F(k)\otimes G(k)\\
+            \end{align*}
+
+            On peut exprimer $F(k)$ sous la forme :
+            $$
+                F(k) = A(k) e^{j\phi(k)}
+            $$
+            avec $A(k)$ l'\textit{amplitude}\index{Amplitude} (similaire à $A(f)$ pour la transformée de Fourier normale) et $\phi(k)$ la \textit{phase}\index{Phase} (similaire à $\phi(f)$).
+
+            On peut montrer que le module $A(k)$ est pair modulo $N$ et la phase $\phi(k)$ est impaire modulo $k$. On dit que $\{F(k)\}$ est une suite \textit{conjuguée modulo $N$}\index{Suite conjuguée modulo $N$} :
+            $$
+                F(N - k) = F^*(k)
+            $$
+
+    \section{Transformée de Fourier Rapide}
+        Il est possible de réduire le temps de calcul de la TFD d'une suite dont le nombre d'échantillons $N$ est décomposable en facteurs (typiquement, une puissance de 2) avec la \textit{transformée de Fourier Rapide} (TFR ou FFT)\index{Transformée de Fourier!Rapide}\nomenclature{TFR}{Transformée de Fourier Rapide}\nomenclature{FFT}{Transformée de Fourier Rapide}. On se concentre sur une méthode nomée \textit{FFT radix 2 avec entrelacement dans le temps}.
+
+        Cette méthode exige que $\exists M$ tel que $N = 2^M$. L'idée est de calculer la TFD d'un signal à $N$ échantillons par le calcul de deux TFD à $\frac{N}{2}$ échantillons. Ces deux TFS sont ensuite décomposée en deux TFD traitant chacune $\frac{N}{4}$ échantillons, et ainsi du suite jusqu'à avoir des TFD à 2 points. Les détails (dont le \textit{facteur de rotation} nécessaire pour construire la TFD à partir de deux sous-TFD) sont donnés dans le cours.
+
+        Retenons ici l'idée principale et le fait que la complexité de la FFT est en $\mathcal{O}(N \log_2(N))$ et que la complexité de la TFD est en $\mathcal{O}(N^2)$. Donc, la FFT est plus rapide à calculer que la TFD directe.
+
+    \section{Observation spectrale}
+        Nous pouvons considérer la TFD d’une séquence $\{x(0),x(1),...,x(N-1)\}$ comme la transformée de Fourier de la fonction impulsionnelle $x_N^+(t)$ obtenue par multiplication de $x(t)$ avec un train de $N$ impulsions de Dirac, transformée dont on n’a gardé que les $N$ valeurs correspondant aux fréquences $f\in \left\{0, \frac{F_e}{N}, \frac{2F_e}{N}, \dots, \frac{(N-1)F_e}{N}\right\}$.
+
+        Il nous faut maintenant connaître l'effet de cette troncation dans le temps et de cet échantillonnage en fréquence.
+
+        Considérons d'abord la fonction $w^+(t) = \begin{cases}
+            1 &\text{si } t \in \{0, T_e, \dots, (N-1)T_e\}\\
+            0 &\text{sinon}
+        \end{cases}$. Cette fonction correspond à un train de $N$ impulsions de Dirac, c'est-à-dire à une \textit{fenêtre rectangulaire}\index{Fenêtre!Rectangulaire}. La transformée de Fourier $W^+(f)$ de ce signal est donnée par la TFTD de la suite d'échantillons $\{w(n)\}$ correspondants :
+        $$
+            W^+(F) = \sumInfty{n} w(n)e^{-jn\phi} = \left(\frac{e^{\frac{-jN}{2\phi}}}{e^{\frac{-j}{2\phi}}}\right) \frac{\sin(\frac{N\phi}{2})}{\sin(\frac{\phi}{2})}
+        $$
+        
+        Cette fonction a l'allure d'une fonction $sinc$ périodique. Elle vaut $N$ en $F=0$ et s'annule en $F\in\left\{\frac{1}{N}, \frac{2}{N}, \dots, \frac{N-1}{N}\right\}$.
+
+        La transformée de Fourier $X_N^+(f)$ de $x_n^+(t)$ correspond donc à la convolution des transformées de Fourier respectives de $x(t)$ et de $w^+(t)$. La TFD de $\{x(0), x(1), \dots, x(N-1)\}$ est alors la séquence des valeurs de $X_N^+(f)$ pour $f\in\left\{0, \frac{F_e}{N}, \frac{2F_e}{N}, \dots, \frac{(N-1)F_e}{N}\right\}$.
+
+        \subsection{Signal périodique}
+            On sait que la TFTD d'un signal $x_{T_0}(n)$ résultant de l'échantillonnage d'un signal analogique périodique $x_{T_0}(f)$ avec un pas d'échantillonnage $T_e$ est périodique et discrète (c'est un spectre de raies périodique).
+
+            Nous allons utiliser $W^+(F)$ pour établir le lien qui unit la transformée de Fourier d'un signal périodique analogique $x_{T_0}(t)$ à la TFD de la suite d'échantillons correspondant $x_{T_0}(n)$. Voir la figure page 144.
+
+            \begin{exemple}
+                Les exemples semblent importants/utiles.
+            \end{exemple}
+
+        \subsection{Signal non-périodique}
+            \subsubsection{Cas où la fenêtre de $N$ échantillons n'a pas d'influence}
+                Si le signal dont on cherche à observer le spectre est de durée finie et que le nombre $N$ d'échantillons couvre une plage temporelle supérieure ou égale à cette durée, alors la TFD affiche les $N$ valeurs de la TFTD originale. C'est donc immédiat, dans ce cas, d'avoir le spectre du signal si on a la TFD.
+
+            \subsubsection{Cas où la fenêtre de $N$ échantillons conduit à une troncature du signal dans le temps}
+                Dans ce cas, l'interprétation donnée plus haut (sur les signaux périodiques) est également applicable à un signal non périodique $x(t)$. La seule différence est que la transformée de Fourier $X(f)$ est continue (et non discrète).
+
+                L'effet de la convolution de $X(f)$ avec $W^+(f)$ correspond à une périodification accompagnée d'un filtrage passe-bas de $X(f)$ : les variations brusques de $X(f)$ sont adoucies et sa dynamique est limitée par celle de $W^+(f)$ : on voit parfois apparaître sur $X_N^+(f)$ les lobes secondaires de $W^+(f)$ dans les plages de fréquence où $X(f)$ sont très faibles.
+
+                Le niveau d'amplitude des raies données par la TFD est lié à celui de la transformée de Fourier du signal :
+                \begin{align*}
+                    X^+(F = 0) &= \sumInfty{n} x(n) & X_N^+(F = 0) &= \sum_{n=0}^{N-1} x(n)
+                \end{align*}
+                On en déduit :
+                \begin{align*}
+                    X_N^+(0) &= kX^+(0) &\text{avec } k = \frac{\sum\limits_{n=0}^{N-1} x(n)}{\sumInfty{n} x(n)}
+                \end{align*}
+
+                Voir le graphique page 153.
+
+                Tout ça pour dire que la TFD a une amplitude différente de la TFTD, c'est-à-dire que l'amplitude de la TFTD est multipliée par $k$ (dont la définition est donnée au-dessus) pour obtenir l'amplitude de la TFD.
+
+        \subsection{Calcul de la TFTD sur $\NTFD$ points en fréquence}
+            On peut contrôler les effets de modification exposés dans la sous-section précédente en réalisant le calcul de la TFTD du signal fenêtré $\{x_N(n)\}$ sur un nombre de points en fréquence $\NTFD$\index{$\NTFD$} différent de $N$.
+
+            \subsubsection{Complétion par des zéros}
+                On peut ajouter des échantillons nuls à la suite des $N$ valeurs $\{x_N(0), x_N(1), \dots, x_N(N-1)\}$ jusqu'à obtenir $\NTFD$ valeurs. On obtient alors une représentation plus réaliste de $\{x_N(n)\}$.
+
+                On augmente donc le nombre d'échantillons de la TFTD de $\{x_N(n)\}$ avec, cette fois, $\NTFD$ valeurs. Ceci fournit donc une meilleure représentation de la $X_N^+(f)$ MAIS n'augmente pas la précision du résultat (on voit mieux parce qu'on a plus de points mais les points ne sont pas mieux placés). Voir le graphique page 157.
+
+            \subsubsection{Périodification de la séquence d'échantillons}
+                On peut aussi calculer la TFTD de $\{x_N(n)\}$ sur un nombre de points $\NTFD$ (en fréquence) plus petit que $N$. Il suffit en effet de découper la séquence $\{x_N(0), x_N(1), \dots, x_N(N-1)\}$ en blocs de $\NTFD$ valeurs. Ensuite, on somme les échantillons occupant les mêmes positions dans leurs blocs respectifs. Ceci revient à périodifier la séquence d'entrée avec une période de $\NTFD$ échantillons :
+                $$
+                    x_{\NTFD}(n) = \sumInfty{i} x_N(n-i \NTFD)
+                $$
+                
+                Il est (apparemment) facile de montrer que la TFD de la séquence $\{x_{\NTFD}(n)\}$ ainsi constituée fournit bien les valeurs de la TFTD de $\{x_N(n)\}$ sur $\NTFD$ valeurs entre $F=0$ et $F=1$.
+
+                L'intérêt de cette méthode est de limiter les calculs (par exemple, parce qu'il y a énormément d'échantillons).
+
+                Comme la complétion par de zéros augmente le nombre de points sans modifier la valeur des points, la périodification diminue le nombre de points sans modifier les valeurs (on voit moins de points mais les points ne sont pas mieux placés). Voir le graphique page 159.
+        
+        \subsection{Pondération par une fenêtre}
+            Nous avons vu que le fait de ne conserver que $N$ échantillons d'un signal $\{x(n)\}$ peut être interprété comme la multiplication de ce signal par une fenêtre rectangulaire. La TFTD de cette fenêtre possède un lobe principal de largeur $\frac{1}{N}$ et le geain d'amplitude des lobes secondaires est à peu près $-13\,dB$ (on a donc une perte d'amplitude puisque le gain est négatif). Ceci peut poser problème si certaines raies (certaines fréquences) sont largement à plus de $13\,dB$ sous la raie d'amplitude maximale.
+
+            \begin{exemple}
+                On prend un signal composé d'une sinusoïde à 130Hz d'amplitude 1 et d'une autre sinusoïde à 300Hz d'amplitude $\frac{1}{100}$. On utilise une fenêtre rectangulaire à 64 points et le calcul de la FFT se fait sur 512 points en fréquence. La fréquence $f=130Hz$ est très visible. En revanche, la fréquence $f=300Hz$ est masquée par les lobes secondaires de la première raie. Voir page 161 du syllabus pour le graphique.
+            \end{exemple}
+
+            On peut alors utiliser une autre \textit{fenêtre de pondération}\index{Fenêtre!De pondération}. Ces fenêtres sont données (avec la longueur des lobes et la perte d'amplitude) dans la \autoref{subsec:fenetres}.
+
+            Il faut donc faire très attention au choix de la fenêtre : permettre d'avoir des lobes plus bas implique que les lobes sont plus longs. Si deux fréquences sont très proches, leurs lobes pourraient fusionner (voir page 164).
+
+        \subsection{Analyse à court-terme}
+            L'analyse en fréquence est une opération qui effectue une moyenne sur tout l'axe du temps. Par conséquent, certains aspects temporels peuvent être complétement cachés. Il peut alors être intéressant de découper le signal en tranches pour faire apparaître l'ordonnancement de portions du signal. On constate que le découpage en tranches plus petites augmente la résolution temporelle mais diminue la résolution fréquentielle.
+
+            En plus clair, maintenant : l'analyse en fréquence donne les fréquences mais ne donne pas l'ordre d'apparition de ces fréquences. Par exemple, avec un signal composé d'une sinusoïde à une certaine fréquence \underline{suivie} d'une sinusoïde à une autre fréquence, on a les fréquences mais on ne sait pas quelle fréquence est la première. Le découpage en temps permet de voir quelles fréquences interviennent à quel moment. Cependant, comme à chaque fois on prend une petite partie du temps, on n'a pas toutes les informations. Par conséquent, les fréquences ne sont pas forcément bien calculées ! Il faut donc combiner les deux intelligemment pour savoir quelles sont les fréquences et leur ordre.
+
+    \section{Convolution linéaire}
+        Rappelons que la convolution linéaire est donnée par :
+        $$
+            y(n) = x(n) * h(n) = \sumInfty{i} x(i)h(n-i)
+        $$
+
+        Le nombre de valeurs non-nulles retournées par la convolution de deux séquences finies de $N$ et $M$ valeurs est de $N + M - 1$. Il est facile de montrer qu'il faut $\mathcal{0}(NM)$ opérations.
+
+        On peut réduire la charge de calculs en calculant la TFD (par la FFT) de chacune des séquences à convoluer, en multipliant les TFD obtenues et en prenant la TFD inverse du résultat. Il faut cependant rajouter des zéros afin d'avoir (au moins) $N + M - 1$ valeurs dans chaque séquence (typiquement, on s'arrange pour avoir aussi une puissance de deux pour profiter pleinement de la FFT). On a donc $\mathcal{0}((N+M)log(N+M))$\footnote{Je n'ai pas vérifié mes calculs... Il faut simplement retenir que passer par 3 TFD (2 directs et une inverse) est plus rapide que de calculer directement la convolution linéaire.} opérations, ce qui est meilleur.
+
+    \section{Conclusion}
+        La TFTD d'une fonction non périodique est une fonction continue tandis que la TFD est une fonction discrète. On peut augmenter ou diminuer le nombre de points du graphique de la TFD en faisant varier $\NTFD$ mais cette modification ne modifie pas la valeur des points.
+
+        Il faut faire attention aux points suivants :
+        \begin{itemize}
+            \item Echantillonner le signal provoque du recouvrement spectral. Ceci peut être contrôlé via $f_e$.
+            \item On applique une fenêtre de pondération. Ceci peut faire en sorte que certaines fréquences soient cachées. Ceci peut être contrôlé via le choix de la fenêtre et $N$.
+            \item Effectivement calculer la transformée de Fourier discrète nous donne un signal discret. On peut augmenter ou diminuer le nombre de points via $\NTFD$.
+        \end{itemize}

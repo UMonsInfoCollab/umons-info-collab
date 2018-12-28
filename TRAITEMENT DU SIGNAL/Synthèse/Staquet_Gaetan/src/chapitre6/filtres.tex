@@ -1,0 +1,132 @@
+\chapter{Synthèse des filtres numériques}
+    Pour finir ce cours, intéressons-nous à la \textit{synthèse}\index{Synthèse} des filtres numériques, c'est-à-dire à leur implémentation en pratique.
+
+    \section{Cellule du second degré}
+        On va juste regarder une cellule de base du second degré (ordre)\index{Degré|see {Ordre}}\index{Ordre}.
+
+        On sait que la fonction de transfert en Z d'une cellule du second ordre est de la forme :
+        $$
+            H(z) = \frac{b_0 + b_1z^{-1} + b_2z^{-2}}{1 + a_1z^{-1} + b_2z^{-2}}
+        $$
+
+        On sait aussi que les racines et les pôles peuvent s'écrire sous la forme :
+        $$
+            -\sigma \pm j \omega
+        $$
+        De plus, $\rho$ est le module et $\sigma = -\rho\cos(\theta)$ (voir la figure de la page 216 pour les liens entre les différentes valeurs).
+
+        On a alors :
+        $$
+            H(z) = K \frac{1 - 2\rho_n\cos(\theta_n)z^{-1} + \rho_n^2 z^{-2}}{1 - 2\rho_n\cos(\theta_d)z^{-1} + \rho_d^2 z^{-2}}
+        $$
+        Ceci caractérise une \textit{cellule du second degré}\index{Cellule du second degré}.
+
+        La stabilité impose des conditions sur la valeur des coefficients du dénominateur :
+        \begin{itemize}
+            \item Si $a_2 > \frac{a_1^2}{4}$ ($\rho^2 > \sigma^2$), les pôles sont complexes. Il faut alors $a_2 < 1$ ($\rho < 1$).
+            \item Si $a_2 \leq \frac{a_1^2}{4}$, les pôles sont réels. Il faut alors $(1 - a_1 + a_2) > 0 \land (1 + a_1 + a_2) > 0$.
+        \end{itemize}
+
+        \subsection{Résonateur du second degré}
+            Si la cellule a les caractéristiques suivantes, alors la cellule est un \textit{résonateur du second degré}\index{Résonateur du second degré} :
+            \begin{itemize}
+                \item Les pôles complexes sont situés proches du cercle unité ($\rho_d \simeq 1$).
+                \item $b_2 = 0$ (on a donc un seul zéro réel).
+            \end{itemize}
+
+            La fonction de transfert est donné par :
+            $$
+                H(z) = K \frac{1 + bz^{-1}}{1 + a_1z^{-1} + a_2z^{-2}} = K \frac{1 + bz^{-1}}{(1-p_1z^{-1})(1 - p_2z^{-1})}
+            $$
+            avec $p_1 = \rho e^{j\theta}$, $p_2 = \rho e^{-j\theta}$ , $a_1 = -2\rho\cos(\theta)$ et $a_2 = \rho^2$.
+
+            Ou plus simplement :
+            $$
+                H(z) = K \frac{1 - \cos(\theta)z^{-1}}{1 - 2\rho\cos(\theta)z^{-1} + \rho^2z^{-2}}
+            $$
+
+            L'amplitude maximale de la transformée de Fourier est :
+            $$
+                A_M = \frac{K}{2(1-\rho)\sqrt{\rho}}
+            $$
+
+            Regardons maintenant l'intervalle de fréquences $\Delta\phi$ dans lequel $A$ est supérieur à $\frac{1}{\sqrt{2}}$ (la \textit{bande passante à $3\,dB$}\index{Bande passante à $3\,dB$}) :
+            \begin{align*}
+                \Delta\phi &= 2\epsilon = 2(1-\rho) & \text{Radians}\\
+                \Delta f &= \frac{2(1-\rho) f_e}{2\pi} = \frac{\Delta\phi f_e}{2\pi} & \text{Hertz}
+            \end{align*}
+
+            Cette cellule amplifie les valeurs du signal pour certaines fréquences.
+
+        \subsection{Filtre coupe-bande du second degré}
+            Si la cellule a les caractéristiques suivantes, alors la cellule est un \textit{filtre coupe-bande du second degré}\index{Filtre coupe-bande du second degré} :
+            \begin{itemize}
+                \item Deux zéros sur le cercle de rayon unité ($\rho_n = 1$)
+                \item Deux pôles complexes proches de ces zéros et mêmes arguments.
+            \end{itemize}
+
+            La fonction de transfert est donné par :
+            $$
+                H(z) = K \frac{1 - 2\rho\cos(\theta)z^{-1} + z^{-2}}{1 - 2\rho\cos(\theta)z^{-1} + \rho^2z^{-2}}
+            $$
+
+            Cette cellule élimine une composante spectrale de fréquence $f_0 = \frac{\theta f_e}{2\pi}$.
+
+            La \textit{bande coupante à $3\,dB$}\index{Bande coupante à $3\,dB$}, c'est-à-dire, l'intervalle de fréquences autour de $f_0$ dans lequel l'amplitude est inférieure à $\frac{1}{\sqrt{2}}$ vaut :
+            \begin{align*}
+                \Delta\phi &= 2\epsilon = 2(1 - \rho) & \text{Radians}\\
+                \Delta f &= \frac{\Delta\phi f_e}{2\pi} & \text{Hertz}
+            \end{align*}
+
+        \subsection{Implémentation d'une cellule du second degré}\label{subsec:implementationCellule}
+            Nous avons vu au \autoref{chap:systemesNumeriques} une façon de représenter un SLI récursif (le graphe de fluence). Cette structure est appelée \textit{structure directe I}\index{Structure!Directe I} (ou \textit{structure immédiate})\index{Structure!Immédiate|see {Structure, Directe I}}. Cette structure peut servir pour implémenter la récurrence numérique d'un SLI récursif. Cependant, il ne s'agit pas de la structure la plus efficace. Un exemple d'une telle structure est donné dans la \autoref{fig:structureDirecteI}.
+
+            \input{chapitre6/directI.tex}
+
+            Il est facile de trouver la \textit{structure directe II}\index{Structure!Directe II} en intervertissant l'ordre de l'implémentation de $A(z)$ et $B(z)$ (on prend le "bloc" de $A(z)$, on l'échange de place avec le "bloc" de $B(z)$ et on permute les nœuds d'addition et de $z^{-1}$ en changeant aussi le sens des flèches) et en fusionnant les blocs $z^{-1}$ qui sont au même niveau. Comme une petite figure est plus claire que des mots, la \autoref{fig:structureDirecteII} donne un exemple.
+
+            \input{chapitre6/directII.tex}
+
+            On obtient une structure qui est déjà plus compacte... Cependant, on peut faire encore mieux grâce à la \textit{règle de Mason}\index{Règle de Mason} :
+            $$
+                H(z) = \frac{\sum_i P_i(z)}{1 - \sum_j B_j(z)}
+            $$
+            où $P_i(z)$ représente la fonction de transfert associé à un parcours dans la structure du filtre et $B_j(z)$ représente celle d'une boucle (les sommets $i$ et $j$ s'étendent sur tous les parcours et toutes les boucles). Les structures déjà données respectent cette règle. Sur base de cette règle, on peut obtenir une \textit{structure directe II transposée}\index{Structure!Directe II!Transposée} en réalisant les opérations suivantes :
+            \begin{enumerate}
+                \item Remplacer les nœuds de sommation (les nœuds avec un $\Sigma$) par des nœuds de dispersion (là où plusieurs branches démarrent; ces nœuds sont représentés par un point noir dans ce document) et inversément.
+                \item Inverser tous les sens de parcours (on permute le bloc de $A(z)$ et celui de $B(z)$ et toutes les flèches sauf celles de la première ligne).
+            \end{enumerate}
+
+            Encore une fois, un exemple est donné dans la \autoref{fig:structureDirecteIITransposee}.
+
+            \input{chapitre6/directIITransposee.tex}
+
+            \begin{remarque}
+                Je ne pense pas qu'il faille retenir comment passer d'une structure à l'autre... Tant que vous savez dessiner la structure demandée à l'examen...
+            \end{remarque}
+
+    \section{Synthèse des filtres IIR}
+        \subsection{Butterworth - Chebyshev - Cauer}
+            Voir les slides (page 9) pour les représentations graphiques.
+
+            Ces filtres sont tous des filtres passe-bas. Ils ont chacun des avantages et des inconvénients : meilleur coupage dans la fréquence MAIS le début est plus chaotique (voir Cauer pour un exemple assez parlant).
+
+        \subsection{Le problème de la quantification des coefficients}
+            Stocker les coefficients en virgule fixe (donc, avec un nombre précis de bits pour la partie entière et un nombre précis de bits pour la partie décimale; il n'y a pas de principe d'exposant et de mantisse) peut poser de lourds problèmes pour nos filtres. En effet, une petite variation d'un coefficient d'un polynôme peut casser tout le filtre. Cependant, il peut arriver (sur certains hardwares) que la virgule fixe soit imposée. Voir la slide numérotée 21 pour une illustration (syllabus page 230).
+
+        \subsection{Le problème du bruit de calcul}
+            En plus du problème de la quantification des coefficients, la virgule fixe pose un autre problème : les échantillons sont aussi encodés avec la virgule fixe... Ainsi que tous les résultats de calcul intermédiaires. Plus précisément, il y a deux conséquences importantes :
+            \begin{enumerate}
+                \item En sortie de chaque multiplicateur, les valeurs numériques sont connues sur $2N$ bits (où $N$ est le nombre de bits des valeurs d'entrée). On veut tout stocker sur $N$ bits. On doit donc arrondir le résultat, ce qui provoque du \textit{bruit de calcul}\index{Bruit de calcul}. On peut atténuer cet effet en stockant les résultats de la multiplication sur $N_c$ bits avec $N < N_c < 2N$.
+                \item Les additionneurs ont un autre problème : il n'y a a pas d'arrondi à exécuter mais il peut y avoir un dépassement (overflow). Ceci peut être interprété comme un changement de signe par le processeur (si les nombres sont signés) ce qui provoque des erreurs importantes. On peut limiter cet effet en divisant tous les nombres par un facteur d'échelle. Dans ce cas, la sortie du filtre est également modifiée (puisque tous les nombres sont plus petits) !
+            \end{enumerate}
+
+            Ce qui nous intéresse ici, c'est de comprendre que choisir la structure directe I, II ou II transposée dépend des contraintes hardwares et des bruits de calcul qu'on tolère. On peut aussi utiliser la technique de \textit{cascade de cellules du second degré} (mais je pense pas que ça soit très utile dans ce cours).
+
+    \section{Synthèse des filtres FIR}
+        Les filtres FIR (sans partie récursive) ont une fonction de transfert de la forme :
+        $$
+            H(z) = \sum_{n=0}^{N-1} h(n)z^{-n}
+        $$
+
+        On sait qu'ils sont toujours stables. Ils servent à créer des filtres qui ne déforment pas le signal. Cependant, pour atteindre une bonne sélectivité des fréquences, leur degré est plus important que pour les filtres IIR. Une utilisation typique des filtres FIR est, par exemple, celle des filtres d'interpolation ou de décimation (car on ne veut pas modifier le signal en entrée !). Cependant, il existe des techniques pour trouver le degré minimal nécessaire : Parks et McClellan qui se basent sur minimiser le maximum de $|H(\phi) - H_d(\phi)|$ où $H_d(\phi)$ est la transmittance idéale à réaliser. On peut aussi noter que les filtres FIR sont beaucoup moins sensibles à une quantification de leurs coefficients.

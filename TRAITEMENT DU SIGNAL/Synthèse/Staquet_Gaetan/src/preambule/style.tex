@@ -1,0 +1,24 @@
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{emptypage}
+
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{0.2cm}
+
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter. #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection. #1}{}}
+
+\fancyhf{} % supprime les en-têtes et pieds prédéfinis
+\fancyhead[R]{\thepage} % Met le numéro de la page à droite sur toutes les pages
+\fancyhead[LE]{\textsl{\leftmark}} % Met le nom du chapitre à gauche sur les pages paires
+\fancyhead[LO]{\textsl{\rightmark}} % Met le nom de la section à gauche sur les pages impaires
+\renewcommand{\headrulewidth}{0.4pt}% filet en haut de page
+\renewcommand{\footrulewidth}{0pt} % pas de filet en bas
+
+\fancypagestyle{plain}{ % pages de tetes de chapitre
+    \fancyhead{} % supprime l'entete
+    \fancyhead[R]{\thepage}
+    \renewcommand{\headrulewidth}{0pt} % et le filet
+}
+
+\linespread{1.1}
