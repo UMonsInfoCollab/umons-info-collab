@@ -1,0 +1,63 @@
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[auto, node distance=2cm]
+        % First row : input, sum, branch, multiply (b0), sum
+        \node at (0, 0)                                         (input)     {$x(n)$};
+        \node [sum, right of=input]                             (sum11)     {};
+        \node [branch, right=4cm of sum11]                      (branch11)  {};
+        \node [multiply right={$b_0$}, right of=branch11]       (mult11)    {};
+        \node [sum, right of=mult11]                            (sum12)     {};
+        \node [right of=sum12]                                  (output)    {$y(n)$};
+
+        % Second row : sum, multiply (-a1), z, multiply (b1), sum
+        \node [sum, below of=sum11]                             (sum21)     {};
+        \node [multiply left={$-a_1$}, right of=sum21]          (mult21)    {};
+        \node [Z, below=0.5cm of branch11]                      (Z21)       {};
+        \node [branch, below of=branch11]                       (branch21)  {};
+        \node [multiply right={$b_1$}, below of=mult11]         (mult22)    {};
+        \node [sum, right of=mult22]                            (sum22)     {};
+
+        % Third row : sum, multiply (-a2), z, multiply (b2), sum
+        \node [sum, below of=sum21]                             (sum31)     {};
+        \node [multiply left={$-a_1$}, right of=sum31]          (mult31)    {};
+        \node [Z, below=0.5cm of branch21]                      (Z31)       {};
+        \node [branch, below of=branch21]                       (branch31)  {};
+        \node [multiply right={$b_1$}, below of=mult22]         (mult32)    {};
+        \node [sum, right of=mult32]                            (sum32)     {};
+
+        % Fourth row : just coordinates to draw the dashed lines
+        \coordinate [below=1cm of branch31]     (Z41);
+        \coordinate [below=1cm of sum31]        (sum41);
+        \coordinate [below=1cm of sum32]        (sum42);
+
+        \path           (input)     --  (sum11);
+        \path           (sum11)     --  (branch11);
+        \path           (branch11)  --  (mult11);
+        \path           (branch11)  --  (Z21);
+        \path           (mult11)    --  (sum12);
+        \path           (sum12)     --  (output);
+
+        \path           (sum21)     --  (sum11);
+        \path           (mult21)    --  (sum21);
+        \path           (Z21)       --  (branch21);
+        \path           (branch21)  --  (mult21);
+        \path           (branch21)  --  (mult22);
+        \path           (branch21)  --  (Z31);
+        \path           (mult22)    --  (sum22);
+        \path           (sum22)     --  (sum12);
+
+        \path           (sum31)     --  (sum21);
+        \path           (mult31)    --  (sum31);
+        \path           (Z31)       --  (branch31);
+        \path           (branch31)  --  (mult31);
+        \path           (branch31)  --  (mult32);
+        \path[dashed]   (branch31)  --  (Z41);
+        \path           (mult32)    --  (sum32);
+        \path           (sum32)     --  (sum22);
+
+        \path [dashed]  (sum41) -- (sum31);
+        \path [dashed]  (sum42) -- (sum32);
+    \end{tikzpicture}
+    \caption{Exemple de structure directe II}
+    \label{fig:structureDirecteII}
+\end{figure}

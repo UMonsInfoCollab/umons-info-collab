@@ -1,0 +1,128 @@
+\chapter{Systèmes numériques}\label{chap:systemesNumeriques}
+    Un \textit{système numérique}\index{Système numérique} reçoit en entrée une séquence d'échantillons $\{x(0), x(1), \dots\}$ (notée $x(n)$) et produit en sortie une séquence d'échantillons $y(n)$ obtenue après applications d'opérations algébriques.
+
+    Dans ce document, si un système reçoit $x(n)$ en entrée et donne $y(n)$ en sortie, nous écrivons $x(n) \rightarrow y(n)$.
+
+    Ce chapitre se concentre sur le \textit{domaine temporel}\index{Domaine temporel}.
+
+    Un système numérique est
+    \begin{itemize}
+        \item \textit{linéaire}\index{Système numérique!Linéaire} ssi $\alpha x_1(n) + \beta x_2(n) \rightarrow \alpha y_1(n) + \beta y_2(n)$ en sortie.
+        \item \textit{invariant}\index{Système numérique!Invariant} ssi $x(n-n_0) \rightarrow y(n-n_0)$ en sortie.
+        \item \textit{stable}\index{Système numérique!Stable} ssi, quand les entrées sont finies, les sorties sont finies.
+    \end{itemize}
+
+    Un système numérique linéaire et invariant est noté \textit{SLI} \index{SLI} \nomenclature{SLI}{Système numérique linéaire et invariant}.
+
+    \begin{exemple}
+        Regardons deux signaux :
+        \begin{itemize}
+            \item $y(n) = Kx(n) + A$ (avec $K$ et $A$ des constantes réelles) est
+            \begin{itemize}
+                \item non linéaire car $x_1(n) \rightarrow K x_1(n) + A$ et $x_2(n) \rightarrow K x_2(n) + A$. Donc, on devrait avoir $\alpha x_1(n) + \beta x_2(n) \rightarrow K \alpha x_1(n) + K \beta x_2(n) + 2A$ pour que le système soit linéaire. Or, on a $\alpha x_1(n) + \beta x_2(n) \rightarrow K \alpha x_1(n) + K \beta x_2(n) + A$
+                \item invariant car $x(n) \rightarrow K x(n) + A = y(n)$ et, donc, on doit avoir $y(n-n_0) = K x(n-n_0) + A$. On a bien ceci : $x(n-n_0) \rightarrow K x(n - n_0) + A = y(n-n_0)$.
+                \item stable car $\lim\limits_{n\to\infty} Kx(n) + A$ est finie car on suppose que $x(n)$ est fini.
+            \end{itemize}
+            \item $y(n) = n x(n)$
+            \begin{itemize}
+                \item linéaire car $x_1(n) \rightarrow n x_1(n)$ et $x_2(n) \rightarrow n x_2(n)$. On devrait donc avoir $\alpha x_1(n) + \beta x_2(n) \rightarrow \alpha n x_1(n) + \beta n x_2(n)$. On a bien ceci : $\alpha x_1(n) + \beta x_2(n) \rightarrow n (\alpha x_1(n) + \beta x_2(n)) = \alpha n x_1(n) + \beta n x_2(n)$.
+                \item non invariant car $x(n) \rightarrow n x(n) = y(n)$. On devrait donc avoir $y(n-n_0) = (n-n_0) x(n-n_0)$. Or, on a $x(n-n_0) = n x(n-n_0)$. Le système n'est donc pas invariant.
+                \item instable car $\lim\limits_{n\to\infty} n x(n) = \infty$ même si $x(n)$ est fini (à cause du $n$ seul).
+            \end{itemize}
+        \end{itemize}
+    \end{exemple}
+
+    \section{Systèmes (non) récursifs}
+        On peut écrire la plupart des SLI sous la forme d'\textit{équations aux différences finies, linéaires et à coefficients constants}\index{Équations aux différences finies}\index{Différences finies|see {Équations aux différences finies}}, comme :
+        $$
+            y(n) + a_1y(n-1) + a_2y(n-1) + \dots + a_N y(n-N) = b_0x(n) + b_1x(n-1) + \dots + b_Mx(n-M)
+        $$
+
+        On peut écrire cette équation sous une forme plus compacte :
+        \begin{equation}
+            y(n) + \sum_{i=1}^N a_i y(n-i) = \sum_{i=0}^M b_i x(n-i)
+            \label{eq:SLIRecursif}
+        \end{equation}
+
+        Un système qui a une équation de cette forme est dit \textit{récursif}\index{SLI!Récursif}. Il faut avoir calculer toutes les sorties précédentes $n-1, n-2, \dots$ pour calculer la sortie $n$ (à cause des $y(n-i)$).
+
+        Si le système a une équation de la forme suivante (qui est un cas particulier de la forme générale), alors il est dit \textit{non récursif}\index{SLI!Non récursif} :
+        \begin{equation}
+            y(n) = \sum_{i=0}^M b_i x(n-i)
+            \label{eq:SLINonRecursif}
+        \end{equation}
+
+        L'\textit{ordre}\index{Ordre} d'un SLI récursif est donné par $N$ (le plus grand décalage dans le temps pour les sorties). Pour un SLI non récursif, il est donné par $M$ (le plus grand décalage dans le temps pour les entrées).
+
+        A partir de maintenant, on dira \textit{filtre numérique}\index{Filtre numérique} pour un système numérique linéaire et invariant pouvant s'écrire comme \eqref{eq:SLIRecursif}. On distingue les \textit{filtres récursifs} et \textit{filtres non récursifs}.
+
+        \subsection{Représentation graphique (graphe de fluence)}
+            Voir le cours p.26. La \autoref{subsec:implementationCellule} donne des exemples de représentation graphique.
+
+    \section{Réponse impulsionnelle}
+        La \textit{réponse impulsionnelle}\index{Réponse impulsionnelle}, notée $h(n)$, d'un SLI numérique est définir comme sa réponse forcée $y(n)$ en donnant en entrée une impulsion de Dirac. On suppose de plus que $\forall n < 0, y(n) = 0$. Pour obtenir $h(n)$, il suffit de calculer.
+
+        Dans le cas d'un filtre non récursif, $h(n)$ est simplement la suite des coefficients $b_i$. En effet, l'impulsion de Dirac se propage le long de la chaîne d'éléments à délai. On dit donc qu'un filtre non récursif est à \textit{réponse impulsionnelle finie} (RIF)\index{Réponse impulsionnelle!finie} \nomenclature{RIF}{Réponse impulsionnelle finie}.
+
+        Dans le cas d'un filtre récursif, $h(n)$ est une séquence illimitée. En effet, chaque sortie dépendant des sorties précédentes, on n'aura jamais que la sortie puisse être nulle. Ceci est vrai même quand le filtre est stable. On dit donc qu'un filtre récursif est à \textit{réponse impulsionnelle infinie} (RII)\index{Réponse impulsionnelle!infinie} \nomenclature{RII}{Réponse impulsionnelle infinie}.
+
+    \section{Réponse forcée à une entrée quelconque}
+        \begin{remarque}
+            Les interprétations ne sont pas données ici mais sont dans le cours (p.32 à 35).
+        \end{remarque}
+        On peut directement calculer la réponse forcée à une entrée quelconque (comme pour la réponse impulsionnelle). Cependant, en connaissant la réponse impulsionnelle, on peut aller plus vite en faisant une \textit{convolution}\index{Convolution}. Le symbole de la convolution est $*$\nomenclature{$f(t)*g(t)$}{Convolution entre la fonction $f(t)$ et la fonction $g(t)$}.
+        \begin{equation}
+            y(n) = x(n) * h(n) = \sumInfty{i} x(i) h(n-i)
+            \label{eq:convolution}
+        \end{equation}
+
+        On peut montrer que le produit de convolution est commutatif :
+        \begin{equation}
+            y(n) = x(n) * h(n) = \sum_{i=0}^{+\infty} h(i) x(n-i)
+            \label{eq:convolutionDuale}
+        \end{equation}
+
+        \subsection{Stabilité et réponse impulsionnelle}
+            Une conséquence importante de l'\autoref{eq:convolution} est que la stabilité\index{Système numérique!Stable} d'un filtre numérique peut être vérifiée sur base de sa réponse impulsionnelle. La condition est la suivante :
+            $$
+                \sumInfty{i} |h(n-i)| < +\infty
+            $$
+
+            Comme, en pratique, on se limite aux premiers échantillons de la réponse impulsionnelle (ceux dont la valeur est supérieure à un certain seuil, typiquement $10^{-3}$ ou $10^{-4}$), on peut réduire la condition à :
+            $$
+                \forall -\infty < i < +\infty, |h(n-i)| < +\infty
+            $$
+
+    \section{Transformée en Z - Pôles et zéros d'un SLI}
+        La \textit{transformée en Z}\index{Transformée en Z}, notée $X(z)$, d'une séquence numérique $\{x(n)\}$ est :
+        $$
+            \{x(n)\} \transfoZ X(z) = \sumInfty{i} x(i) z^{-i}
+        $$
+
+        Il est évidemment possible de prendre la transformée en Z de $\{h(n)\}$. Cette transformée est la \textit{fonction de transfert en Z}\index{Fonction de transfert en Z} et est notée $H(z)$\nomenclature{$H(z)$}{Fonction de transfert en Z}. Il suffit de remplacer $x$ par $h$ dans l'équation précédente.
+
+        La transformée en Z de la sortie du système est donnée par :
+        $$
+            y(n) \transfoZ Y(z) = X(z)H(z)
+        $$
+
+        On peut donc dire que $H(z) = \frac{Y(z)}{X(z)}$ et on peut écrire $H(z)$ sous une forme plus simple (avec $a_0 = 1$) :
+        $$
+            H(z) = \frac{\sum\limits_{i=0}^M b_i z^{-i}}{\sum\limits_{i=0}^N a_i z^{-i}}
+        $$
+
+        Avec cette écriture, trouver $H(z)$ en connaissant l'équation aux différences finies d'un filtre est immédiat.
+
+        On définit les \textit{zéros}\index{Zéro} d'un SLI numérique comme les racines du numérateur de $H(z)$ tandis que les \textit{pôles}\index{Pôle} sont les racines du dénominateur. On peut les représenter dans un cercle unitaire complexe. Dans le cours, un zéro est représenté par un rond et un pôle par une croix.
+
+        \subsection{Stabilité et pôles}
+            Un SLI numérique est strictement stable si ses pôles sont tous à l'intérieur du cercle de rayon unité (cercle non compris), et stable\index{Système numérique!Stable} si on accepte aussi les pôles simples.
+        
+        \subsection{Inverse d'un SLI}
+            \begin{remarque}
+                Cette sous-section est inspirée de l'exercice 1.11.b du syllabus.
+
+                Ce qui est dit ici ne marche que pour les systèmes qui ont une entrée et une sortie ! C'est, apparemment, plus compliqué dans le cas où on a un système avec plusieurs entrées et/ou plusieurs sorties.
+            \end{remarque}
+
+            On a un SLI qui reçoit $x(n)$ en entrée et produit $y(n)$. On veut construire un autre SLI qui prend $y(n)$ en entrée et produit $x(n)$. En connaissant $H(z)$ du premier système, c'est plutôt simple : la fonction de transfert du second système est $\frac{1}{H(z)}$ (à condition que $H(z) \not=0$, évidemment). A partir de là, il est aisé de trouver les coefficients du système.

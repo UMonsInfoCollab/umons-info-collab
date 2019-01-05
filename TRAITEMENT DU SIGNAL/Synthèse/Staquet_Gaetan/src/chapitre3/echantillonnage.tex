@@ -1,0 +1,106 @@
+\chapter{Echantillonnage}
+    Regardons maintenant comment passer d'un signal continu à un signal discret. Cette conversion est appelée \textit{échantillonnage}\index{Échantillonnage}.
+
+    L'échantillonnage consiste à construire, à partir d'un signal analogique $f(t)$, un signal à temps discret $f(n) = f(nT_e)$ obtenu en mesurant la valeur de $f(t)$ toutes les $T_e$ secondes. On peut voire ceci comme le fait de multiplier $f(t)$ par un train d'impulsions de Dirac de période $T_e$ :
+    $$
+        f^+(t) = f(t)\delta_{T_e}(t) = \sum_n f(nT_e)\delta(t - nT_e)
+    $$
+
+    On peut alors interpréter la transformée de Fourier $F^+(f)$ de $f^+(t)$ (c'est-à-dire, la TFTD de $\{f(n)\}$) comme celle d'un produit (pour rappel, un produit en temps est une convolution en fréquence) :
+    $$
+        F^+(f) = F(f) * \left[\frac{1}{T}\delta_{f_e}(f)\right] = \frac{1}{T_e} \sumInfty{k} F(f - nf_e)
+    $$
+
+    Le schéma de la page 103 du syllabus illustre très bien ce principe.
+
+    \begin{remarque}
+        La transformée de Fourier obtenue est continue et périodique (ce qui est logique, vu que c'est un TFTD d'un signal non périodique).
+    \end{remarque}
+
+    \section{Recouvrement spectral (aliasing)}
+        Si le spectre $F(f)$ du signal analogique $f(t)$ n'est pas nul au delà de $\frac{f_e}{2}$, la superposition peut conduire à des empiètements des translatées. Ce phénomène est appelé \textit{recouvrement} (ou \textit{repliement}) \textit{spectral} (ou, en anglais, \textit{aliasing})\index{Recouvrement spectral}\index{Repliement spectral|see {Recouvrement spectral}}\index{Aliasing|see {Recouvrement spectral}}.
+
+        Ce recouvrement spectral a pour conséquence que le signal $f(n)$ n'est plus une image correcte de $f(t)$. On appelle ceci l'\textit{effet stroboscopique}\index{Effet stroboscopique}.
+
+        Le terme de \textit{repliement spectral} vient du fait que tout se passe comme si la partie de $F(f)$ inférieure à $\frac{f_e}{2}$ se trouvait additionnée à la partie de ce même $F(f)$ supérieure à $\frac{f_e}{2}$, repliée autour de $\frac{f_e}{2}$ et conjuguée. La figure de la page 104 illustre ceci.
+
+        On peut simplement corriger ce problème en prenant une fréquence d'échantillonnage au moins deux fois plus grande que la plus haute composante fréquentielle du signal.
+        
+        Cependant, certains signaux ont un spectre infini. Dans ce cas, on choisit la fréquence d'échantillonnage de façon à ce que le recouvrement spectral ne dépasse pas un certain seuil. On peut aussi ajouter un \textit{filtre de garde}\index{Filtre de garde} qui ne laissent passer que les fréquences inférieures ou égales à $\frac{f_e}{2}$. Evidemment, en faisant ceci, on commet toujours une erreur dans l'échantillonnage vu qu'on ne considère pas toutes les fréquences.
+
+    \section{Théorème de Shannon}
+        Le \textit{théorème de Shannon} (ou \textit{théorème de l'échantillonnage})\index{Théorème de Shannon}\index{Théorème de l'échantillonnage|see {Théorème de Shannon}} dit :
+        \begin{theorem}[Théorème de Shannon]
+            Tout fonction $f(t)$ dont le spectre est à support bornée (c'est-à-dire que $\exists f_M$ tel que $\forall |f| > f_M, F(f) = 0$) est complètement définie par ses échantillons $f(n T_e)$ si $f_e \geq 2f_M$.
+        \end{theorem}
+
+        Si on échantillonne en respectant ce théorème, il n'y a pas de recouvrement dans les échantillons.
+
+        On peut reconstruire le signal d'origine en faisant une convolution dans le temps entre $f^*(t)$ et $sinc(\frac{t}{T_e})$ (une fonction pieuvre qui est considérée comme la \textit{fonction d'interpolation idéale}\index{Fonction d'interpolation idéale}). En fréquence, ceci nous donne un produit entre $F$ et $T_e rect(\frac{f}{T_e})$\footnote{On peut calculer cette transformée de Fourier en utilisant le fait que $sinc(t) \fourier rect(f)$ et la propriété de changement d'échelle qui est $f(at) \fourier \frac{1}{|a|}F(\frac{f}{a})$.}. Ceci est illustré (avec une erreur dans la fonction $sinc$) à la page 109.
+
+    \section{Reconstruction du signal à temps continu}
+        A partir des échantillons, on veut reconstruire le signal d'origine $f(t)$. Il faut procéder en deux étapes :
+        \begin{enumerate}
+            \item On construit un vrai signal analogique $f^*(t)$ à partir des échantillons du signal à temps discret. On appelle ceci \textit{extrapolation}\index{Extrapolation}. On peut voir $f^*(t)$ comme une première ébauche de $f(t)$.
+            \item On applique sur $f^*(t)$ un \textit{filtre de lissage}\index{Filtre de lissage} qui affine $f^*(t)$ et le rapproche de $f(t)$.
+        \end{enumerate}
+
+        % TODO: si j'en vois dans les examens
+
+    \section{Changement de fréquence d'échantillonnage}
+        Il peut arriver qu'on souhaiter augmenter ou diminiuer la fréquence d'échantillonnage d'un signal déjà échantillonné. Ici, on va regarder comment multiplier ou diviser la fréquence d'échantillonnage par un nombre entier.
+
+        \subsection{Décimation}
+            Considérons un signal $x_1(n)$ obtenu par échantillonnage d'un signal analogique $x(t)$ à une fréquence d'échantillonnage $f_e$. Le spectre utile du signal est limité à l'intervalle $[0, \frac{f_e}{2}]$. On veut \textit{sous-échantillonner}\index{Sous-échantillonnage} ce signal à une fréquence $f_e'$ qui est $k$ fois inférieure à $f_e$. On parle aussi de \textit{downsampling}\index{Downsampling|see {Sous-échantillonnage}}.
+
+            On va, dans un premier temps, prendre un échantillon sur $k$ de $x_1(n)$. On va \textit{décimer}\index{Décimation} $x_1(n)$ par $k$.
+
+            Au départ, on avait un signal $x(t)$ échantillonné à $f_e$. On a ensuite appliqué un autre échantillonnage à $\frac{f_e}{k}$. Ceci est évidemment équivalent à un échantillonnage direct à $\frac{f_e}{k}$. Voici quelques résultats :
+            \begin{itemize}
+                \item Le spectre du signal décimé est celui du signal analogique de départ, rendu périodique de période $\frac{f_e}{k}$ (car TFTD).
+                \item L'amplitude spectrale est divisée par $kT_e$ (car on divise par $k$ par rapport au spectre du signal échantillonné à $f_e$).
+            \end{itemize}
+
+            Cependant, une simple décimation ne suffit pas. En effet, comme il y a généralement un filtre de garde reglé pour un échantillonnage à une fréquence de $f_e$, le sous-échantillonnage par $k$ introduit un repliement spectral des composantes de $x_1(n)$ situées entre $\frac{f_e}{2k}$ et $\frac{f_e}{2}$. Il est donc nécessaire de faire précéder le sous-échantillonnage d'un filtre \textit{numérique} passe-bas de fréquence de coupure égale à $\frac{f_e}{2k}$. La décimation totale est illustrée à la page 113.
+
+        \subsection{Interpoler}
+            Considérons un signal $x_1(n)$ obtenu par échantillonnage d'un signal analogique $x(t)$ à une fréquence d'échantillonnage $f_e$. Le spectre utile du signal est limité à l'intervalle $[0, \frac{f_e}{2}]$. On veut \textit{sur-échantillonner}\index{Sur-échantillonnage} ce signal à une fréquence $f_e'$ qui est $k$ fois supérieure à $f_e$. On parle aussi de \textit{upsampling}\index{Upsampling|see {Sur-échantillonnage}}.
+
+            Il faut calculer $k - 1$ échantillons intermédiaires entre deux échantillons de $x_1(n)$. Ceci est possible car, par le théorème de Shannon, on sait qu'on peut totalement reconstituer le signal analogique en utilisant l'interpolateur idéal.
+
+            Pour faire ceci, il suffit simplement de rajouter les échantillons suplémentaires (et de mettre leur valeur à zéro) de la façon suivante :
+            $$
+                x_2(n) = \begin{cases}
+                    x_1(\frac{n}{k}) &\text{si } n \text{ est mutliple de } k\\
+                    0 &\text{sinon}
+                \end{cases}
+            $$
+
+            Comme on rajouté uniquement des zéros, ceci ne modifie pas la TFTD, qui reste périodique de période $f_e$. Par contre, le spectre utile de $x_2(n)$ s'étend maintenant de 0 à $\frac{kf_e}{2}$. Ceci fait donc apparaître de nouvelles composantes de $x_1(n)$ (qu'on ne veut pas). On peut les éliminer en faisant suivre le sur-échantillonnage par un filtre passe-bas \textit{numérique} de fréquence de coupure égale à $\frac{f_e'}{2k}$. Le résultat est appelé \textit{interpolation}\index{Interpolation} du signal et est illustré à la page 114.
+
+    \section{Filtre de garde réel et sur-échantillonnage (oversampling)}
+        Le filtre de garde idéal est impossible à réaliser en pratique. On prendra donc un filtre de garde qui modifie légérement le spectre original autour de $f_M$ (à cause du repliement de composantes résiduelles supérieures à $\frac{f_e}{2}$).
+
+        On peut compenser cet effet de deux façons :
+        \begin{itemize}
+            \item Si la fréquence d'échantillonnage est imposée, on peut faire en sorte que la bande passante du filtre soit plus étroite que la limite théorique de $\frac{f_e}{2}$. Ceci attenue les recouvrements spectraux MAIS les composantes à plus haute fréquence sont perdues !
+            \item Si on peut choisir $f_e$, alors on peut la prendre fortement supérieure à $2f_M$. Ceci fait qu'on a plus de calculs à exécuter !
+        \end{itemize}
+
+    \section{Filtre de lissage réel et sur-échantillonnage (oversampling)}
+        On peut simplifier le filtre de lissage en utilisant une fréquence d'échantillonnage intermédiaire, supérieure à la fréquence de départ, avant d'extrapoler les échantillons. Il suffit de faire du upsampling. Ceci fait qu'on a plus de calculs à exécuter au niveau du filtre numérique mais on gagne en simplification au niveau du filtre de lissage.
+
+        \begin{exemple}
+            L'exemple des CDs de la page 117 semble être assez important !
+        \end{exemple}
+
+    \section{Théorème de Shannon généralisé}
+        On peut généraliser le théorème de Shannon\index{Théorème de Shannon} pour les signaux à bande étroite, c'est-à-dire pour les signaux pour lesquels l'amplitude spectrale se trouve confinée dans une bande de fréquence de largeur $B$ centrée autour de $f_0$. Ceci est illustré (et expliqué en détail) à la page 118. On ne donne ici que le théorème.
+
+        \begin{theorem}[Théorème de Shannon généralisé]
+            Toute fonction $f(t)$ dont le spectre est à bande étroite $(f_0, B)$ est complètement définie par ses échantillons $f(nT_e)$ si $f_e\geq 2B$ et que $f_e$ respecte en outre l'une des conditions suivantes : $Kf_e = f_0 - \frac{B}{2}$ ou $Kf_e = f_0 + \frac{B}{2}$, avec $K$ entier.
+        \end{theorem}
+
+        \begin{exemple}
+            L'exemple des pages 119 à 121 semble également important !
+        \end{exemple}

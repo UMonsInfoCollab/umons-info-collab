@@ -1,0 +1,79 @@
+\section{Transformée de Fourier (temps continu)}
+    \subsection{Fonctions non périodiques}
+        On décompose selon une base d'exponentielles complexes :
+
+        $$
+            F(f) = \int_{-\infty}^{+\infty} f(t) e^{-j\omega t}\,dt
+        $$
+
+        \subsubsection{Fonctions usuelles}
+            On donne ici quelques fonctions avec leur transformée de Fourier\index{Transformée de Fourier}. Les développements peuvent être trouvés dans le syllabus.
+
+            \begin{align*}
+                rect(t) &\fourier sinc(f)\\
+                tri(t) &\fourier sinc^2(f)\\
+                sinc(t) &\fourier rect(-f) = rect(f)\\
+                \delta(t) &\fourier 1\\
+            \end{align*}
+
+            Les trois premières fonctions ont une seule fréquence caractéristique en $f = 0$.
+        
+    \subsection{Fonctions périodiques}
+        La décomposition devient discrète :
+        $$
+            F_{T_0}(f) = \sumInfty{k} F_k \delta(f - kf_0) \mbox{ avec } F_k = \frac{1}{T_0}\int_{\frac{-T_0}{2}}^{\frac{T_0}{2}} f_{T_0}(t) e^{-jk\omega_0 t}\,dt
+        $$
+
+        Série de Fourier :
+        $$
+            f_{T_0}(t) = \sumInfty{k} F_k e^{jk\omega_0 t}
+        $$
+
+        \subsubsection{Fonctions usuelles}
+            Comme précédemment, on donne quelques fonctions (périodiques, cette fois) avec leur transformée de Fourier.
+
+            \begin{remarque}
+                Pour rappel, $\omega = 2\pi f$. Plus particulièrement, $f_0 = \frac{\omega_0}{2\pi}$. De plus, $T = \frac{1}{f} \Leftrightarrow f = \frac{1}{T}$.
+
+                On a aussi que :
+                $$\delta_{T_0}(t) = \sumInfty{n}\delta(t - nT_0)$$
+            \end{remarque}
+
+            \begin{align*}
+                e^{j\omega_0t} &\fourier \delta(f - f_0)\\
+                \cos(\omega_0t) &\fourier \frac{1}{2}\left[\delta(f - f_0) + \delta(f + f_0)\right] & \text{Il y a donc deux fréquences pour le cosinus : $-f_0$ et $f_0$}\\
+                \sin(\omega_0 t) &\fourier \frac{1}{2j}\left[\delta(f - f_0) + \delta(f + f_0)\right] & \text{Mêmes fréquences que pour le cosinus}\\
+                1 &\fourier \delta(f)\\
+                \delta_{T_0}(t) &\fourier \frac{1}{T_0}\delta_{f_0}(f) & \text{Voir la figure dans le syllabus page 75}\\
+                rect_{T_0}(t) &\fourier \frac{sinc(f)}{2}\\
+                tri_{T_0}(t) &\fourier \left|\frac{sinc^2(f)}{2}\right|
+            \end{align*}
+
+\section{Transformée de Fourier à temps discret}
+    On a :
+    \begin{itemize}
+        \item $f_e$, la fréquence d'échantillonage.
+        \item $T_e = \frac{1}{f_e}$, la période d'échantillonage.
+        \item $\omega_e = 2\pi f_e$, la pulsation d'échantillonage.
+    \end{itemize}
+    \subsection{Fonctions non périodiques}
+        Les deux équations suivantes décrivent la même TFTD (la première est en fréquence et la seconde en pulsation).
+        \begin{align*}
+            F^+(F) &= \sumInfty{n} f(n) e^{-jn2\pi f} &\mbox{avec } F = \frac{T_e}{T} = \frac{f}{f_e}\\
+            F^+(\phi) &= \sumInfty{n} f(n)e^{-jn\phi} &\mbox{avec } \phi = 2\pi F = 2\pi \frac{f}{f_e}
+        \end{align*}
+
+    \subsection{Fonctions périodiques}
+        On suppose que le signal périodique a une période de $n_0$ échantillons. Dans ce cas, la période $T_0$ de la fonction $f^+_{T_0}$ est égale à $n_0 T_e$.
+
+        \begin{align*}
+            &F_{T_0}(F) = \sumInfty{k} F_k \delta(\phi - k\phi)    &\text{avec } F_k = \frac{1}{T_0} \sum_{n=0}^{n_0-1} f(n) e^{-jnk\phi_0}
+        \end{align*}
+
+\section{Fonction de réponse en fréquence $H(\phi)$}
+    La fonction de réponse en fréquence d'un SLI est la TFTD de sa réponse impulsionnelle.
+
+    Elle peut être simplement calculée via :
+    $$
+        H(\phi) = {\left.H(z)\right|}_{z=e^{j\phi}}
+    $$

@@ -1,0 +1,12 @@
+\section{Echantillonnage}
+    \subsection{Théorème de Shannon}
+        Si on a que $f_M$ est la plus haute fréquence du signal, il faut que $f_e \geq 2 f_M$
+
+    \subsection{Décimer}
+        Pour décimer (diviser la $f_e$ d') un signal $x(n)$ par $k$, il faut prendre un échantillon sur $k$ et appliquer un filtre numérique passe-bas de fréquence de coupure égale à $\frac{f_e}{2k}$.
+
+    \subsection{Interpoler}
+        Pour interpoler (multiplier la $f_e$ d') un signal $x(n)$ par $k$, il suffit d'ajouter $k-1$ échantillons à zéro entre deux échantillons et appliquer un filtre numérique passe-bas de fréquence de coupure égale à $\frac{kf_e}{2k} = \frac{f_e}{2}$.
+
+    \subsection{Théorème de Shannon généralisé}
+        Pour les signaux pour lesquels l'amplitude spectrale se trouve confinée dans une bande de fréquence de largeur $B$ centrée autour de $f_0$, il faut que $f_e \geq 2B$ et que $f_e$ respecte $Kf_e = f_0 - \frac{B}{2}$ ou $Kf_e = f_0 + \frac{B}{2}$ avec $K$ entier.

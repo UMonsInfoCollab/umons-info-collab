@@ -1,0 +1,39 @@
+\documentclass[a4paper, titlepage, twoside, openright, french]{report}
+
+\input{preambule/preambule.tex}
+
+\title{Formulaire et résumé de Traitement du Signal}
+\date{Année académique 2018-2019}
+\author{Gaëtan Staquet}
+
+\begin{document}
+    \maketitle
+    \pagenumbering{roman}
+
+    \begin{abstract}
+        Ce document est un formulaire/résumé du cours de Traitement du Signal donné par Thierry Dutoit en l'année académique 2018-2019. Il est distribué sous licence MIT. Il ne vise pas à expliquer le cours mais tente de rendre le cours plus compact (en ignorant les parties purement théoriques).
+
+        Le premier chapitre est un formulaire brut, c'est-à-dire que les formules et résultats sont donnés tels quels. Les chapitres suivants résument chacun un chapitre du cours.
+
+        Pour rappel, le chapitre 5 du cours ne concerne pas les étudiants de la Faculté des Sciences.
+    \end{abstract}
+
+    \newpage
+    \thispagestyle{fancy}
+    \tableofcontents
+
+    \newpage
+    \pagenumbering{arabic}
+    \include{formulaire/formulaire}
+    \include{chapitre1/signauxNumeriques}
+    \include{chapitre2/analyseFrequentielle}
+    \include{chapitre3/echantillonnage}
+    \include{chapitre4/TFD}
+    \include{chapitre6/filtres}
+
+    \cleardoublepage
+    \addcontentsline{toc}{chapter}{Index}
+    \printindex
+    \cleardoublepage
+    \printnomenclature
+\end{document}

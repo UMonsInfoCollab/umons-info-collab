@@ -1,0 +1,224 @@
+\chapter{Analyse fréquentielle des signaux et systèmes numériques}
+    Dans le \autoref{chap:systemesNumeriques}, on a utilisé uniquement le domaine temporel. Dans ce chapitre, nous allons parler du \textit{domaine fréquentiel}\index{Domaine fréquentiel}, c'est-à-dire que nous allons analyser les \textit{fréquences}\index{Fréquence} des signaux et systèmes numériques.
+
+    \section{Analyse fréquentielle des signal analogiques}
+        Un signal analogique est un signal continu, contrairement à un signal numérique.
+
+        \subsection{Transformée de Fourier d'un signal d'énergie finie}
+            On peut décomposer un signal en plusieurs impulsions de Dirac\index{Impulsion de Dirac} grâce à :
+            $$ 
+                \intInfty f(\tau)\delta(t-\tau)\,d\tau = f(t)
+            $$
+            On peut voir cette équation comme la décomposition de $f(t)$ en une somme pondérée (et continue) de fonctions de base orthonormées... Néanmoins, il semblerait que ce ne soit pas très utile dans ce cours.
+
+            Il est également possible de décomposer un signal d'énergie finie comme une somme pondérée et continue de fonctions de base $\{e^{j\omega t}\}$ avec $\omega \in [-\infty, +\infty]$, c'est-à-dire des exponentielles imaginaires. Ceci s'exprime comme suit :
+            \begin{equation}
+                f(t) = \intInfty F(f) e^{j\omega t}\,df
+                \label{eq:decompositionExponentielles}
+            \end{equation}
+
+            Les coefficients complexes $F(f)$ sont fonction de la variable $f$ (qui est la fréquence. Pour rappel, $f = \frac{\omega}{2\pi}$). Ces coefficients constituent la \textit{transformée de Fourier}\index{Transformée de Fourier} de $f(t)$, notée $F(f)$.
+
+            Si on admet que les exponentielles imaginaires constituent une base une base de l'ensemble des fonctions d'énergie finie, cette base est orthonormée. On peut donc obtenir que les coefficients intervenant dans la décomposition de $f(t)$ sur ces fonctions de base peuvent être obtenus par simple projection de $f(t)$ sur les fonctions de base :
+            $$
+                F(f) = <f(t), e^{j\omega t}>
+            $$
+
+            Avec ceci, on obtient l'expression suivante :
+            \begin{equation}
+                F(f) = \intInfty f(t) e^{-j\omega t}\,dt
+                \label{eq:transformeeFourier}
+            \end{equation}
+
+            Le couple $f(t)$ et $F(f)$ constitue une \textit{paire de transformées de Fourier}\index{Paire de transformées de Fourier}\nomenclature{$f(t) \fourier F(f)$}{$F(f)$ est la transformée de Fourier de $f(t)$}. On note cette relation par :
+            $$
+                f(t) \fourier F(f)
+            $$
+
+            \subsubsection{Amplitude et phase}
+                Si on définit l'\textit{amplitude}\index{Amplitude} $A(f)$ et la \textit{phase}\index{Phase} $\phi(f)$ de la transformée de Fourier par :
+                $$
+                    F(f) = A(f) e^{j\phi(f)}
+                $$
+                
+                Pour que $f(t)$ soit une fonction réelle, $A(f)$ doit être une fonction paire et $\phi(f)$ doit être une fonction impaire.
+
+                \begin{remarque}
+                    Dans ce cours, toutes les fonctions analysées sont réelles, sauf l'exponentielle imaginaire.
+                \end{remarque}
+
+                On a :
+                $$
+                    F(0) = <f(t), e^{j 0 t}> = <f(t), 1> = \intInfty f(t)\,dt = A(0)
+                $$
+
+            \subsubsection{Propriétés de la transformée de Fourier}
+                La liste complète des propriétés peut être trouvée dans le syllabus à la page 68. On ne donne ici que quelques propriétés :
+
+                \begin{align*}
+                    \mbox{Réflexion} && f(-t) &\fourier F^*(f)\footnotemark\\
+                    \mbox{Changement d'échelle} && f(at) &\fourier \frac{1}{|a|}F(\frac{f}{a})\\
+                    \mbox{Somme} && \sum_i a_if_i(t) &\fourier \sum_i a_i F_i(f)\\
+                    \mbox{Produit} && f(t)g(t) &\fourier F(f)*G(f)\\
+                    \mbox{Convolution} && f(t)*g(t) &\fourier F(f)G(f)\\
+                    \mbox{Produit scalaire} && <f(t), g(t)> &\fourier <F(f), G(f)>
+                \end{align*}
+                \footnotetext{Pour rappel, $F^*(f)$ indique qu'on prend les complexes conjugués de $F(f)$.}
+
+        \subsection{Transformée de Fourier d'une fonction périodique}
+            La transformée de Fourier d'une fonction périodique devient :
+            \begin{equation}
+                F_{T_0}(f) = \sumInfty{k} F_k \delta(f - kf_0) \mbox{ avec } F_k = \frac{1}{T_0}\int_{\frac{-T_0}{2}}^{\frac{T_0}{2}} f_{T_0}(t) e^{-jk\omega_0 t}\,dt
+                \label{eq:transformeeFourierPeriodique}
+            \end{equation}
+
+            On a donc que la transformée de Fourier d'un signal périodique est discrète.
+
+            On peut réduire la somme continue \eqref{eq:decompositionExponentielles} à une somme discrète, que l'on appelle \textit{série de Fourier}\index{Série de Fourier} associée à $f_{T_0}(t)$ :
+            \begin{equation}
+                f_{T_0}(t) = \sumInfty{k} F_k e^{jk\omega_0 t}
+                \label{eq:serieFourier}
+            \end{equation}
+
+        \subsection{Notation en $\omega$}
+            Parfois, on préfère représenter la transformée de Fourier en utilisant la variable de \textit{pulsation}\index{Pulsation} $\omega$ plutôt qu'avec la fréquence $f$.
+
+            On a :
+            $$
+                f(t) = \intInfty F(f)e^{j2\pi f t}\,df = \frac{1}{2\pi}\intInfty F(\omega) e^{j\omega t}\,d\omega
+            $$
+
+            Pour la plupart des fonctions, le passage de $F(f)$ à $F(\omega)$ est immédiat car $F(\omega) = F(f)$. Le changement d'échelle ne change rien à la valeur de la fonction. Seul l'axe des abscisses est modifié ($1$ devient $2\pi$, $2$ devient $4\pi$, etc. Cf graphique page 78 du syllabus).
+
+            Cependant, il existe un cas important où le changement d'échelle modifie la valeur de la transformée : l'impulsion de Dirac\index{Impulsion de Dirac}. On a :
+            $$
+                \intInfty\delta(f)\,df = 1 = \intInfty\delta(\omega)\,d\omega
+            $$
+            Ceci impose que $\delta(f) = 2\pi\delta(\omega)$.
+
+            Ceci implique aussi que les transformées qui se basent sur les impulsions de Dirac (comme les transformées des sinusoïdes) sont modifiées lors du changement d'échelle !
+
+            \begin{exemple}
+                Regardons le cosinus :
+                $$
+                    cos(\omega_0 t) \fourier \frac{1}{2}\left[\delta(f-f_0) + \delta(f+f_0)\right]  = \pi\left[\delta(\omega-\omega_0) + \delta(\omega + \omega_0)\right]
+                $$
+
+                On a deux pics en $-f_0$ et $f_0$ de valeur $\frac{1}{2}$. Ces deux pics deviennent deux pics en $-\omega_0$ et $\omega_0$ de valeur $\pi$.
+            \end{exemple}
+
+    \section{Analyse fréquentielle des signaux à temps discret}
+        Jusqu'à présent, nous avons traité des signal analogiques (donc continus). Nous voulons aussi nous intéresser aux signaux numériques (donc discrets).
+
+        \subsection{Transformée de Fourier à temps discret}
+            Pour étudier les fréquence d'un signal à temps discret composé d'une séquence d'échantillons $\{f(n)\}$, il faut associer aux échantillons une échelle de temps. On le fait grâce à la fonction analogique $f^+(t)$ composée d'une suite d'impulsions de Dirac espacées d'un temps $T_e$ appelé \textit{période d'échantillonnage}\index{Période d'échantillonnage}. Evidemment, les valeurs de $f^+(t)$ sont égales aux échantillons $f(n)$.
+
+            $$
+                f^+(t) = \sumInfty{n} f(n)\delta(t-nT_e)
+            $$
+
+            La \textit{fréquence d'échantillonnage}\index{Fréquence!D'échantillonnage} est $f_e = \frac{1}{T_e}$ et $\omega_e = 2\pi f_e$ est la \textit{pulsation d'échantillonnage}\index{Pulsation!D'échantillonnage}.
+
+            On peut simplement définir la \textit{transformée de Fourier à temps discret}\index{Transformée de Fourier!À temps discret}\nomenclature{TFTD}{Transformée de Fourier à temps discret} (qu'on raccourcit en TFTD) comme la transformée de Fourier de $f^+(t)$. On peut écrire la formule simplement sous la forme :
+            \begin{align}
+                &F^+(F) = \sumInfty{n} f(n) e^{-jn2\pi f} &\mbox{avec } F = \frac{T_e}{T} = \frac{f}{f_e}
+                \label{eq:TFTD}
+            \end{align}
+            où $F$ est la \textit{fréquence normalisée}\index{Fréquence!Normalisée} sans dimension et $T = \frac{1}{f}$ ($f$ étant la véritable variable de la fonction étant donné que $f_e$ est une constante pour le signal (idem pour $T_e = \frac{1}{f_e}$)).
+
+            On définit la \textit{pulsation normalisée}\index{Pulsation!Normalisée} $\phi$ (parfois notée $\Omega$) comme $\phi = 2\pi F$. On obtient la notation plus compacte :
+            \begin{align}
+                &F^+(\phi) = \sumInfty{n} f(n)e^{-jn\phi} &\mbox{avec } \phi = 2\pi F = 2\pi \frac{f}{f_e}
+                \label{eq:TFTDCompact}
+            \end{align}
+
+            On a donc que $F^+(F)$ est une fonction périodique en $F$ de période 1 (ce qui correspond à une période de $f_e$ en fréquence non normalisée) et que $F^+(\phi)$ est une fonction périodique en $\phi$ de période $2\pi$ (ce qui correspond à une période de $\omega_e$ en pulsation non normalisée).
+
+            \begin{remarque}
+                La TDTF d'un signal discret est continue et périodique !
+            \end{remarque}
+
+            On a aussi que le signal $\{f(n)\}$ et la fonction $F^+(t)$ forment une \textit{paire de transformées de Fourier à temps discret}\index{Paire de transformées de Fourier!À temps discret}\nomenclature{$\{ f(n) \} \TFTD F(F)$}{$F(F)$ est la TFTD de l'ensemble d'échantillons $\{ f(n) \}$}, notée :
+            $$
+                \{f(n)\} \TFTD F^+(F)
+            $$
+
+            Pour ne pas alourdir les notations, on va laisser tomber le $+$ :
+            $$
+                \{f(n)\} \TFTD F(F)
+            $$
+
+            Comme c'était déjà le cas pour la transformée de Fourier, la TFTD $F(F)$ d'un signal $\{f(n)\}$ réel est telle que $F(-F) = F^*(F)$, c'est-à-dire que les valeurs de $F(F)$ entre 0 et 1 sont les complexes conjugués des valeurs de $F(F)$ entre -1 et 0 : le module de la TFTD est pair et son argument est impair.
+
+            \subsubsection{Interprétation géométrique}
+                Voir le syllabus page 81.
+
+            \subsubsection{Propriétés de la TFTD}
+                Comme pour la transformée de Fourier, on ne donne que quelques propriétés. La liste complète se trouve à la page 83 du syllabus.
+
+                \begin{align*}
+                    \mbox{Réflexion} && f(-n) &\TFTD F^*(F)\\
+                    \mbox{Changement d'échelle} && f(an) &\TFTD \frac{1}{|a|}F(\frac{F}{a})\\
+                    \mbox{Somme} && \sum_i a_if_i(n) &\TFTD \sum_i a_iF_i(F)\\
+                    \mbox{Produit} && f(n)g(n) &\TFTD \int_{-\frac{1}{2}}^{\frac{1}{2}} F(F-\Phi)G(\Phi)\,d\Phi\\
+                    \mbox{Convolution} && f(n)*g(n) &\TFTD F(F)G(F)\\
+                    \mbox{Produit scalaire} && \sum_n f(n)g^*(n) &\TFTD \int_{-\frac{1}{2}}^{\frac{1}{2}} F(F)G^*(F)\,dF
+                \end{align*}
+
+        \subsection{TFTD d'une fonction périodique}
+                Dans le cas d'un signal périodique à temps discret de période égale à $n_0$ échantillons, noté $\{f_{n_0}(n)\}$, on périodifie la fonction $f^+(t)$ pour obtenir $f_{T_0}^+(t)$ :
+                $$
+                    f_{T_0}^+(t) = \sumInfty{k} f^+(t - kn_0T_e)
+                $$
+
+                La période $T_0$ de $f_{T_0}^+$ est égale à $n_0 T_e$.
+
+                La TDTF du signal périodique est une suite d'impulsions de Dirac en fréquence (comme pour la transformée de Fourier à temps continu) dont les valeurs sont données par les produits scalaires obtenus par :
+                \begin{align}
+                    & F_{T_0}(F) = \sumInfty{k} F_k\delta(\phi - k\phi) & \mbox{avec } F_k = \frac{1}{T_0} \sum_{n=0}^{n_0-1} f(n) e^{-jnk\phi_0}
+                    \label{eq:TFTDPeriodique}
+                \end{align}
+
+                \begin{remarque}
+                    Si on applique \eqref{eq:TFTDPeriodique} à un signal à temps discret et non périodique, $F_{T_0}(F)$ est périodique de période $1$.
+                \end{remarque}
+
+                Les signaux périodiques à temps discret possèdent donc un spectre de raies de pas $\frac{1}{n_0}$ (en $F$). Ce spectre de raies est lui-même périodique de période 1 (en $F$). L'amplitude des raies est égale à l'amplitude du spectre du signal non périodique sous-jacent $f^+(t)$ divisée par la période $T_0$.
+
+                On peut réduire la somme continue \eqref{eq:decompositionExponentielles} à une somme discrète, que l'on appelle \textit{série de Fourier à temps discret}\index{Série de Fourier!À temps discret} associée à $f_{T_0}^+(t)$ :
+                $$
+                    f_{T_0}^+(t) = \sumInfty{k} F_k e^{jk}
+                $$
+
+                \begin{remarque}
+                    La TFTD d'un signal discret périodique est discrète et périodique !
+                \end{remarque}
+
+    \section{Réponse en fréquence d'un SLI numérique}
+        \subsection{Réponse à une exponentielle imaginaire}
+            Soit un SLI numérique. Donnons-lui en entrée une exponentielle imaginaires $x(n) = e^{jn\phi} (\forall n \in [[-\infty,+\infty]]\footnote{La notation $[[a, b]]$ indique un intervalle dont tous les éléments sont des entiers, c'est-à-dire que $[[a, b]] = [a, b] \cap \mathbb{Z}$.})$. La réponse du SLI est :
+            \begin{align*}
+                y(n) = x(n)*h(n) &= \sumInfty{i} h(i)x(n-i)\\
+                &= \sumInfty{i} h(i)e^{j(n-i)\phi}\\
+                &= e^{jn\phi} \sumInfty{i} h(i)e^{-ji\phi}\\
+                &= e^{jn\phi} H(\phi) & \text{avec } H(\phi) = \sumInfty{n} h(n)e^{-jn\phi}
+            \end{align*}
+
+            On a donc que la réponse de régime d'un SLI à une exponentielle imaginaire n'est autre que l'exponentielle imaginaire d'entrée, multipliée par un facteur complexe $H(\phi)$ qui dépend de la pulsation normalisée $\phi$ de l'exponentielle.
+
+            $H(\phi)$ est appelée la \textit{fonction de réponse en fréquence} (ou \textit{transmittance isochrone})\index{Fonction de réponse en fréquence}\index{Transmittanche isochrone|see {Fonction de réponse en fréquence}} du SLI.
+
+            On a que la réponse en fréquence d'un SLI est la TFTD de sa réponse impulsionnelle.
+
+        \subsection{Lien entre $H(z)$ et $H(\phi)$}
+            On a :
+            \begin{equation}
+                H(\phi) = {\left.\frac{\sum\limits_{i=0}^M b_iz^{-i}}{\sum\limits_{i=0}^N a_i z^{-i}}\right|}_{z=e^{j\phi}} = {\left.H(z)\right|}_{z=e^{j\phi}}
+            \end{equation}
+
+            Pour calculer la fonction de réponse en fréquence d'un SLI, il suffit donc de connaître la fonction de transfert en Z\index{Fonction de transfert en Z} et de changer chaque occurence de $z$ par $e^{j\phi}$.
+
+            En d'autres termes, la réponse en fréquence d'un SLI numérique est égale à sa transformée en Z calculée sur le cercle de rayon unité.
+
+        \subsection{Interprétation géométrique}
+            Voir syllabus page 89.

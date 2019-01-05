@@ -1,0 +1,53 @@
+\section{Transformée de Fourier Discrète}
+    La TFD est définie par :
+    $$
+        X(k) = \sum_{n=0}^{N-1} x(n)e^{-jnk\frac{2\pi}{N}}
+    $$
+
+    On peut facilement la représenter sur un cercle de rayon unitaire.
+
+    La TFD inverse est définie par :
+    $$
+        x(n) = \frac{1}{N}\sum_{k=0}^{N-1} X(k)e^{jnk\frac{2\pi}{N}}
+    $$
+
+    Calculer la TFD implique toujours de d'abord appliquer une fenêtre. Par défaut, il s'agit d'une fenêtre rectangulaire. Par conséquent, les valeurs de la TFD ne correspondent pas exactement à celles de la transformée de Fourier.
+
+    \subsection{Fenêtres usuelles}\label{subsec:fenetres}
+        Donnons d'abord les définitions des fenêtres :
+        \begin{align*}
+            \text{Rectangulaire} && w(n) &= \begin{cases}
+                1 & \text{si } n \in [[0, N-1]] \\
+                0 & \text{sinon}
+            \end{cases}\\
+            \text{Hanning} && w(n) &= \begin{cases}
+                \frac{1}{2} - \frac{1}{2}\cos(\frac{2\pi n}{N}) & \text{si } n \in [[0, N-1]]\\
+                0 & \text{sinon}
+            \end{cases}\\
+            \text{Hamming} && w(n) &= \begin{cases}
+                0.54-0.46\cos(\frac{2\pi n}{N}) & \text{si } n \in [[0, N-1]]\\
+                0 & \text{sinon}
+            \end{cases}\\
+            \text{Blackman} && w(n) &= \begin{cases}
+                0.42-0.5\cos(\frac{2\pi n}{N})+0.08\cos(\frac{4\pi n}{N}) & \text{si } n \in [[0, N-1]]\\
+                0 & \text{sinon}
+            \end{cases}\\
+        \end{align*}
+
+        La \autoref{tab:fenetres} donne les caractéristiques des différentes fenêtres.
+
+        \begin{table}
+            \centering
+            \begin{tabular}{lrr}
+                \toprule
+                Fenêtre & \makecell{Demi-largeur du lobe principal\\(en fréquence)} & \makecell{Niveau des lobes secondaires\\(en décibel)}\\
+                \midrule
+                Rectangulaire & $\frac{1}{N}$ & $-13\,dB$\\
+                Hanning & $\frac{3}{2N}$ & $-30\,dB$\\
+                Hamming & $\frac{2}{N}$ & $-40\,dB$\\
+                Blackman & $\frac{11}{4N}$ & $-60\,dB$\\
+                \bottomrule
+            \end{tabular}
+            \caption{Comparaison des fenêtres usuelles}
+            \label{tab:fenetres}
+        \end{table}
