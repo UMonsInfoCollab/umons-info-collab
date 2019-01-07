@@ -1,0 +1,36 @@
+Il y a deux "paquets" de questions. Le tout premier à passer choisit la question librement. S'il a pris une question du paquet 1, le suivant doit tirer une question parmi celles du paquet 2 (et inversément). Et ainsi de suite.
+
+Les questions sont groupées comme elles étaient sur les énoncés. 
+
+La liste ici n'est évidemment pas exhaustive !
+
+Paquet 1:
+1) Expliquer le fonctionnement de l'algorithme de Knuth-Morris-Pratt
+    - Avantage par rapport à l'algo naïf ?
+    - Complexité de l'algo ?
+    - Quel est le principe du prétraitrement du motif ?
+2) Construisez un exemple pour l'algorithme KMP tel qu'à un moment donné, le décalage du motif est plus grand que 1 et la comparaison ne reprend pas à la première position du motif.
+
+B. Donnez et expliquez la version améliorée de l'algorithme naïf pour le String Matching (SM_naïf2)
+F. Donnez la table next de l'algorithme de Knuth-Moriss-Pratt pour le motif p = abaababbb (je suis pas sûr à 100% du motif). Il n'est pas nécessaire d'appliquer l'algorithme formellement
+
+H. Décrivez l'algorithme de Knuth-Moriss-Pratt ainsi que sa complexité lorsque la table next[] est connue
+R. Recherchez le motif p = ACTGACTGCA dans le texte t=GTACTACTACTGACT en utilisant l'algorithme de Knuth-Moriss-Pratt : 
+    -Prétraitez le motif (il n'est pas indispensable de suivre formellement l'algorithme de prétraitement vu en cours)
+    -Effectuez la recherche étant donné la table calculée
+
+Paquet 2:
+L. Expliquer le principe de l'alignement global avec une fonction de Gap affine où w(k) = h + g x k est la pénalité attribuée à un gap avec k, la longueur du gap.
+    - Présenter le fonctionnement
+    - Donner l'algorithme et expliquer
+    - Appliquer l'algorithme sur un exemple donné (je ne sais plus lequel je n'ai pas noté les 2 séquences )
+   Où les scores sont les suivants :
+    - match +2
+    - mismatch : -1
+    - h = 2 
+    - g = 1
+
+W.  - Expliquez ce qui différencie algo global, local et semi global dans la construction de la matrice
+    - Expliquez l'algo semi global
+    - Construisez la matrice correspondant à un exemple donné par le prof (l'exemple a été perdu dans les limbes de la mémoire)
+
