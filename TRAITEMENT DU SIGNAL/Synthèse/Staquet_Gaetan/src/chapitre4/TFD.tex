@@ -112,7 +112,7 @@
                 On augmente donc le nombre d'échantillons de la TFTD de $\{x_N(n)\}$ avec, cette fois, $\NTFD$ valeurs. Ceci fournit donc une meilleure représentation de la $X_N^+(f)$ MAIS n'augmente pas la précision du résultat (on voit mieux parce qu'on a plus de points mais les points ne sont pas mieux placés). Voir le graphique page 157.
 
             \subsubsection{Périodification de la séquence d'échantillons}
-                On peut aussi calculer la TFTD de $\{x_N(n)\}$ sur un nombre de points $\NTFD$ (en fréquence) plus petit que $N$. Il suffit en effet de découper la séquence $\{x_N(0), x_N(1), \dots, x_N(N-1)\}$ en blocs de $\NTFD$ valeurs. Ensuite, on somme les échantillons occupant les mêmes positions dans leurs blocs respectifs. Ceci revient à périodifier la séquence d'entrée avec une période de $\NTFD$ échantillons :
+                On peut aussi calculer la TFTD de $\{x_N(n)\}$ sur un nombre de points $\NTFD$ (en fréquence) plus petit que $N$. Il suffit en effet de découper la séquence $\{x_N(0), x_N(1), \dots, x_N(N-1)\}$ en blocs de $\NTFD$ valeurs. Ensuite, on somme les échantillons occupant les mêmes positions dans leurs blocs respectifs \textbf{avant} de calculer la FFT. Ceci revient à périodifier la séquence d'entrée avec une période de $\NTFD$ échantillons :
                 $$
                     x_{\NTFD}(n) = \sumInfty{i} x_N(n-i \NTFD)
                 $$
@@ -145,9 +145,9 @@
             y(n) = x(n) * h(n) = \sumInfty{i} x(i)h(n-i)
         $$
 
-        Le nombre de valeurs non-nulles retournées par la convolution de deux séquences finies de $N$ et $M$ valeurs est de $N + M - 1$. Il est facile de montrer qu'il faut $\mathcal{0}(NM)$ opérations.
+        Le nombre de valeurs non-nulles retournées par la convolution de deux séquences finies de $N$ et $M$ valeurs est de $N + M - 1$. Il est facile de montrer qu'il faut $\mathcal{O}(NM)$ opérations.
 
-        On peut réduire la charge de calculs en calculant la TFD (par la FFT) de chacune des séquences à convoluer, en multipliant les TFD obtenues et en prenant la TFD inverse du résultat. Il faut cependant rajouter des zéros afin d'avoir (au moins) $N + M - 1$ valeurs dans chaque séquence (typiquement, on s'arrange pour avoir aussi une puissance de deux pour profiter pleinement de la FFT). On a donc $\mathcal{0}((N+M)log(N+M))$\footnote{Je n'ai pas vérifié mes calculs... Il faut simplement retenir que passer par 3 TFD (2 directs et une inverse) est plus rapide que de calculer directement la convolution linéaire.} opérations, ce qui est meilleur.
+        On peut réduire la charge de calculs en calculant la TFD (par la FFT) de chacune des séquences à convoluer, en multipliant les TFD obtenues et en prenant la TFD inverse du résultat. Il faut cependant rajouter des zéros afin d'avoir (au moins) $N + M - 1$ valeurs dans chaque séquence (typiquement, on s'arrange pour avoir aussi une puissance de deux pour profiter pleinement de la FFT). On a donc $\mathcal{O}((N+M)log(N+M))$\footnote{Je n'ai pas vérifié mes calculs... Il faut simplement retenir que passer par 3 TFD (2 directs et une inverse) est plus rapide que de calculer directement la convolution linéaire.} opérations, ce qui est meilleur.
 
     \section{Conclusion}
         La TFTD d'une fonction non périodique est une fonction continue tandis que la TFD est une fonction discrète. On peut augmenter ou diminuer le nombre de points du graphique de la TFD en faisant varier $\NTFD$ mais cette modification ne modifie pas la valeur des points.
