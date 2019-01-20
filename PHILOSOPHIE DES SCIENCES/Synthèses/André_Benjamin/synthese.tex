@@ -1,0 +1,251 @@
+\documentclass[fleqn,letterpaper, 12pt]{book}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%   PACKAGES   %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[top = 1.6cm, left = 2cm, right = 2cm ]{geometry}
+\usepackage[pdftex]{graphicx}
+\usepackage[numbers]{natbib}
+\usepackage[french]{babel}
+\usepackage{soulutf8}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage{longtable}
+\usepackage[T1]{fontenc}
+\usepackage{epigraph}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{xcolor}
+\usepackage{eurosym}
+\usepackage{calc}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage[Algorithme]{algorithm}
+\usepackage{algorithmic}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%   TEMPLATE   %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
+\newcommand{\newlinealinea}{
+	~\\ \hspace*{0.5cm}}
+\newcommand{\alinea}{
+	\hspace*{0.5cm}}
+\newcommand{\alinealong}{
+	\hspace*{1.1cm}}
+\newcommand{\alignparagraph}{
+	\hspace*{0.6cm}}
+\newcommand{\red}[1]{
+	\textcolor{red}{#1}}
+\newcommand{\green}[1]{
+	\textcolor{green}{#1}}
+\newcommand{\point}{$\bullet\ $}
+\makeatletter
+\newcommand*{\whiten}[1]{\llap{\textcolor{white}{{\the\SOUL@token}}\hspace{#1pt}}}
+\newcommand{\myul}[1]{
+	\underline{\smash{#1}}
+}
+\makeatother
+\setlength{\fboxsep}{2pt}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+\makeatletter
+\@addtoreset{section}{part}
+\makeatother  
+\renewcommand*\sfdefault{phv}
+\renewcommand*\rmdefault{ppl}
+\renewcommand\epigraphflush{flushright}
+\renewcommand\epigraphsize{\normalsize}
+\setlength\epigraphwidth{0.7\textwidth}
+\definecolor{titlepagecolor}{cmyk}{0.24,0.92,0.78,0.25}
+\definecolor{red}{cmyk}{0, 0.91, 0.91, 0.20}
+\DeclareFixedFont{\titlefont}{T1}{phv}{\seriesdefault}{n}{0.375in}
+\DeclareFixedFont{\subtitlefont}{T1}{phv}{\seriesdefault}{n}{0.25in}
+\cfoot{\thepage}
+\pagestyle{fancy}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%  TITLE PAGE %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand\titlepagedecoration{%
+	\begin{tikzpicture}[remember picture,overlay,shorten >= -10pt]
+	
+	\coordinate (aux1) at ([yshift=-70pt]current page.north east);
+	\coordinate (aux2) at ([yshift=-460pt]current page.north east);
+	\coordinate (aux3) at ([xshift=-6cm]current page.north east);
+	\coordinate (aux4) at ([yshift=-150pt]current page.north east);
+	
+	\begin{scope}[titlepagecolor!40,line width=12pt,rounded corners=12pt]
+	\draw
+	(aux1) -- coordinate (a)
+	++(225:5) --
+	++(-45:5.1) coordinate (b);
+	\draw[shorten <= -10pt]
+	(aux3) --
+	(a) --
+	(aux1);
+	\draw[opacity=0.6,titlepagecolor,shorten <= -10pt]
+	(b) --
+	++(225:2.2) --
+	++(-45:2.2);
+	\end{scope}
+	\draw[titlepagecolor,line width=8pt,rounded corners=8pt,shorten <= -10pt]
+	(aux4) --
+	++(225:0.8) --
+	++(-45:0.8);
+	\begin{scope}[titlepagecolor!70,line width=6pt,rounded corners=8pt]
+	\draw[shorten <= -10pt]
+	(aux2) --
+	++(225:3) coordinate[pos=0.45] (c) --
+	++(-45:3.1);
+	\draw
+	(aux2) --
+	(c) --
+	++(135:2.5) --
+	++(45:2.5) --
+	++(-45:2.5) coordinate[pos=0.3] (d);   
+	\draw 
+	(d) -- +(45:1);
+	\end{scope}
+	\end{tikzpicture}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%  ALGORITHM  %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\algorithmicrequire}{\textbf{Requis:}}
+\renewcommand{\algorithmicensure}{\textbf{Promet:}}
+\renewcommand{\algorithmicend}{\textbf{fin}}
+\renewcommand{\algorithmicif}{\textbf{si}}
+\renewcommand{\algorithmicthen}{\textbf{alors}}
+\renewcommand{\algorithmicelse}{\textbf{sinon}}
+\renewcommand{\algorithmicelsif}{\algorithmicelse\ \algorithmicif}
+\renewcommand{\algorithmicendif}{\algorithmicend\ \algorithmicif}
+\renewcommand{\algorithmicfor}{\textbf{pour}}
+\renewcommand{\algorithmicforall}{\textbf{pour chaque}}
+\renewcommand{\algorithmicdo}{\textbf{faire}}
+\renewcommand{\algorithmicendfor}{\algorithmicend\ \algorithmicfor}
+\renewcommand{\algorithmicwhile}{\textbf{tant que}}
+\renewcommand{\algorithmicendwhile}{\algorithmicend\ \algorithmicwhile}
+\renewcommand{\algorithmicloop}{\textbf{boucle}}
+\renewcommand{\algorithmicendloop}{\algorithmicend\ \algorithmicloop}
+\renewcommand{\algorithmicrepeat}{\textbf{répéter}}
+\renewcommand{\algorithmicuntil}{\textbf{jusqu'à}}
+\renewcommand{\algorithmicprint}{\textbf{afficher}}
+\renewcommand{\algorithmicreturn}{\textbf{retourner}}
+\renewcommand{\algorithmictrue}{\textbf{vrai}}
+\renewcommand{\algorithmicfalse}{\textbf{faux}}
+
+\renewcommand{\algorithmicand}{\textbf{et}}
+\renewcommand{\algorithmicor}{\textbf{ou}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%   CUSTOM TIKZ    %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\tikzmultiline}[6]{
+	% {from}{to}{arrows}{offset from}{offset to}{arrow angle}
+	\pgfmathsetmacro{\pgfminus}{#3-1}%
+	\foreach \i in {0,...,\pgfminus}{
+		 \pgfmathsetmacro{\pgfresult}{\i*100/\pgfminus}%
+		\draw[-] (#1.{(\i)*#6+#4 - \pgfminus*#6/2}) -- (#2.{-(\i)*#6+#5  + \pgfminus*#6/2});}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%   NOTATIONS    %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%   INFORMATIONS  %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\title}{\titlefont Philosophie des sciences \\ \subtitlefont Synthèse \par}
+\newcommand{\subject}{Philosophie des sciences}
+\newcommand{\student}{Benjamin André}
+\renewcommand{\date}{\today}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+	\lhead{\student}
+	\rhead{\subject}
+	\pagenumbering{gobble}
+	\begin{titlepage}
+		%
+		\noindent
+		%
+		\newgeometry{bottom = 2cm, top = 2.5cm}
+		\begin{center}
+			\includegraphics[scale=1.2]{Images/UMONS}\\
+			\vspace*{0.3cm}
+			\includegraphics[scale=0.23]{Images/FS_Logo}\\
+			\vspace*{2.5cm}
+			%
+			\title
+			\vspace*{2.5cm}
+			\date
+			%
+		\end{center}
+		\vspace*{3cm}
+		\hfill
+		%
+		\begin{minipage}{0.18\linewidth}
+			\begin{flushright}
+				\rule{0.5pt}{50pt}
+			\end{flushright}
+		\end{minipage}
+		%
+		\begin{minipage}{0.8\linewidth}
+			\begin{flushleft}
+				\textsf{\textbf{Sujet :}} \subject\\
+				\textsf{\textbf{Étudiant:}} \student
+			\end{flushleft}
+		\end{minipage}
+		%
+		\vspace*{\fill}                                                             
+		%
+		\begin{center}
+			Faculté des Sciences $\bullet$ Université de Mons $\bullet$ 
+			Place du Parc 20 $\bullet$ B-7000 Mons
+		\end{center}
+		\titlepagedecoration
+	\end{titlepage}
+	\newgeometry{top = 3cm, left = 2cm, right = 2cm, bottom=2.5cm}
+	\setcounter{tocdepth}{1}\tableofcontents\newpage
+	\pagenumbering{arabic}\setcounter{page}{1}
+	
+	
+
+
+	
+	
+	
+	
+\end{document}
