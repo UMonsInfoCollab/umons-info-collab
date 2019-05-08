@@ -1,0 +1,102 @@
+\documentclass[a4paper, 11pt, french]{article}
+
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{numprint}
+
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{lscape}
+\usepackage{wrapfig}
+\usepackage{rotating}
+
+\usepackage{fullpage}
+\usepackage{hyperref}
+\usepackage{nameref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xspace}
+
+\usepackage{tikz}
+
+\graphicspath{{images/}}
+
+% Traductions
+\makeatletter
+\renewcommand{\ALG@name}{Algorithme}
+\renewcommand{\listalgorithmname}{Liste des \ALG@name s}
+\renewcommand{\algorithmicrequire}{\textbf{Entrée :}} 
+\renewcommand{\algorithmicensure}{\textbf{Sortie :}} 
+\renewcommand{\algorithmicend}{\textbf{fin}}
+\renewcommand{\algorithmicif}{\textbf{si}}
+\renewcommand{\algorithmicthen}{\textbf{alors}}
+\renewcommand{\algorithmicelse}{\textbf{sinon}}
+\renewcommand{\algorithmicfor}{\textbf{pour}}
+\renewcommand{\algorithmicforall}{\textbf{pour chaque}}
+\renewcommand{\algorithmicdo}{\textbf{faire}}
+\renewcommand{\algorithmicwhile}{\textbf{tant que}}
+\renewcommand{\algorithmicloop}{\textbf{boucle}}
+\renewcommand{\algorithmicrepeat}{\textbf{répéter}}
+\renewcommand{\algorithmicuntil}{\textbf{jusqu'à ce que}}
+\renewcommand{\algorithmicreturn}{\textbf{retourner}}
+\newcommand{\new}{\textbf{nouveau}\xspace}
+\makeatother
+\newcommand{\entree}[1]{\Require #1} 
+\newcommand{\sortie}[1]{\Ensure #1}
+
+% Références vers des algo
+\newcommand{\algorithmautorefname}{algorithme}
+\newcommand{\definitionautorefname}{définition}
+
+% Définitions mathématiques
+\theoremstyle{definition}
+\newtheorem{definition}{Définition}
+
+\hypersetup{colorlinks=true,breaklinks=true,urlcolor=cyan,linkcolor=gray,citecolor=green}
+
+% Pour faire do-while
+\algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
+
+% Pour être plus lisible
+\newcommand{\mean}[1]{\overline{#1}}
+
+\def\sun{s_{1}}
+\def\sde{s_{2}}
+\def\ademi{_{\frac{\alpha}{2}}}
+
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{darkred}{rgb}{0.3,0.0,0.0}
+
+\lstset{%
+    breaklines=true,
+        columns=fullflexible,
+            showstringspaces=false
+}
+
+\title{Résumé-explications de Simulation}
+\author{Virgile Brouillard\and Jonathan Joertz\and Dorian Labeeuw\and Gaëtan Staquet}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\input{jonathan}
+\input{approches-polaire}
+\input{paire-impaire}
+\input{kinderman-monahan}
+\input{rectangles}
+\input{minimisation-aleatoire}
+
+\end{document}
