@@ -1,0 +1,167 @@
+% Pages 138 à 139 du livre de référence (n° du lecteur PDF, pas des pages du livre)
+
+\subsection{Méthode paire-impaire}
+On veut tirer des nombres aléatoires selon une loi de la forme
+
+\begin{equation}
+    f(x) = 
+        \begin{cases}
+            Ce^{-h(x)} & \text{si } x \in [a, b] \\
+            0 & \text{sinon}
+        \end{cases}
+\end{equation}
+
+avec $\forall x \in [a, b], h(x) \in [0, 1]$.
+
+Pour simuler cette loi, on va accepter un $X \in [a, b[$ avec une probabilité $e^{-h(x)}$ via l'algorithme suivant :
+
+\begin{algorithm}[H]
+    \caption{Méthode paire-impaire}
+    \begin{algorithmic}[1]
+        \Do
+            \State Prenons $U$ tiré selon une loi uniforme sur $[0, 1[$
+            \State $X \gets a + (b-a)\,U$ \Comment{$X$ est uniforme sur $[a, b[$}
+            \State $V_0 \gets h(X)$
+            \State $i \gets 0$
+            \Do
+                \State $i \gets i+1$
+                \State Prenons $V_i$ tiré selon une loi uniforme sur $[0, 1[$
+            \DoWhile{$V_{i-1} \geq V_i$}
+        \DoWhile{$i$ est pair}
+        \State Accepter $X$
+    \end{algorithmic}
+\end{algorithm}
+
+Vérifions que cet algorithme respecte bien la condition d'accepter $X$ avec une probabilité $e^{-h(X)}$.
+
+Remarquons que les $V_i$ sont indépendants et distribués uniformément.
+
+La probabilité que l'algorithme s'arrête pour un $i$ quelconque est
+\begin{equation}
+    P(i) = P\{(V_0 \geq V_1 \geq \dots \geq V_{i-1}) \wedge (V_{i-1} < V_i)\}
+    \label{paireimpaire:eq:probaI}
+\end{equation}
+
+Sans tenir compte de l'ordre, la probabilité que $V_0 \geq V_1 \wedge V_0 \geq V_2 \wedge \dots \wedge V_0 \geq V_{i-1}$ est $V_0^{i-1}$ \footnote{La probabilité que $a \leq b$ est $b$, donc que $a \leq b \wedge c \leq b$ est $b^2$, et ainsi de suite.}. Comme $V_0 = h(X)$ (par construction), $V_0^{i-1} = h(X)^{i-1}$. Dans notre cas, comme on veut $V_0 \geq V_1 \geq \dots \geq V_{i-1}$, il n'y a qu'un seul ordre possible. Donc,
+$$P\{V_0 \geq V_1 \geq \dots \geq V_{i-1}\} = \frac{[h(X)]^{i-1}}{(i-1)!}$$
+
+De la même façon, $P\{V_{i-1} < V_i\} = \frac{[h(X)]^i}{i!}$.
+
+Donc, \eqref{paireimpaire:eq:probaI} devient
+\begin{equation}
+    P(i) = \frac{[h(X)]^{i-1}}{(i-1)!} - \frac{[h(X)]^i}{i!}
+\end{equation}
+
+On n'accepte que si $i$ est impair. La probabilité de s'arrêter à une valeur de $i$ impaire vaut
+\begin{align*}
+    \sum_{i=1,3,5,\dots}^\infty \frac{[h(X)]^{i-1}}{(i-1)!} - \frac{[h(X)]^i}{i!} & = \sum_{j=0}^\infty (-1)^j \frac{[h(X)]^j}{j!} & \text{en mettant $i-1$ et $i$ ensemble} \\
+    & = \sum_{j=0}^\infty \frac{[-h(X)]^j}{j!}\\
+    & = e^{-h(X)} & \text{par le développement de Taylor}
+\end{align*}
+
+Donc, on obtient que l'algorithme s'arrête pour un $i$ impair (en d'autres termes, qu'il accepte un nombre $X$) avec une probabilité $e^{-h(X)}$, comme voulu.
+
+Analysons maintenant le nombre moyen de nombres à générer avant d'en accepter un. Pour un $k \geq 1$ fixé (avec une probabilité qu'on s'arrête à $k$ qui vaut $P(k)$), il faut générer $k$ nombres.
+\begin{align*}
+    \mean{k} = \sum_{k=1}^\infty kP(k) & = \sum_{k=1}^\infty k \left\{ \frac{[h(X)]^{k-1}}{(k-1)!} - \frac{[h(X)]^k}{k!} \right\} & \text{Définition de $P(k)$} \\
+    & = \sum_{k=1}^\infty k\frac{[h(X)]^{k-1}}{(k-1)!} - \sum_{k=1}^\infty k \frac{[h(X)]^k}{k!} \\
+    & = \sum_{k=0}^\infty (k+1)\frac{[h(X)]^k}{k!} - \sum_{k=1}^\infty k \frac{[h(X)]^k}{k!} & \text{On change $k=1$ en $k=0$} \\
+    & = \sum_{k=0}^\infty k \frac{[h(X)]^k}{k!} + \sum_{k=0}^\infty \frac{[h(X)]^k}{k!} - \sum_{k=1}^\infty k \frac{[h(X)]^k}{k!} \\
+    & = \sum_{k=0}^\infty \frac{[h(X)]^k}{k!} + \sum_{k=1}^\infty k\frac{[h(X)]^k}{k!} - \sum_{k=1}^\infty k\frac{[h(X)]^k}{k!} & \text{Pour $k=0$, $\forall R, kR = 0$}\\
+    & = \sum_{k=0}^\infty \frac{[h(X)]^k}{k!} + 0 \\
+    & = e^{h(X)} & \text{Par le développement de Taylor} \\
+    & \leq e & \text{$h(X) \in [0, 1]$}
+\end{align*}
+
+En conclusion, on génère peu de nombres en moyenne. Cette méthode est donc plutôt efficace et ne demande pas de calculs complexes (logarithmes, racines carrées, etc.), même pour simuler la loi normale.
+
+\subsubsection{Loi normale}
+On va essayer de simuler la partie positive de la distribution $f(x) = \sqrt{\frac{2}{\pi}} e^{-\frac{x^2}{2}}$. On peut décider aléatoirement si on multiplie par $-1$ à la fin (avec un tirage pile ou face, par exemple).
+
+On suppose qu'on travaille sur un ordinateur binaire avec $n + 1$ bits de précision. Cet algorithme demande une table de valeurs\footnote{La table avec les 30 premières valeurs se trouvent à la slide 76 du cours (et j'ajoute $a_0 = 0$)} $\forall j \in [1,n+1], d_j = a_j - a_{j-1}$, avec $a_j$ défini par :
+$$\int_{a_j}^{+\infty} f(x)dx = \frac{1}{2^j}$$
+
+Prenons $\forall a_j \leq t \leq a_{j+1}$, $h(t) = \frac{t^2 - a_j^2}{2}$ et vérifions que $h(t)$ est une fonction valide pour la méthode paire-impaire, c'est-à-dire que $\forall a_j \leq t \leq a_{j+1}, h(t) \in [0, 1]$. Il est trivial que $h(t) \geq 0$ avec $t \geq a_j$. On veut montrer que $h(t) \leq 1 \iff t^2-a_j^2 \leq 2 \iff a_{j+1}^2 - a_j^2 \leq 2$.
+
+Prenons $m(x) = e^{\frac{x^2}{2}} \int_x^{+\infty} e^{-\frac{t^2}{2}} dt$. Comme $\int_x^{+\infty}e^{-\frac{t^2}{2}} dt$ n'est pas calculable, calculons plutôt
+
+\begin{align*}
+    \int_x^{+\infty} \frac{e^{-\frac{t^2}{2}}}{t^2} dt
+    & = \left.- \frac{1}{t}e^{-\frac{t^2}{2}}\right]_x^{+\infty} - \int_x^{+\infty}\frac{-t e^{-\frac{t^2}{2}}}{-t} dt & \text{Intégration par partie} \\
+    & = \frac{e^{-\frac{x^2}{2}}}{x} - \int_x^{+\infty}e^{-\frac{t^2}{2}} dt & \text{$e^{-\infty}=0$}\\
+    e^{\frac{x^2}{2}} \int_x^{+\infty} \frac{e^{-\frac{t^2}{2}}}{t^2} dt & = \frac{1}{x} - m(x) & \text{On multiplie par $e^{\frac{x^2}{2}}$}
+\end{align*}
+
+Donc, on obtient que
+$$m(x) = \frac{1}{x} - e^{\frac{x^2}{2}} \int_x^{+\infty}\frac{e^{-\frac{t^2}{2}}}{t^2} dt < \frac{1}{x}$$
+
+Regardons la croissance de $m$ en dérivant $m(x) = e^\frac{x^2}{2}\int_x^{+\infty}e^{-\frac{t^2}{2}}dt$ :
+\begin{align*}
+    m'(x) & = x\ m(x) + e^\frac{x^2}{2} \left[ -e^{-\frac{t^2}{2}} \right]_{-\infty}^x \\
+    & = x\ m(x) - 1 \\
+    & < x\frac{1}{x} - 1 & \text{$m(x) < \frac{1}{x}$}\\
+    & = 0
+\end{align*}
+
+Donc, $m$ est décroissante.
+
+\newpage
+
+Posons $y = \sqrt{x^2 + 2\,ln(2)}$, donc $y^2 = x^2 + 2\,ln(2)$ et $y > x \Rightarrow m(y) < m(x)$ (par décroissance).
+
+\begin{align*}
+    m(y) &= e^\frac{y^2}{2} \int_y^{+\infty}e^{-\frac{t^2}{2}} dt \\
+    \iff \int_y^{+\infty}e^{-\frac{t^2}{2}} dt & = e^{-\frac{y^2}{2}} m(y) \\
+    & = e^{\frac{-x^2 - 2\,ln(2)}{2}} m(y)\\
+    & = \frac{1}{2} e^{-\frac{x^2}{2}}m(y) \\
+    & < \frac{1}{2} e^{-\frac{x^2}{2}}m(x)
+\end{align*}
+
+Posons $x = a_j$ et multiplions les deux côtés par $\sqrt{\frac{2}{\pi}}$ :
+\begin{align*}
+    \sqrt{\frac{2}{\pi}}\,\int_y^{+\infty} e^{-\frac{t^2}{2}}dt & < \frac{1}{2}\sqrt{\frac{2}{\pi}}\,e^{-\frac{a_j^2}{2}} m(a_j)\\
+    & = \frac{1}{2}\sqrt{\frac{2}{\pi}}\,e^{-\frac{a_j^2}{2}} e^\frac{a_j^2}{2}\int_{a_j}^{+\infty}e^{-\frac{t^2}{2}} dt & \text{Par définition de $m(x)$}\\
+    & = \frac{1}{2} \frac{1}{2^j} & \text{Par définition des $a_j$} \\
+    & = \frac{1}{2^{j+1}} \\
+    & = \sqrt{\frac{2}{\pi}}\,\int_{a_{j+1}}^{+\infty} e^{-\frac{t^2}{2}} dt & \text{Par définition des $a_j$}
+\end{align*}
+
+On a $\sqrt{\frac{2}{\pi}}\,\int_y^{+\infty} e^{-\frac{t^2}{2}}dt < \sqrt{\frac{2}{\pi}}\,\int_{a_{j+1}}^{+\infty} e^{-\frac{t^2}{2}} dt$. La seule différence entre les deux termes est la borne inférieure de l'intégrale. Pour respecter l'inégalité, il faut que $y > a_{j+1}$ (si vous voyez l'intégrale comme une somme, on "retire" des termes pour avoir une somme plus petite).
+
+Pour finir, on a :
+\begin{align*}
+    y & > a_{j+1}\\
+    \implies \sqrt{a_j^2 + 2\,ln(2)} &> a_{j+1}\\
+    \implies a_j^2+2\,ln(2) & > a_{j+1}^2\\
+    \implies a_{j+1}^2 - a_j^2 &< 2\,ln(2)\\
+    & < 2
+\end{align*}
+
+En conclusion, on a bien $a_{j+1}^2 - a_j^2\leq2$, donc $h(t)$ est une fonction valide pour la méthode paire-impaire pour la loi normale.
+
+L'algorithme suivant est une version spécifique à la loi normale avec $h(t) = \frac{t^2-a^2}{2}$ de la méthode paire-impaire. On va calculer $h(x) = \frac{x^2-a^2}{2} = \frac{y^2 + a\,y}{2}$ en posant $y = x-a \iff x = y + a$. On va donc déterminer aléatoirement un $y$ (en respectant la probabilité de rejet).
+
+\begin{algorithm}[H]
+    \caption{Méthode paire-impaire pour la loi normale}
+    \begin{algorithmic}[1]
+        \State Générer avec une loi uniforme $U \gets (b_0, b_1, b_2, \dots, b_n)$ \Comment{Un nombre en binaire}
+        \State $B \gets b_0$
+        \State $j \gets 1$
+        \State $a \gets 0$
+        \While{$j < n+1 \wedge b_j=1$} \Comment{On détermine d'abord le $a$}
+            \State $a \gets a + d_j$
+            \State $j \gets j + 1$
+        \EndWhile \Comment{On s'arrête en $j$ avec une probabilité $\frac{1}{2^j}$}
+        \Do
+            \State Générer avec une loi uniforme $Y \in [0, d_j[$ \Comment{On peut prendre $Y \gets d_j\,(b_{j+1}, \dots, b_n)$}
+            \State $V \gets (\frac{1}{2}Y + a)Y$
+            \Do
+                \State Générer avec une loi uniforme $U \in [0, 1[$
+            \DoWhile{$U = V$}
+        \DoWhile{$U < V$} \Comment{Pour simuler le cas pair (rejet)}
+        \State $X \gets a + Y$ \Comment{$X \in [a_{j-1}, a_j]$}
+        \If{$B = 1$}
+            \State $X \gets -X$
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}

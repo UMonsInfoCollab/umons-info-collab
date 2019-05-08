@@ -1,0 +1,173 @@
+% p.80-81 :
+    % On veut simuler n'importe quelle loi de proba !
+    % On va créer un rectangle dont le point en bas à gauche est (0, -v_max) et de taille (u, 2v_max)
+    % Traçons le segment (0, 0) -- (u, v) et notons x son coefficient angulaire
+
+    % On veut prouver que la courbe de formule u^2 = f(v/u) est bonne
+    % On veut déterminer l'aire de la zone turquoise et l'aire de la zone colorée
+    % En faisant le rapport entre les deux, on doit obtenir l'intégrale de -inf à x de f(t)dt
+    % Intégrale de -inf à +inf de f(t)dt = 1 car loi de proba
+    % dénominateur : tout le cercle ?
+    % numérateur : la partie turquoise
+    
+% Notes diverses :
+    % y = a*x+b : a = coefficient angulaire et b ordonnée à l'origine
+
+% p 139-141
+
+\subsection{Méthode de Kinderman et Monahan}
+On cherche une méthode pour simuler n'importe quelle loi de probabilité $f(x)$.
+
+On va prendre un rectangle dont le coin inférieur gauche se trouve en $(0, -u_{max})$ et de taille $(u_{max}, 2\,v_{max})$. On tire aléatoirement un point $(u, v$), on trace le segment $(0, 0) - (u, v)$ et on note $x$ le coefficient angulaire de ce segment.
+
+Figure : cf cours p.80
+
+A l'intérieur du rectangle, on définit une courbe telle qu'on rejette les points qui tombent en dehors. Sur la figure du cours, il s'agit du cercle mais ça peut être une autre courbe. On veut que les points acceptés soient tels que $x$ est distribué suivant la loi $f(x)$. On vérifie si le point $(u, v)$ est bien dans la courbe. Si oui, alors $x \gets \frac{v}{u}$.
+
+\subsubsection{Courbe}
+Pour être dans la courbe, les points $(u, v)$ doivent respecter la condition suivante.
+\begin{equation}
+    u > 0, u^2\leq f(\frac{v}{u})
+    \label{eq:cercle}
+\end{equation}
+
+Montrons que la courbe voulue est définie par $u^2 = f(\frac{v}{u}) \iff u = \sqrt{f(\frac{v}{u})}$. Pour ce faire, on va déterminer l'aire sous la courbe et l'aire de la surface turquoise (sur le dessin) pour calculer leur rapport. Comme on veut que $x$ soit distribué selon la loi $f(x)$, le rapport doit être $\int_{-\infty}^x f(t)\,dt$.
+
+\newpage
+
+Calculons l'aire du "cercle" (sur le dessin), c'est-à-dire $\int_{\substack{u > 0\\u^2\leq f(\frac{v}{u})}} du\,dv$ (par \eqref{eq:cercle}). Soit $t = \frac{v}{u} \iff v = tu$, donc $dv = u\,dt$ :
+\begin{align*}
+    \int_{\substack{u > 0\\u^2 \leq f(t)}} u\,du\,dt &= \int_{-\infty}^{+\infty} dt \int_0^{\sqrt{f(t)}} u\,du & \text{Changement de variables, et donc, de bornes}\\
+    & = \int_{-\infty}^{+\infty} dt \left. \frac{u^2}{2} \right ]_0^{\sqrt{f(t)}}\\
+    & = \int_{-\infty}^{+\infty}dt \frac{f(t)}{2}\\
+    & = \frac{1}{2} & \text{car on suppose que $f(x)$ est une loi de probabilité}
+\end{align*}
+
+Calculons maintenant l'aire de la surface turquoise (sur le dessin), c'est-à-dire qu'on rajoute la contrainte $\frac{v}{u} \leq x$, $\int_{\substack{u>0\\u^2\leq f(\frac{v}{u})\\\frac{v}{u}\leq x}} du\,dv$. Soit $t = \frac{v}{u} \iff v = u\,t$, donc $dv = u\, dt$ :
+\begin{align*}
+    \int_{-\infty}^xdt\ \int_0^{\sqrt{f(t)}} u\, du = \frac{1}{2} \int_{-\infty}^x f(t)\,dt
+\end{align*}
+
+Calculons maintenant le rapport entre la surface turquoise et toute la courbe :
+$$ \frac{\frac{1}{2}\int_{-\infty}^x f(t)\,dt}{\frac{1}{2}} = \int_{-\infty}^x f(t)\,dt$$
+
+On obtient bien $\int_{-\infty}^x f(t)\, dt$. Donc, la courbe voulue est bien définie par $u^2 = f(\frac{v}{u})$.
+
+\subsubsection{Loi normale}
+On veut simuler la fonction de probabilité $f(t) = e^{-\frac{t^2}{2}}$. Rappelons que $u^2 \leq f(\frac{v}{u})$. On obtient donc
+\begin{align*}
+    u^2 &\leq e^{-\frac{\frac{v^2}{u^2}}{2}}\\
+    ln(u^2) &\leq -\frac{v^2}{2\,u^2}\\
+    \frac{v^2}{u^2} &\leq -4\,ln(u)\stepcounter{equation}\tag{\theequation}\label{eq:vcarreucarre}\\
+    \iff \frac{1}{4}\frac{v^2}{u^2} &\leq -ln(u) \stepcounter{equation}\tag{\theequation}\label{eq:quartvcarreucarre}\\
+\end{align*}
+
+Prenons $u_{max} = 1$. On veut déterminer $v_{max}$, c'est-à-dire la valeur maximale de la courbe en $y$. On va chercher les points où le contour de la courbe change de concavité, c'est-à-dire où la dérivée vaut $0$. Donc, l'inégalité devient une égalité (pour avoir uniquement le contour de la courbe) et on calcule la dérivée de $\frac{v^2}{u^2} = -4\,ln(u) \iff v^2 = -4\,u^2\,ln(u)$ :
+\begin{align*}
+    2\,v\frac{\partial v}{\partial u} = -8\,u\,ln(u) - 4\,\frac{u^2}{u} &= 0 & = 0\ \text{car on cherche un extremum}\\
+    \iff -4u (2\,ln(u)+1) &= 0\\
+    \iff -4u = 0 \vee ln(u) &= -\frac{1}{2} & \text{On rejette $u = 0$ car on veut une courbe (pas une ligne)}\\
+    \iff u &= e^{-\frac{1}{2}}\\
+\end{align*}
+
+On a donc l'abscisse du point où la concavité de la courbe change. On va modifier \eqref{eq:vcarreucarre} en $v^2 \leq -4\,u^2\,ln(u)$ et appliquer $u=e^{-\frac{1}{2}}$.
+\begin{align*}
+    v_{max}^2 &= -4\,u^2\,ln(u)\\
+    & = -4\,(e^{-\frac{1}{2}})^2\,ln(e^{-\frac{1}{2}})\\
+    & = -4\,e^{-\frac{2}{2}}\,\frac{-1}{2} & \text{Propriétés des exposants et des $ln$}\\
+    & = 2\,e^{-1}\\
+    & = \frac{2}{e}\\
+    \implies v_{max} &= \sqrt{\frac{2}{e}}
+\end{align*}
+
+Cette méthode appliquée telle quelle est lente. En effet, pour chaque $x$ à générer, il faut calculer un logarithme. On va donc encadrer la courbe préalablement définie par deux courbes plus simples. Si le point généré est entre ces deux courbes, alors on vérifiera plus précisement avec le logarithme. Si le point est dans la plus petite des deux, le point est directement accepté. S'il est hors de la plus grande, il est directement rejeté.
+
+Déterminons ces deux courbes
+\begin{align*}
+    \forall x, e^x &\geq 1+x & \text{Par propriété de l'exponentielle}\\
+    \implies \forall c, e^{-1+cu} &\geq cu\\
+    \implies -1+cu &\geq ln(c)+ln(u) & \forall a,b,\ ln(ab) = ln(a)+ln(b)\\
+    \implies -ln(u) &\geq ln(c)-cu+1\stepcounter{equation}\tag{\theequation}\label{lnu1}\\
+    \forall c', e^{-1+\frac{1}{c'u}} &\geq \frac{1}{c'u}\\
+    \implies -1 + \frac{1}{c'u} &\geq -ln(c')-ln(u)\\
+    \implies ln(c') + \frac{1}{c'u} - 1 &\geq -ln(u)\stepcounter{equation}\tag{\theequation}\label{lnu2}\\
+\end{align*}
+
+En combinant \eqref{lnu1} et \eqref{lnu2}, on a :
+\begin{equation}
+    ln(c) - cu + 1 \leq -ln(u) \leq ln(c') + \frac{1}{c'u} - 1
+    \label{eq:lnu}
+\end{equation}
+
+$ln(c) - cu + 1$ décrit la courbe la plus petite et $ln(c') + \frac{1}{c'u} - 1$ décrit la courbe la plus grande.
+
+Donc, pour un point $(u, v)$, on en déduit que :
+\begin{itemize}
+    \item On accepte systématiquement le point si $\frac{1}{4}(\frac{v}{u})^2 \leq ln(c) - cu + 1$ ($\leq -\,ln(u)$ donc on a bien ce qu'on veut)
+    \item On rejette systématiquement le point si $ln(c') + \frac{1}{c'u} - 1 \leq \frac{1}{4}(\frac{v}{u})^2$
+\end{itemize}
+
+Il y a encore des logarithmes MAIS on peut fixer les valeurs de $c$ et $c'$. Donc, les logarithmes deviennent des constantes et on est content.
+
+Déterminons $c$ pour avoir une surface la plus grande possible ($c'$ pour la plus petite possible).
+
+Commençons par $c$
+\begin{align}
+    (\frac{v}{u})^2 &\leq 4(1 + ln(c)) - 4\,c\,u & \text{Par la formule d'acceptance (cf ci-dessus)}\nonumber\\
+    |v| &\leq |u|\sqrt{4(1+ln(c)) - 4\,c\,u} & \text{On prend la racine carrée}\nonumber\\
+    &= u\sqrt{a-b\,u}   & a = 4(1+ln(c))\text{ et } b = 4c \label{eq:maxu}
+\end{align}
+
+On veut maximiser $u$ car on veut une courbe la plus grande possible. Par construction, la plus grande valeur possible pour $u$ demande d'avoir $v=0$. Donc, dans \eqref{eq:maxu}, on pose $|v|=0$ et on remplace l'inégalité par une égalité (pour avoir le contour) :
+\begin{align*}
+    0 &= u\sqrt{a-b\,u}\\
+    \iff u = 0\ &\vee \sqrt{a-b\,u} = 0\\
+    \iff u = 0\ &\vee a-b\,u = 0\\
+    \iff u = 0\ &\vee u = \frac{a}{b}
+\end{align*}
+
+Donc, on prend $u = \frac{a}{b}$ comme valeur maximale pour $u$.
+
+On veut maximiser $R = 2\int_0^{\frac{a}{b}}du\,\int_0^{u\sqrt{a-bu}} dv = 2\int_0^{\frac{a}{b}} \left. v\right]_0^{u\sqrt{a-bu}}\,du = 2\int_0^{\frac{a}{b}} u\sqrt{a-bu}\,du$.
+
+Soit $t=\sqrt{a-bu} \iff u = \frac{a-t^2}{b}$. Donc, $-\frac{b}{2\sqrt{a-bu}} du = dt \implies du = -\frac{2}{b}t\,dt$ (on passe de l'autre côté et par définition de $t$).
+
+\begin{align*}
+    R &= -\frac{4}{b^2}\int_{\sqrt{a}}^0 t^2(a-t^2)dt & \text{Ne pas oublier le changement de bornes}\\
+    &= -\frac{4a}{b^2}\int_{\sqrt{a}}^0 t^2\,dt + \frac{4}{b^2}\int_{\sqrt{a}}^0 t^4\,dt\\
+    &= -\frac{4a}{b^2}\left[\frac{t^3}{3}\right]_{\sqrt{a}}^0 + \frac{4}{b^2}\left[\frac{t^5}{5}\right]_{\sqrt{a}}^0\\
+    &= \frac{-4a}{b^2}\,.\,\frac{-a^\frac{3}{2}}{3} + \frac{4}{b^2}\,.\,\frac{a^{\frac{5}{2}}}{5}\\
+    &= \frac{4a^{\frac{5}{2}}}{3b^2} - \frac{4a^{\frac{5}{2}}}{5b^2}\\
+    &= \frac{8a^{\frac{5}{2}}}{15b^2}\\
+    &= \frac{2\sqrt{2}}{15}\frac{(1+ln(c))^{\frac{5}{2}}}{c^2} & \text{On remplace $a$ et $b$ par leurs valeurs}\stepcounter{equation}\tag{\theequation}\label{eq:R}
+\end{align*}
+
+On veut donc maximiser \eqref{eq:R}. Calculons d'abord quelques dérivées
+\begin{align*}
+    ln(c)' &= \frac{1}{c}\\
+    ((1+ln(c))^{\frac{5}{2}})' &= \frac{5}{2}\frac{1}{c}(1+ln(c))^{\frac{3}{2}}\\
+    R' &= \frac{2\sqrt{2}}{15c^4}\left(\frac{5}{2}c(1+ln(c))^\frac{3}{2} - 2c(1+ln(c))^{\frac{5}{2}}\right)\\
+    &= \frac{2\sqrt{2}(1+ln(c))^{\frac{3}{2}}}{15c^3}\left(\frac{5}{2} - 2(1+ln(c))\right)
+\end{align*}
+
+Trouvons les racines de $R'$.
+\begin{align*}
+    R'&=0\\
+    \iff \frac{(1+ln(c))^{\frac{3}{2}}}{c^3} = 0 &\vee \frac{5}{2} - 2(1+ln(c)) = 0\\
+    \iff (1+ln(c)) = 0 &\vee (1+ln(c)) = \frac{5}{4}
+\end{align*}
+
+$(1+ln(c))=0$ n'est pas un maximum car $R=0$ dans ce cas. Donc, $(1+ln(c)) = \frac{5}{4}$ est maximum.
+\begin{align*}
+    1+ln(c) &= \frac{5}{4}\\
+    \implies ln(c) &= \frac{1}{4}\\
+    \implies c &= e^{\frac{1}{4}}
+\end{align*}
+
+On a (enfin) la valeur optimale pour $c$.
+
+Pour résumer, on accepte toujours un point $(u, v)$ quand $\left(\frac{v}{u}\right)^2 \leq 5 - 4\,u\,e^{\frac{1}{4}}$
+
+Pour la valeur de $c'$\dots\ On ne peut pas calculer les intégrales de façon analytique. Grâce à des fous qui ont fait des tests, la valeur optimale pour $c'$ est approximativement $e^{\nombre{1.35}}$.
+
+Pour résumer, on refuse toujours un point $(u, v)$ quand $\frac{4e^{-\nombre{1.35}}}{u} + \nombre{1.4} \leq \left(\frac{v}{u}\right)^2$
