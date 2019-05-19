@@ -1,0 +1,160 @@
+\section{Réduction de dimensionnalité}
+    Soit une hyper-sphère inscrite dans un hyper-cube de dimension \(d\). Quand \(d \to \infty\), le volume du cube devient infiniment plus grand que le volume de la sphère.
+
+    \subsection{La malédiction de la dimensionnalité}
+        Les balles en haute-dimension (l'espace bornée par une sphère) ont un volume qui tend vers 0. De plus, le volume d'une balle en haute-dimension est concentrée dans sa croûte, c'est-à-dire que la plupart des data-points sont plus proches de la frontière de l'espace que de n'importe quel autre data-point. Donc, la prédiction est beaucoup plus difficile près des bords de l'espace des observations (puisqu'il n'y a pas assez d'informations). A ceci, on peut aussi rajouter que tous les points sont à une distance équivalente les uns des autres (donc, la notion de plus proches voisins disparaît).
+
+        Si on coupe un région de l'espace en cellules de même taille, le nombre de cellules croît exponentiellement avec le nombre de dimensions. Donc, il nous faudrait une quantité exponentiellement large de données d'entraînement pour être sûr que les cellules ne sont pas vides.
+
+        Cependant, il est possible d'apprendre en haute-dimension car des données réelles sont souvent confinées dans une région de l'espace ayant un dimensionnalité intrinsèque plus petite. De plus, des données réelles ont souvent des propriétés de smoothness. On peut donc faire de la réduction de dimensionnalité.
+
+    \subsection{Analyse en composantes principales}
+        On veut réduire le nombre de dimensions pour éviter la malédiction, pour visualiser les données, rendre les variables indépendantes, retirer les variables inutiles, etc. Il existe deux types de réduction de dimensionnalité :
+        \begin{itemize}
+            \item Feature selection qui sélectionne des variables du jeu de données sans les modifier;
+            \item Feature extraction qui crée de nouvelles variables à partir des variables de base.
+        \end{itemize}
+
+        \begin{definition}
+            L'\textit{analyse en composantes principales}\index{PCA}\index{Analyse en composantes principales|see {PCA}}\nomenclature{PCA}{Analyse en composantes principales} (ou \textit{PCA}) est une méthode non-supervisée linéaire de feature extraction.
+
+            Plus précisément, PCA produit une représentation du jeu de données dans une plus petite dimension en trouvant des combinaisons linéaires des variables qui ont une variance maximale et qui sont mutuellement non-corrélées.
+        \end{definition}
+
+        \begin{definition}
+            La \textit{première composante principale} (on écrit \textit{PC} pour composante principale) d'un ensemble de variables \(x_1, x_2, \dots, x_p\) est la combinaison linéaire
+            \[
+                z_1 = \phi_{11}x_1 + \phi_{21} x_2 + \dots + \phi_{p1} x_p
+            \]
+            qui a la plus grande variance telle que \(\sum_{j=1}^p \phi_{j1}^2 = 1\).
+
+            \(\phi_{11}, \dots, \phi_{p1}\) sont les \textit{loadings}\index{Loadings} de la première composante principale.
+
+            Le vecteur loading \(\phi_1 = (\phi_{11}, \dots, \phi_{p1})^T\) définit une direction dans l'espace des variables pour laquelle les données varient le plus.
+
+            Les \textit{scores} \(z_{11}, \dots, z_{n1}\) sont obtenus en projetant les \(n\) données dans cette direction.
+
+            La \textit{deuxième composante principale} est la combinaison linéaire \(z_{2} = \phi_{12}x_1 + \phi_{22}x_2 + \dots + \phi_{p2}x_p\) qui a la variance maximale parmi toutes les combinaisons linéaires qui ne sont pas corrélées avec \(z_1\). En d'autres termes, \(\phi_2\) doit être orthogonale à \(\phi_1\). Ainsi de suite pour les autres composantes.
+
+            Il y a au plus \(\min(n - 1, p)\) composantes principales.
+        \end{definition}
+
+        \subsubsection{Calculs}
+            Soit un data set \(X = \{x_ij\}\) avec \(n\) observations et \(p\) variables. Dans un premier temps, il \textbf{faut centrer chaque variable pour avoir un moyenne de zéro} (la moyenne de la colonne doit être 0). Comme la variance empirique de \(z_{i1}\) est \(\frac{1}{n} \sum_{i=1}^n s_{i1}^2\), on a le problème d'optimisation pour la première composante :
+            \begin{align*}
+                &\max_{\phi_{11}, \dots, \phi_{p1}} \frac{1}{n} \sum_{i=1}^n \left(\sum_{j=1}^p \phi_{j1} x_{ij}\right)^2 & \text{sous la contrainte } &\sum_{j=1}^p \phi_{j1}^2 = 1
+            \end{align*}
+
+            Les composantes suivantes se trouvent de la même manière en rajoutant la contrainte de non-corrélation.
+
+            Nous allons présenter deux méthodes pour calculer les PC. Dans les deux cas, il peut être nécessaire de scaler les données (avoir, pour chaque colonne, une variance entre -1 et 1) si les variables sont dans des unités différentes. Si les variables ont toutes la même unité, alors devoir scaler ou non les variables dépend des cas.
+
+            \paragraph{Première méthode}
+                \begin{algorithm}
+                    \caption{Première méthode pour calculer les composantes principales}
+                    \label{alg:pca:premiere}
+                    \begin{algorithmic}[1]
+                        \Require Le jeu de données \(X\) avec les colonnes centrées en zéro
+                        \Ensure Les composantes principales et les scores
+                        \Statex
+                        \State Scale \(X\)
+                        \State \(C \gets X^T X\) \Comment{La matrice de covariance}
+                        \State Trouver la matrice des valeurs propres \(D\) et la matrice des vecteurs propres \(V\) telles que
+                        \[
+                            C = VDV^T
+                        \]
+                        où les colonnes de \(V\) sont orthonormales \Comment{\(D\) est une matrice diagonale}
+                        \State \(\Phi = V\) \Comment{Les PC}
+                        \State \(Z = X\Phi\) \Comment{Les scores}
+                    \end{algorithmic}
+                \end{algorithm}
+
+                La première méthode pour calculer les PC se base sur les valeurs propres d'une matrice. L'\cref{alg:pca:premiere} donne un pseudo-code pour cette approche.
+
+                \begin{definition}[Valeurs et vecteurs propres\footnote{\url{http://uel.unisciel.fr/physique/outils_nancy/outils_nancy_ch11/co/apprendre_ch11_20.html}}]
+                    Les \textit{valeurs propres}\index{Valeurs propres} d'une matrice carrée \(A\) sont les scalaires \(\lambda\) tels que
+                    \[
+                        \det(A - \lambda\identity) = \begin{vmatrix}
+                            a_{11} - \lambda & a_{12}           & \cdots    & a_{1n}\\
+                            a_{21}           & a_{22} - \lambda & \cdots    & a_{2n}\\
+                            \vdots           & \vdots           & \ddots    & \vdots\\
+                            a_{n1}           & a_{n2}           & \cdots    & a_{nn} - \lambda
+                        \end{vmatrix} = 0
+                    \]
+
+                    Un \textit{vecteur propre}\index{Vecteur propre} \(x\) de composantes \((x', x'', \dots)\) associé à la valeur propre \(\lambda\) doit vérifier la relation :
+                    \[
+                        AX = \lambda X \iff (A - \lambda\identity_n) \begin{pmatrix}
+                            x'\\
+                            x''\\
+                            \vdots
+                        \end{pmatrix} = \begin{pmatrix}
+                            0\\
+                            0\\
+                            \vdots
+                        \end{pmatrix}
+                    \]
+
+                    On peut décomposer une matrice carrée \(A \in R^{x \times n}\) comme :
+                    \begin{align*}
+                        A = V D V^T
+                    \end{align*}
+                    avec \(D \in \R^{n \times n}\) une matrice diagonale et où les colonnes de \(V\) sont les vecteurs propres et l'élément de la \(i\)\ieme{} diagonale de \(D\) est la valeur propre de \(A\) qui correspon à la \(i\)\ieme{} colonne de \(V\) (\cite{burden2010numerical}).
+                \end{definition}
+
+            \paragraph{Seconde méthode}
+                \begin{algorithm}
+                    \caption{Seconde méthode pour calculer les composantes principales}
+                    \label{alg:pca:seconde}
+                    \begin{algorithmic}
+                        \Require Le jeu de données \(X\) avec les colonnes centrées en zéro
+                        \Ensure Les composantes principales et les scores
+                        \Statex
+                        \State Calculer la décomposition en valeurs singulières : \(X = U \Lambda V^T\)
+                        \State \(\Phi = V\) \Comment{Les PC}
+                        \State \(Z = X\Phi\) \Comment{Les scores}
+                    \end{algorithmic}
+                \end{algorithm}
+
+                La seconde méthode utilise la décomposition en valeurs singulières. L'\cref{alg:pca:seconde} donne un pseudo-code pour cette approche.
+
+                \begin{definition}[Décomposition en valeurs singulières]
+                    Soit \(X \in \R^{x\times p}\). La \textit{décomposition en valeurs singulières}\index{SVD}\index{Décomposition en valeurs singulières|see {SVD}}\nomenclature{SVD}{Décomposition en valeurs singulières} consiste à trouver les matrices :
+                    \begin{itemize}
+                        \item \(U \in \R^{n \times r}\); les colonnes de \(U\) sont orthonormales et sont appelées les vecteurs `left-singular' de \(X\);
+                        \item \(\Lambda \in \R^{r \times r}\); une matrice diagonale avec des éléments non-négatifs qui sont les valeurs singulières tels que \(\Lambda_1 \geq \Lambda_2 \geq \cdots \geq \Lambda_r \geq 0\); et
+                        \item \(V \in \R^{p \times r}\); les colonnes de \(V\) sont orthonormales et appelées les vecteurs `right-singular' de \(X\)
+                    \end{itemize}
+
+                    Il existe toujours une unique décomposition en valeurs singulières pour une matrice.
+                \end{definition}
+
+                On peut regarder la relation entre SVD et la covariance :
+                \[
+                    C = X^TX = V\Lambda U^T U\Lambda V^T = V \Lambda^2 V^T = VDV^T
+                \]
+                Les valeurs propres de \(C\) sont les carrés des valeurs singulières de \(X\). Les vecteurs propres de \(C\) sont les vecteurs `right-singular' de \(X\). Les directions des PC \(\phi_1, \phi_2, \dots\) sont les vecteurs `right-singular' de \(X\).
+
+        \subsubsection{Variance expliquée}
+            \begin{definition}
+                En supposant que les variables ont été centrées en 0, la \textit{variance totale}\index{Variance!totale} des données est :
+                \[
+                    \totalVariance = \sum_{j=1}^p \variance[X_j] = \sum_{j=1}^p \frac{1}{n} \sum_{i=1}^n x_{ij}^2
+                \]
+
+                La \textit{variance expliquée}\index{Variance!expliquée} par la \(m\)\ieme{} PC est :
+                \[
+                    V_m = \variance[z_m] = \frac{1}{n} \sum_{i=1}^n z_{im}^2
+                \]
+
+                Par conséquent, on a :
+                \[
+                    \totalVariance = \sum_{m = 1}^M V_m
+                \]
+                avec \(M = \min(n - 1, p)\).
+
+                La \textit{proportion de la variance expliquée} est :
+                \[
+                    PVE_m = \frac{V_m}{\totalVariance}
+                \]
+            \end{definition}

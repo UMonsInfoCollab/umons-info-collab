@@ -1,0 +1,48 @@
+\subsection{Inférence statistique}
+    Le but de l'inférence statistique est d'inférer des choses sur \(F\) dans \(X_1, \dots, X_n \sim F\). Il existe deux catégories de modèles statistiques :
+    \begin{itemize}
+        \item Modèle paramétrique : l'ensemble des distributions \(\mathcal{F}\) peut être décrit par un nombre fini de paramètres. Par exemple, un modèle gaussien peut être décrit par sa moyenne et sa variance et un modèle Bernoulli peut être décrit par son paramètre \(p\).
+        \item Modèle non-paramétrique : l'ensemble des distributions \(\mathcal{F}\) ne peut pas être décrit par un nombre fini de paramètres. Par exemple, estimer directement la CDF ou la densité.
+    \end{itemize}
+
+    Pour le reste de cette section, on suppose que l'échantillon a été généré par un modèle paramétrique. On veut donc estimer les paramètres.
+
+    \subsubsection{Méthode des moments}
+        Supposons qu'il y a \(k\) paramètres à estimer \(\theta = (\theta_1, \dots, \theta_K)\). On peut estimer \(\theta\) en trouvant \(k\) moments. Soient
+        \[
+            m_1 = \frac{1}{n} \sum_{i=1}^n X_i, m_2 = \frac{1}{n} \sum_{i=1}^n X_i^2, \dots, m_k = \frac{1}{n} \sum_{i=1}^n X_i^k
+        \]
+
+        Soit \(\mu_i(\theta) = \int x^i p_\theta(x)\,dx\) le moment du \(i\ieme{}\) individu. La \textit{méthode des moments} consiste à résoudre le système suivant :
+        \[
+            \begin{cases}
+                m_1 &= \mu_1(\theta_1, \dots, \theta_k)\\
+                &\vdots\\
+                m_k &= \mu_k(\theta_1, \dots, \theta_k)
+            \end{cases}
+        \]
+
+    \subsubsection{Maximum Likelihood Estimation}
+        Supposons que \(X_1, \dots, X_n \sim p_\theta\) avec \(p_\theta\) la pmf ou la pdf.
+
+        \begin{definition}
+            La fonction \textit{likelihood}\index{Likelihood} est définie par :
+            \[
+                L(\theta) \equiv L(\theta, X_1, \dots, X_n) = \prod_{i=1}^n p_\theta(X_i)
+            \]
+
+            La fonction \textit{log-likelihood} est définie par :
+            \[
+                l(\theta) \equiv l(\theta, X_1, \dots, X_n) = \log(L(\theta))
+            \]
+
+            Le \textit{Maximum Likelihood Estimator} (noté \textit{MLE}\index{MLE})\nomenclature{MLE}{Maximum Likelihood Estimator (ou Estimation)} est la valeur de \(\theta\) qui maximise \(L(\theta)\) (et \(l(\theta)\) car le \(\log\) est une fonction croissante). Cette valeur est notée \(\estimation{\theta}\) :
+            \[
+                \estimation{\theta} = \argmax_\theta L(\theta) = \argmax_\theta l(\theta)
+            \]
+        \end{definition}
+
+        Typiquement, on calcule le MLE en dérivant partiellement \(l(\theta)\). En d'autres termes, on résoud le système d'équations :
+        \[
+            \forall i \in \{1, \dots, k\}, \frac{\partial}{\partial \theta_i} l(\theta) = 0
+        \]

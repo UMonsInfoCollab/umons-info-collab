@@ -1,0 +1,196 @@
+\section{Classification avancée et arbres}
+    On va découper l'espace des prédicteurs (l'ensemble des valeurs possibles pour les variables) en \(J\) régions distinctes et non-overlapping \(R_1, R_2, \dots, R_J\). Par facilité, on va supposer que chaque région a une forme rectangulaire (en haute-dimension). La réponse du classificateur est :
+    \[
+        f(x) = \sum_{j=1}^J c_j \identity(x \in R_j)
+    \]
+
+    \begin{definition}
+        On va construire des \textit{arbres de régression}\index{Arbres!de régression}. A chaque nœud interne, on fait une comparaison binaire de la forme \(X_i < j\).
+
+        Etant donné une partition \(R_1, R_2, \dots, R_J\), la valeur optimale des \(c_j\) si on veut minimiser \(\sum_i (y_i - f(x_i))^2\) est donnée par :
+        \[
+            \estimation{c_j} = \expectation[y_i | x_i \in R_j]
+        \]
+        On peut facilement calculer l'espérance empirique (moyenne numérique).
+    \end{definition}
+
+    Il n'est pas faisable de tester toutes les combinaisons de conditions binaires possibles. Donc, on va utiliser une approche greedy et top-down : \textit{recursive binary splitting}. L'\cref{alg:arbre:regression} donne un pseudo-code pour cette approche.
+
+    \begin{algorithm}
+        \caption{Recursive binary splitting}
+        \label{alg:arbre:regression}
+        \begin{algorithmic}[1]
+            \State Soit \(R_1\) une seule région (qui couvre l'entièreté de l'espace)
+            \DoUntil
+                \State Sélectionner une région \(R_m\), une variable \(X_j\) et un point de split \(s\) tels que splitter \(R_m\) avec la condition \(X_j < s\) donne la plus grande diminution dans le RSS
+                \State Changer les régions avec cette séparation ajoutée
+            \EndDoUntil{une condition d'arrêt soit satisfaite (par exemple, \(N_m < 5\))}
+        \end{algorithmic}
+    \end{algorithm}
+
+    \begin{definition}
+        Pour un arbre \(T\), le \textit{RSS}\index{RSS} vaut :
+        \[
+            \RSS(T) = \sum_{m = 1}^{|T|} N_m Q_m(T)
+        \]
+        avec
+        \begin{align*}
+            |T| &= \text{le nombre de feuilles de } T\\
+            N_m &= \#\{x_i \in R_m\}\\
+            Q_m(T) &= \frac{1}{N_m} \sum_{x_i \in R_m} (y_i - \estimation{c_m})^2
+        \end{align*}
+    \end{definition}
+
+    \subsection{Pruning}
+        Le processus décrit peut produire de bons résultats sur l'ensemble d'entraînement mais il est fort probable d'avoir de l'overfit (car les arbres sont très flexibles). Un plus petit arbre avec moins de splits (et donc moins de régions) peut avoir une plus petite variance (et une meilleure interprétation) mais le biais augmente. La taille de l'arbre est un hyper-paramètre qui influence la complexité du modèle et la taille optimale doit être choisie en fonction des données. Une autre possibilité est de splitter les données seulement si la diminution du RSS dépasse un certain seuil. Il faut cependant noter qu'un split peu intéressant peut être suivi par un très bon split.
+
+        \begin{definition}
+            Le \textit{tree pruning}\index{Pruning} (ou \textit{élagage d'arbre}) consiste à faire grandir un grand arbre \(T_0\) et d'ensuite l'élaguer pour trouver un plus petit arbre.
+        \end{definition}
+
+        Intuitivement, on pourrait faire de la cross-validation pour trouver le meilleur arbre parmi tous les arbres élagués possibles. Cependant, il y a trop de modèles possibles. Nous allons donc sélectionner un petit ensemble d'arbres à considérer.
+
+        \subsubsection{Weakest link pruning}
+            Pour cette méthode, on commence avec l'arbre complet \(T_0\). On remplace un sous-arbre de \(T_0\) par une seule feuille pour obtenir l'arbre \(T_1\). Le sous-arbre à élaguer est choisi en minimisant 
+            \[
+                \frac{\RSS(T_1) - \RSS(T_0)}{|T_1| - |T_0|}
+            \]
+            On recommence avec \(T_1\) et ainsi de suite pour obtenir une séquence d'arbres \(T_0, T_1, \dots, T_R\) où \(T_R\) est l'arbre avec un seul nœud.
+            
+            On sélectionne l'arbre \(T_j\) optimal par cross-validation.
+
+        \subsubsection{Cost complexity pruning}
+            Le \textit{cost complexity criterion} est donné par :
+            \[
+                C_\alpha(T) = \sum_{m = 1}^{|T|} N_m Q_m(t) + \alpha |T|
+            \]
+            où \(\alpha \geq 0\) est un hyper-paramètre qui dirige le tradeoff entre la taille de l'arbre et sa capacité à coller aux données.
+
+            Une grande valeur de \(\alpha\) donne un petit arbre (et inversément).
+
+            L'idée est de trouver, pour chaque \(\alpha\), le sous-arbre \(T_\alpha \subseteq T_0\) qui minimise \(C_\alpha(T)\) (qui est unique).
+
+            \begin{remarque}
+                La solution pour chaque \(\alpha\) est parmi la séquence construite par le Weakest link pruning.
+            \end{remarque}
+
+            \begin{algorithm}
+                \begin{algorithmic}[1]
+                    \State Construire un grand arbre en s'arrêtant quand chaque feuille a moins d'observations qu'un certain seuil
+                    \State Appliquer le cost complexity pruning pour obtenir une séquence des meilleurs sous-arbres en fonction de \(\alpha\)
+                    \State Diviser l'ensemble d'entraînement en \(K\) folds
+                    \ForAll{\(k\) allant de \(1\) à \(k\)}
+                        \State Répéter les lignes 1 et 2 sur toutes les données sauf celles dans le fold \(k\)
+                        \State Evaluer le MSE sur les données du fold \(k\) en fonction de \(\alpha\)
+                    \EndFor
+                    \State Calculer les moyennes des MSE pour chaque \(\alpha\)
+                    \State Choisir la valeur de \(\alpha\) qui minimise le MSE
+                    \State \Return le sous-arbre de la ligne 2 qui correspond à la valeur choisie de \(\alpha\)
+                \end{algorithmic}
+            \end{algorithm}
+
+    \subsection{Arbres de classification}
+        Contrairement aux arbres de régression, un arbre de classification prédit une réponse qualitative. La classe d'une région est la classe la plus représentée dans cette région. On utilise aussi des conditions binaires pour splitter.
+
+        Le RSS ne peut pas être utilisé (car n'a pas de sens). Notons \(\estimation{p}_{mk}\) la proportion d'observations dans la \(m\)\ieme{} région qui sont dans la \(k\)\ieme{} classe. On peut utiliser les fonctions suivantes :
+        \begin{itemize}
+            \item \textit{classification error rate} :
+            \[
+                1 - \max_k \estimation{p}_{mk}
+            \]
+            Cette mesure n'est pas assez sensible pour faire grandir un arbre.
+            \item \textit{Gini index} mesure la variance totale pour les \(K\) classes :
+            \[
+                G = \sum_{k=1}^K \estimation{p}_{mk} (1 - \estimation{p}_{mk})
+            \]
+            \item \textit{entropy} :
+            \[
+                D = -\sum_{k=1}^K \estimation{p}_{mk} \log(\estimation{p}_{mk})
+            \]
+        \end{itemize}
+
+        Si les \(\estimation{p}_{mk}\) sont proches de zéro, \(G\) et \(D\) sont petits. Ils mesurent le \textit{node purity}\index{Node purity}, c'est-à-dire qu'une petite valeur indique que le nœud contient principalement des observations d'une seule classe.
+
+        Quand on construit un arbre de classification, on utilise l'index de Gini ou l'entropy pour évaluer la qualité d'un split. Les trois fonctions peuvent être utilisées quand on élague l'arbre. La classification error rate est préférée quand l'accuracy de l'arbre final est le but.
+
+    \subsection{Avantages et inconvénients}
+        \begin{itemize}
+            \item Avantages
+            \begin{itemize}
+                \item Modèle flexible
+                \item Facilement interprétable
+                \item Gestion facile des variables qualitatives sans devoir créer des variables dummy
+                \item Gestion facile des valeurs manquantes (considérées comme une possibilité pour le split)
+            \end{itemize}
+            \item Désavantages
+            \begin{itemize}
+                \item Instables et non-robustes : une petite modification des données peut provoquer de gros changements dans l'arbre
+                \item Grande variance !
+            \end{itemize}
+        \end{itemize}
+
+        La performance de prédiction des arbres peut être grandement améliorer en aggrégeant plusieurs arbres de décision, via des méthodes comme \textit{bagging}, \textit{random forests} et \textit{boosting}.
+
+    \subsection{Aggrégations}
+        La procédure d'aggrégation de base est :
+        \begin{enumerate}
+            \item Prendre \(B\) ensembles d'entraînement depuis la population :
+            \[
+                D_1, D_2, \dots, D_B
+            \]
+            \item Construire des modèles de prédictions séparés en utilisant chaque \(D\) :
+            \[
+                \estimation{f}_{D_1}(x), \dots, \estimation{f}_{D_B}(x)
+            \]
+            \item La solution finale est donnée par la moyenne des modèles :
+            \[
+                \estimation{f}_{avg}(x) = \frac{1}{B} \sum_{b = 1}^B \estimation{f}_{D_b} (x)
+            \]
+        \end{enumerate}
+
+        Comme les ensembles d'entraînement sont indépendants, la variance de la moyenne des modèles est \(\frac{\sigma^2}{B}\) si la variance de chaque modèle est \(\sigma^2\).
+
+        \subsubsection{Bagging}
+            Pour le bagging, on prend \(B\) ensembles d'entraînement générés via bootstrap\index{Bootstrap}.
+
+            Le bagging permet de réduire la variance. C'est particulièrement utile pour les arbres de décision. Le bagging a plus de chance d'améliorer les résultats quand les modèles utilisés ont une grande variance et un petit biais.
+
+            \paragraph{Bagging pour les arbres de décision}
+                On construit \(B\) arbres de régression (en utilisant \(B\) ensembles d'entraînement bootstrappés) et on prend la moyenne des prédictions.
+
+                On laisse les arbres grandir sans les élaguer. Par conséquent, chaque arbre a un grand biais et un petite variance. En prenant la moyenne des \(B\) arbres, la variance est réduite.
+
+                Pour les arbres de classification, il existe plusieurs méthodes pour aggréger les prédictions, par exemple, le vote de majorité.
+
+            \paragraph{Estimation de l'erreur}
+                Pas besoin d'utiliser la cross-validation pour estimer l'erreur de test d'un modèle baggé (donc, c'est pratique pour les grands jeux de données).
+
+                En moyenne, chaque arbre utilise deux tiers des observations (car bootstrap). Les observations restantes sont appelées \textit{out-of-bag} (OOB)\index{OOB}\nomenclature{OOB}{Out-of-bag} observations. On peut prédire la réponse pour la \(i\)\ieme{} observation en utilisant chacun des arbres pour lesquel cette observations était OOB. Donc, il a y environ \(\frac{B}{3}\) prédictions pour la \(i\)\ieme{} observation (il suffit ensuite d'aggréger les prédictions).
+
+            \paragraph{Importance d'une variable}
+                Le bagging améliore la qualité des prédictions au détriment de l'interprétabilité. Par conséquent, il est difficile de savoir quels variables sont importantes. On peut enregistrer la quantité totale par laquelle RSS/Gini/entropy est réduit par les splits sur une certaine variable. Une grande valeur indique une variable importante.
+
+            \paragraph{Biais et variance tradeoff}
+                On a :
+                \begin{align*}
+                    \estimation{f}^B (x) &= \frac{1}{B} \sum_{b = 1}^B T_b(x)\\
+                    \MSE &= \expectation[(y - \estimation{f}^B(x))^2]\\
+                \end{align*}
+
+                Pour rappel, \(\MSE = \) bruit + \(\text{biais}^2\) + variance. Si les arbres sont suffisemment profonds, le biais est petit. La variance est \(\variance\left[\frac{1}{B} \sum_{b = 1}^B T_b(x)\right]\). Nous allons calculer cette variance.
+
+                Soit un ensemble de \(B\) observations indépendantes \(Z_1, \dots, Z_B\). Chaque observation a une variance de \(\sigma^2\). Alors, la variance de la moyenne est donnée par \(\frac{\sigma^2}{B}\). Cependant, si les variables sont simplement identiquement distribuées (mais pas nécessairement indépendantes) avec des corrélations paire-à-paire \(\rho > 0\), alors :
+                \begin{align*}
+                    \variance\left[\frac{1}{B} \sum_{i = 1}^B Z_i\right] &= \sum_{i=1}^B \sum_{j=1}^B \frac{1}{B^2} \covariance[Z_i, Z_j]\\
+                    &= \frac{1}{B^2} \sum_{i=1}^B \left(\covariance[Z_i, Z_i] + \sum_{\substack{j=1\\j\not=i}}^B \covariance[Z_i, Z_j]\right)\\
+                    &= \frac{1}{B^2} \sum_{i=1}^B \left(\variance[Z_i] + \sum_{\substack{j = 1\\j\not=i}}^B \sigma^2 \correlation[Z_i, Z_j]\right) & \correlation[X, Y] = \frac{\covariance[X, Y]}{\variance[X] \variance[Y]}\\
+                    &= \frac{1}{B^2} \sum_{i=1}^B \left(\sigma^2 + \sum_{\substack{j = 1\\j\not=i}}^B \sigma^2 \rho\right)\\
+                    &= \frac{1}{B^2} \sum_{i=1}^B \left(\sigma^2 + (B - 1)\sigma^2 \rho\right)\\
+                    &= \frac{1}{B}\sigma^2 + \sigma^2 \rho - \frac{1}{B}\sigma^2\rho\\
+                    &= \rho\sigma^2 + \sigma^2 \frac{1 - \rho}{B}
+                \end{align*}
+
+                Donc, la réduction de la variance est moins grande si les variables sont corrélées que si les variables sont indépendantes.
+
+        \subsubsection{Forêts aléatoires}
+            Les \textit{forêts aléatoires} offrent un avantage par rappport aux arbres baggés en décorrélant les arbres. Chaque fois qu'un split dans un arbre est tenté, un échantillon aléatoire de \(m\) variables (parmi les \(p\) variables au total) est choisi comme candidats pour le split. On prend typiquement \(m \approx \sqrt{p}\). Si \(m = p\), alors c'est équivalent à faire du bagging sur des arbres.

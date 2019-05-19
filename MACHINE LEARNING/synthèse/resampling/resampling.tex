@@ -1,0 +1,85 @@
+\section{Resampling}
+    \begin{definition}
+        Les méthodes de \textit{resampling}\index{Resampling} sont utilisées dans :
+        \begin{enumerate}
+            \item La validation de modèle en utilisant des sous-ensembles des données (cross-validation et bootstrapping);
+            \item L'estimation de l'incertitude des statistiques en tirant aléatoirement (avec remise) des données (bootstrapping):
+            \item Faire des tests pour voir si une méthode est significative (tests de permutation)
+        \end{enumerate}
+    \end{definition}
+
+    \subsection{\(k\)-fold cross-validation}
+        \begin{definition}
+            La \textit{\(k\)-fold cross-validation}\index{Cross-validation}
+            \begin{itemize}
+                \item Diviser l'ensemble des données en \(k\) parties différentes
+                \item Retirer une partie, entraîner le modèle sur les \(k - 1\) autres parties et calculer le \(\MSE\) sur la partie retirée
+                \item Répéter \(k\) fois (une fois par partie à retirer)
+            \end{itemize}
+
+            En faisant la moyenne des \(k\) MSE, on obtient une estimation de l'erreur de validation (de test) pour de nouvelles observations :
+            \[
+                \CV_{k} = \frac{1}{k} \sum_{i=1}^k \MSE_i
+            \]
+
+            Le \textit{leave-one-out cross-validation}\index{Leave-one-out} est un cas spécial où \(k = n\).
+        \end{definition}
+
+        Chaque ensemble d'entraînement est \(\frac{k - 1}{k}\) fois aussi grand que l'ensemble de base. Donc, les estimations de l'erreur de prédiction sont biaisées vers le haut. Le biais est minimisé quand \(k = n\). Cependant, la variance augmente avec \(k\) (car il y a des observations communes entre les différents ensembles). On prend typiquement \(k = 5\) ou \(k = 10\) pour un bon compromis entre le biais et la variance.
+
+        Il faut faire attention à bien utiliser la cross-validation. Par exemple, :
+        \begin{enumerate}
+            \item Diviser l'ensemble en 10 folds
+            \item Pour \(i = 1, \dots, 10\), on utilise tous les folds sauf \(i\), on trouver les 5 meilleures variables, on entraîne un modèle avec ces 5 variables et on calcule l'erreur sur le fold \(i\).
+            \item On calcule la moyenne des erreurs.
+        \end{enumerate}
+        En bref, \textbf{toutes les étapes} de la procédure doivent être dans la cross-validation.
+
+        On choisit le modèle le plus simple dont l'erreur de CV n'est pas plus grande qu'un écart-type au-dessus que l'erreur du modèle avec la plus petite erreur.
+
+    \subsection{Bootstrap}
+        \begin{definition}
+            Le \textit{bootstrap}\index{Bootstrap} est un outil statistique permettant de quantifier l'incertitude associée à un estimateur ou une méthode d'apprentissage.
+
+            On imite le processus d'obtention de nouveaux jeux de données pour estimer la variabilité de notre estimation. Pour ça, on peut tirer des observations depuis le jeu de données original avec remise (nonparamétrique) ou depuis un modèle estimé (paramétrique). On obtient des \textit{échantillons bootstrap}.
+
+            L'\cref{alg:bootstrap} donne un pseudo-code pour le bootstrap.
+        \end{definition}
+
+        \begin{algorithm}
+            \caption{Bootstrap}
+            \label{alg:bootstrap}
+            \begin{algorithmic}[1]
+                \State Trouver une bonne estimation \(\estimation{P}\) de \(P\) (la distribution originale)
+                \State Tirer \(B\) échantillons bootstrap indépendants \(Z^{*(1)}, \dots, Z^{*(B)}\) de \(\estimation{P}\) : \(\forall b \in \{1, \dots, B\}, Z_1^{*(b)}, \dots, Z_n^{*(b)} \sim \estimation{P}\)
+                \State Evaluer : \(\forall b \in \{1, \dots, B\}, \estimation{\theta}^{*(b)} = s(Z^{*(b)})\)
+                \State Estimater la mesure qui nous intéresse depuis la distribution des \(\estimation{\theta}^{*(b)}\)
+            \end{algorithmic}
+        \end{algorithm}
+
+        Bootstrap peut servir pour estimer beaucoup de choses (contrairement à la cross-validation qui ne gère que les erreurs). Par exemple, on peut chercher \(\estimation{\theta} = \) moyenne, médianne, etc.
+
+        Le nombre \(B\) d'échantillons et la taille \(n\) des échantillons (le nombre d'observations par échantillon) jouent tous deux un rôle dans la précision de l'estimation.
+
+        \subsubsection{Estimation de l'erreur de prédiction}
+            On fit le modèle sur des échantillons bootstrap (avec le nombre d'observations par échantillon que dans le jeu de base) et on regarde la qualité des prédictions :
+            \[
+                \errorBoot = \frac{1}{B}\frac{1}{N} \sum_{b=1}^B \sum_{i=1}^N L(y_i, \estimation{f}^{*b}(x_i))
+            \]
+
+            Comme on tire avec remise et que chaque échantillon a la même taille que le jeu de base, il y a des observations qui peut peuvent apparaître plus qu'une fois dans les échantillons et d'autres qui n'apparaissent jamais. Donc, on a que nos ensembles d'entraînement et de validation ont des observations en commun (ce qui nous donne une estimation erronée de l'erreur de validation). Nous allons calculer la probabilité qu'un observation \(i\) donnée soit dans l'échantillon bootstrap \(b\) :
+            \begin{align*}
+                P(\text{observation \(i\) soit tirée}) &= \frac{1}{n} & \text{Distribution uniforme}\\
+                P(\text{observation \(i\) ne soit pas tirée}) &= 1 - \frac{1}{n}\\
+                P(\text{observation } i \not\in \text{échantillon } b) &= (1 - \frac{1}{n})^n & \text{Il faut que l'observation ne soit jamais tirée}\\
+                P(\text{observation \(i \in\) échantillon \(b\)}) &= 1 - (1 - \frac{1}{n})^n \\
+                &\approx 1 - \frac{1}{e} \approx 0.632
+            \end{align*}
+
+            On a donc que chaque observation a 63\% de chances d'apparaître dans un échantillon bootstrap. Nous allons améliorer bootstrap en mémorisant les observations qui ne sont pas dans les échantillons. Ceci permet de mieux estimer l'erreur de validation :
+            \[
+                \errorLooBoot = \frac{1}{N} \sum_{i=1}^N \frac{1}{|C^{-i}|} \sum_{b \in C^{-i}} L(y_i, \estimation{f}^{*b} (x_i))
+            \]
+            avec \(C^{-i}\) l'ensemble des indices des échantillons bootstrap qui ne contiennent pas l'observation \(i\).
+
+            Comme pour la cross-validation, il y a un biais `training-set-size'.

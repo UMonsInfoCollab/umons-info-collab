@@ -1,0 +1,289 @@
+\subsection{Régression}
+    \begin{definition}
+        Pour la \textit{régression}\index{Régression}, on suppose que les données suivent le modèle suivant :
+        \[
+            Y = f(X) + \varepsilon
+        \]
+        où \(f\) est la véritable function (inconnue), \(\varepsilon\) est le terme aléatoire d'erreur (indépendant de \(X\)) avec \(\expectation[\varepsilon] = 0\).
+
+        La variable de sortie d'une régression est toujours continue.
+    \end{definition}
+
+    Ce modèle implique que \(f(X) = \expectation[Y|X]\), que \(P(Y|X)\) dépend de \(X\) seulement via \(f(X)\) et que \(Y \not= f(X)\) (la relation n'est pas déterministe).
+
+    \begin{definition}[Tâches]
+        La \textit{prédiction}\index{Prédiction} est la tâche qui consiste à prédire la sortie pour une nouvelle entrée \(x^*\) :
+        \[\estimation{y^*} = \estimation{f}(x^*)\]
+        avec \(\estimation{f}\) notre estimation de \(f\) et \(\estimation{y^*}\) représente notre prédiction pour \(y^*\).
+
+        L'\textit{inférence}\index{Inférence} (ou l'\textit{explication}\index{Explication}\index{Explanation|see {Explication}}) est la tâche qui consiste à trouver et `expliquer' la relation entre la sortie et les variables.
+    \end{definition}
+
+    On peut distinguer deux catégories de méthodes :
+    \begin{enumerate}
+        \item Méthodes paramétriques :
+        \begin{itemize}
+            \item Régression linéaire : \(f(X) = \beta_0 + \beta_1X_1 + \dots + \beta_pX_p\) et \(\estimation{Y}(x) = \estimation{f}(x)\).
+        \end{itemize}
+        \item Méthodes non-paramétriques :
+        \begin{itemize}
+            \item k-Nearest Neighbours : \(\estimation{Y}(x) = \frac{1}{k}\sum_{x_i\in N_k(x)} y_i\).
+        \end{itemize}
+    \end{enumerate}
+
+    \subsubsection{Prédiction optimale}
+        Notons \(g(X)\) la fonction optimale pour la régression et utilisons \(L(y, \estimation{y})) = (y - \estimation{y})^2\).
+
+        On veut minimiser :
+        \begin{align*}
+            \expectation[L(Y, g(X))] &= \expectation_{Y, X}[(Y - g(X))^2] & \text{Par notre choix de } L\\
+            &= \expectation_X[\expectation_Y[(Y - g(X))^2|X]] & \text{Théorème de l'espérance totale}
+        \end{align*}
+
+        On peut laisser tomber \(\expectation_X\) car minimiser l'erreur point-à-point est suffisant (faire la moyenne des erreurs n'apporte pas plus d'informations que de considérer chaque erreur) :
+        \begin{align*}
+            \expectation_Y[(Y - g(X))^2|X] &= \int_{-\infty}^{+\infty} (y - g(X))^2 f_{Y|X}(y|x)\,dy\\
+            &= \int_{-\infty}^{+\infty} y^2 f_{Y|X}(y|x)\,dy - 2g(X) \int_{-\infty}^{+\infty} y f_{Y|X}(y|x)\,dy + (g(X))^2 \int_{-\infty}^{+\infty} f_{Y|X}(y|x)\,dy \\
+        \end{align*}
+
+        On a que \(\int_{-\infty}^{+\infty} y^2 f_{Y|X}(y|x)\, dy\) ne dépend pas de \(g(X)\). Donc, on peut laisser tomber ce terme. De plus, on a que \(\int_{-\infty}^{+\infty} f_{Y|X}(y|x)\,dy = 1\) par les propriétés d'une fonction de densité de probabilité. Remarquons aussi que \(\int_{-\infty}^{+\infty} y f_{Y|X}(y|x)\, dy = \expectation[Y|X]\), par définition.
+
+        Donc, on obtient :
+        \[
+            \argmin_{g(X)} \expectation_Y[(Y - g(X))^2|X] = \argmin_{g(X)}\left\{-2g(X) \expectation[Y|X] + (g(X))^2\right\}
+        \]
+
+        En dérivant, on obtient \(-2\expectation[Y|X] + 2g(X)\). La seconde dérivée est \(2\) (qui est toujours \(> 0\)). La racine est donc \(g(X) = \expectation[Y|X]\).
+
+        On a donc que la fonction optimale pour la régression est
+        \[
+            g(X) = \expectation[Y|X]
+        \]
+
+        Dans ce cas, on a que le biais\index{Biais} et la variance\index{Variance} de la méthode sont tous deux nuls. Donc, le MSE\index{MSE} est égal à la variance irréductible.
+
+    \subsubsection{Erreurs (efficacité du modèle)}
+        Pour rappel, on ne peut pas calculer \(\errorOut(\fEstimated)\) car on ne connait pas \(\distribution(Y, X)\).
+
+        \begin{definition}
+            L'\textit{erreur d'entraînement}\index{Erreur!d'entraînement} (ou \textit{erreur in-sample}\index{Erreur!in-sample|see {Erreur, d'entraînement}}) est l'erreur commise par le modèle sur les données d'entraînement :
+            \[
+                \errorIn(\fEstimated) = \frac{1}{n} \sum_{i=1}^n (y_i - \fEstimated(x_i))^2
+            \]
+        \end{definition}
+
+        \begin{remarque}
+            On utilise \(\data\) pour calculer \(\fEstimated\) et \(\errorIn(\fEstimated)\) ! En d'autres termes, on ne sait pas déterminer l'efficacité du modèle sur des données qui ne sont pas dans l'ensemble d'entraînement.
+        \end{remarque}
+
+        On va calculer le \textit{mean squared error}\index{MSE}\index{Mean Squared Error|see {MSE}} (abrégé en \textit{MSE}) \nomenclature{MSE}{Mean Squared Error} sur deux ensembles distincts :
+        \begin{enumerate}
+            \item L'\textit{ensemble d'entraînement}\index{Ensemble!d'entraînement} \(\data = \{(x_i, y_i)\}_{i=1}^n\). Le \textit{training MSE} est :
+            \[
+                \MSE_{train} = \frac{1}{n} \sum_{i=1}^n (y_i - \fEstimated(x_i))^2
+            \]
+            \item L'\textit{ensemble de test}\index{Ensemble!de test} \(\testData = \{(\widetilde{x_i}, \widetilde{y_i})\}_{i=1}^m\). Le \textit{test MSE} est :
+            \[
+                \MSE_{test} = \frac{1}{n} \sum_{i=1}^m (\widetilde{y_i} - \fEstimated(\widetilde{x_i}))^2
+            \]
+        \end{enumerate}
+
+        Une méthode plus fexible implique un training MSE plus bas (car le modèle apprend mieux à coller aux données) MAIS le test MSE peut être plus grand (car le modèle colle trop aux données d'entraînement).
+
+    \subsubsection{Décomposition du MSE}
+        \begin{theorem}
+            Le MSE sur un \(x_0\) en-dehors de l'ensemble d'entraînement peut être décomposé :
+            \[
+                \expectation_{\data, \varepsilon}[(Y - \fEstimated(x_0))^2] = (\bias[\fEstimated(x_0)])^2 + \variance[\fEstimated(x_0)] + \variance[\varepsilon]
+            \]\index{Biais}\index{Variance} avec
+            \begin{align*}
+                \bias[\fEstimated(x_0)] &= \expectation[\fEstimated(x_0)] - f(x_0)\\
+                \text{et } \variance[\fEstimated(x_0)] &= \expectation\left[\left(\fEstimated(x_0) - \expectation[\fEstimated(x_0)]\right)^2\right]
+            \end{align*}
+        \end{theorem}
+        \begin{proof}
+            Soit \(Y = f(X) + \varepsilon\) avec \(\expectation[\varepsilon] = 0\) et \(\variance[\varepsilon] = \sigma^2\).
+
+            Comme \(f\) est déterministe, \(\expectation[f(x_0)] = f(x_0)\) et \(\variance[f(x_0)] = 0\).
+
+            \begin{align*}
+                \expectation[(Y - \fEstimated(x_0))^2] &= \expectation[(Y - f(x_0) + f(x_0) - \fEstimated(x_0))^2]\\
+                &= \expectation[(Y - f(x_0))^2 + (f(x_0) - \fEstimated(x_0))^2 + 2(Y - f(x_0)(f(x_0) - \fEstimated(x_0)))]\\
+                &= \sigma^2 + \expectation[(\fEstimated(x_0) - f(x_0))^2] + 2\expectation[(Y - f(x_0))(f(x_0) - \fEstimated(x_0))]
+            \end{align*}
+
+            Commençons par montrer que \(\expectation[(Y - f(x_0)(f(x_0) - \fEstimated(x_0)] = 0\) :
+            \begin{align*}
+                \expectation[(Y - f(x_0)(f(x_0) - \fEstimated(x_0)] &= \expectation[Yf(x_0) - f^2(x_0) - Y\fEstimated(x_0) + f(x_0)\fEstimated(x_0)]\\
+                &= \expectation[f^2(x_0) + \varepsilon f(x_0)] - \expectation[f^2(x_0)] - \expectation[f(x_0)\fEstimated(x_0) + \varepsilon \fEstimated(x_0)] + \expectation[f(x_0)\fEstimated(x_0)]\\
+                &= f^2(x_0) - f^2(x_0) - f(x_0)\expectation[\fEstimated(x_0)] - \expectation[\varepsilon \fEstimated(x_0)] + f(x_0)\expectation[\fEstimated(x_0)]\\
+                &= \expectation[\varepsilon \fEstimated(x_0)]\\
+                &= 0 &\text{???}
+            \end{align*}
+
+            Déterminons \(\expectation[(\fEstimated(x_0) - f(x_0))^2]\) :
+            \begin{align*}
+                \expectation[(\fEstimated(x_0) - f(x_0))^2] =& \expectation[(\fEstimated(x_0) - \expectation[\fEstimated(x_0)] + \expectation[\fEstimated(x_0)] - f(x_0))^2]\\
+                =& \expectation[(\fEstimated(x_0) - \expectation[\fEstimated(x_0)])^2] + \expectation[(\expectation[\fEstimated(x_0)] - f(x_0))^2] \\&+ 2\expectation[(\fEstimated(x_0) - \expectation[\fEstimated(x_0)])(\expectation[\fEstimated(x_0)] - f(x_0))]\\
+                =& \variance[\fEstimated(x_0)] + \bias^2[\fEstimated(x_0)] + 2\expectation[(\fEstimated(x_0) - \expectation[\fEstimated(x_0)])(\expectation[\fEstimated(x_0)] - f(x_0))]\\
+            \end{align*}
+
+            Montrons d'abord que \(\expectation[(\expectation[\fEstimated(x_0)] - f(x_0))^2] = \bias^2[\fEstimated(x_0)]\)
+            \begin{align*}
+                \expectation[(\expectation[\fEstimated(x_0)] - f(x_0))^2] &= \expectation\left[(\expectation[\fEstimated(x_0)])^2 + f^2(x_0) - 2f(x_0)\expectation[\fEstimated(x_0)]\right]\\
+                &= \expectation\left[(\expectation[\fEstimated(x_0)])^2\right] + \expectation[f^2(x_0)] - 2f(x_0)\expectation[\expectation[\fEstimated(x_0)]] & \text{Par linéarité}\\
+                &= (\expectation[\fEstimated(x_0)])^2 + f^2(x_0) - 2f(x_0)\expectation[\fEstimated(x_0)] & \text{Car } \expectation[\fEstimated(x_0)] \text{ est constant}\\
+                &= (\expectation[\fEstimated(x_0)] - f(x_0))^2\\
+                &= \bias^2[\fEstimated(x_0)]
+            \end{align*}
+
+            Montrons finalement que \(\expectation[(\fEstimated(x_0) - \expectation[\fEstimated(x_0)])(\expectation[\fEstimated(x_0)] - f(x_0))] = 0\) :
+            \begin{align*}
+                \expectation\left[(\fEstimated(x_0) - \expectation[\fEstimated(x_0)])(\expectation[\fEstimated(x_0)] - f(x_0))\right] &= \expectation\left[\fEstimated(x_0)\expectation[\fEstimated(x_0)] - (\expectation[\fEstimated(x_0)])^2 - \fEstimated(x_0)f(x_0) + f(x_0)\expectation[\fEstimated(x_0)]\right]\\
+                &= (\expectation[\fEstimated(x_0)])^2 - (\expectation[\fEstimated(x_0)])^2 - f(x_0)\expectation[\fEstimated(x_0)] + f(x_0)\expectation[\fEstimated(x_0)]\\
+                &= 0
+            \end{align*}
+            
+            On a donc bien que MSE = \(\text{biais}^2\) + variance de la méthode + une variance irréductible (inhérente au jeu de donnés).
+        \end{proof}
+
+    \subsubsection{Régression linéaire}
+        Pour la \textit{Régression linéaire}\index{Régression!Linéaire}, on suppose que \(f(X)\) est une fonction linéaire en \(X\) et que \(\estimation{Y}(x) = \fEstimated(x)\).
+
+        \paragraph{Une seule variable} Dans ce cas, on a que \(Y = \beta_0 + \beta_1 X + \varepsilon\). On veut trouver les estimations \(\betaEstimated{0}\) et \(\betaEstimated{1}\) pour \(\estimation{y} = \betaEstimated{0} + \betaEstimated{1} x\).
+
+        \begin{definition}
+            Soit \(\estimation{y_i} = \betaEstimated{0} + \betaEstimated{1}x_i\) la prédiction pour \(Y\) pour la i\ieme{} valeur de \(X\) (la i\ieme{} ligne dans le jeu de données).
+
+            Le i\ieme{} \textit{residual}\index{Residual} est défini comme :
+            \[
+                e_i = y_i - \estimation{y_i} = y_i - \betaEstimated{0} - \betaEstimated{1} x_i
+            \]
+
+            On définit le \textit{residual sum of squares}\index{Residual sum of squares|see {RSS}} (noté \textit{RSS}\index{RSS} ou \textit{SSE}\index{SSE|see {RSS}})\nomenclature{RSS}{Residual sum of squares} par :
+            \begin{align*}
+                \RSS &= \sum_{i=1}^n e_i^2\\
+                &= \sum_{i=1}^n (y_i - \betaEstimated{0} - \betaEstimated{1} x_i)^2\\
+                &= \sum_{i=1}^n (y_i - \fEstimated(x_i)) & \text{Par hypothèse de la régression linéaire}\\
+                &= n \MSE\index{MSE}
+            \end{align*}
+        \end{definition}
+
+        On va minimiser le RSS. On obtient :
+        \begin{align*}
+            \betaEstimated{0} &= \frac{\sum_{i=1}^n (x_i - \mean{x})(y_i - \mean{y})}{\sum_{i=1}^n (x_i - \mean{x})^2}\\
+            \betaEstimated{1} &= \mean{y} - \betaEstimated{1}\mean{x}
+        \end{align*}
+        avec \(\mean{y} = \frac{1}{n}\sum_{i=1}^n y_i\) et \(\mean{x} = \frac{1}{n}\sum_{i=1}^n x_i\).
+
+        \begin{remarque}
+            Minimiser le RSS est équivalent à maximiser MLE en supposant que \(\varepsilon_i|x_i \sim  \gaussian(0, \sigma^2)\), ce qui implique que \(y_i|x_i \sim \gaussian(\beta_0 + \beta_1 x_i, \sigma^2\). En effet, la fonction de vraisemblance est \(\prod_{i=1}^n f(y_i, x_i) = \prod_{i=1}^n f_X(x_i) \prod_{i=1}^n f_{Y|X}(y_i|x_i)\) (par la décomposition d'une probabilité jointe). Comme le premier terme ne contient pas les paramètres à trouver, on se concentre uniquement sur le deuxième terme (appelé \textit{conditional likelihood}\index{Conditional likelihood}\index{Likelihood}). On a que \(\prod_{i=1}^n f_{Y|X}(y_i|x_i) \propto \sigma^{-n}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n (y_i - \beta_0 - \beta_1x_i)^2}\). En passant au log, on obtient que la fonction est proportionnelle à \(-n\log(\sigma) - \frac{1}{2\sigma^2}\sum_{i=1}^n (y_i - \beta_0 - \beta_1x_i)^2\).
+        \end{remarque}
+
+        On a :
+        \begin{align*}
+            \SE(\betaEstimated{1})^2 &= \frac{\sigma^2}{\sum_{i=1}^n (x_i - \mean{x})}\\
+            \SE(\betaEstimated{2})^2 &= \sigma^2 \left[\frac{1}{n} + \frac{\mean{x}^2}{\sum_{i=1}^n (x_i - \mean{x})^2}\right]
+        \end{align*}
+        avec \(\sigma^2 = \variance[\varepsilon]\).
+
+        On peut calculer les \textit{intervalles de confiance}\index{Intervalles de confiance} à 95\% :
+        \[
+            \betaEstimated{1} \pm 2\SE(\betaEstimated{1})
+        \]
+
+        Avec ces intervalles, on peut faire des \textit{tests d'hypothèse}\index{Tests d'hypothèse}, principalement l'\textit{hypothèse nulle}\index{Hypothèse!nulle} \(H_0\) (il n'y a pas de relation entre \(X\) et \(Y\); on teste \(\beta_1 = 0\)) et l'\textit{hypothèse alternative}\index{Hypothèse!alternative} \(H_A\) (il y a une relation entre \(X\) et \(Y\); on teste \(\beta_1 \not= 0\)).
+
+        Pour tester l'hypothèse nulle, on calcule une \textit{t-statistic}\index{t-statistic} :
+        \[
+            t = \frac{\betaEstimated{1} - 0}{\SE(\betaEstimated{1})} = \frac{\betaEstimated{1}}{\SE(\betaEstimated{1})}
+        \]
+        On peut calculer (numériquement) la probabilité de voir une valeur plus grande ou égale à \(|t|\). Cette probabilité est appelée \textit{p-value}\index{p-value} (une petite valeur indique que l'hypothèse est fausse)
+        
+        \begin{definition}
+            On définit le \textit{Residual Standard Error}\index{Residual Standard Error|see {RSE}} (noté \textit{RSE}\index{RSE})\nomenclature{RSE}{Residual Standard Error} :
+            \[
+                \RSE = \sqrt{\frac{\RSS}{n-2}} = \sqrt{\frac{\sum_{i=1}^n (y_i - \estimation{y_i})^2}{n - 2}}
+            \]
+
+            On définit le \textit{Total Sum of Squares}\index{Total Sum of Squares|see {TSS}} (noté \textit{TSS}\index{TSS})\nomenclature{TSS}{Total Sum of Squares} :
+            \[
+                \TSS = \sum_{i=1}^n (y_i - \mean{y})^2
+            \]
+
+            On définit le \textit{R-squared}\index{R-squared} ou \textit{\(R^2\) statistic}\index{R statistic@\(R^2\) statistic|see {R-squared}} (la fraction de la variance expliquée) :
+            \[
+                R^2 = \frac{TSS - RSS}{TSS} = 1 - \frac{RSS}{TSS} = 1 - \frac{\sum_{i=1}^n (y_i - \estimation{y}_i)^2}{\sum_{i=1}^n (y_i - \mean{y})^2}
+            \]
+            On peut montrer que, dans le cas simple d'une variable, \(R^2 = r^2\), avec \(r\) la corrélation entre \(X\) et \(Y\).
+        \end{definition}
+
+        \paragraph{Plusieurs variables} Dans ce cas, notre modèle est \(Y = \beta_0 + \beta_1 X_1 + \dots + \beta_p X_p + \varepsilon\). On peut écrire \(\forall i \in \{0, \dots, n\}, y_i = \beta_0 + \beta_1 x_{i,1} + \dots + \beta_p x_{i,p}\). On a alors, en notation matricielle :
+        \[
+            Y = \begin{pmatrix}
+                y_1\\
+                y_2\\
+                \vdots\\
+                y_n
+            \end{pmatrix}, X = \begin{pmatrix}
+                x_{1,1} & x_{1,2} & \dots & x_{1,p}\\
+                x_{2,1} & x_{2,2} & \dots & x_{2,p}\\
+                \vdots  & \vdots  & \ddots & \vdots\\
+                x_{n,1} & x_{n,2} & \dots & x_{n,p}
+            \end{pmatrix}, \beta = \begin{pmatrix}
+                \beta_1\\
+                \beta_2\\
+                \vdots\\
+                \beta_p
+            \end{pmatrix} \text{ et } \varepsilon = \begin{pmatrix}
+                \varepsilon_1\\
+                \varepsilon_2\\
+                \vdots\\
+                \varepsilon_p
+            \end{pmatrix}
+        \]
+        \[
+            y = \beta_0 + X\beta + \epsilon = \tilde{X}\tilde{\beta} + \epsilon
+        \]
+        avec \(\tilde{X} = [1 X]\) et \(\tilde{\beta} = \left(\beta_0 \beta^T\right)^T\).
+
+        Comme précédemment, on va minimiser le RSS\index{RSS} :
+        \begin{align*}
+            \RSS =& \sum_{i=1}^n\left(y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{i,j}\right)^2\\
+            =& (Y - \beta_0 - X\beta)^T (Y - \beta_0 - X\beta)\\
+            =& (Y - \tilde{X}\tilde{\beta})^T (Y - \tilde{X}\tilde{\beta})
+        \end{align*}
+
+        Par simplicité, on va laisser tomber l'intercept (donc, pas de \(\beta_0\)). Alors, on a la solution \textit{Ordinary Least Squares}\index{Ordinary Least Squares|see {OLS}} (noté \textit{OLS}\index{OLS})\nomenclature{OLS}{Ordinary Least Squares} :
+        \[
+            \betaEstimated{} = \argmin_\beta (Y - X\beta)^T(Y - X\beta) = (X^TX)^{-1}X^TY
+        \]
+
+        \begin{remarque}
+            \(X^TX\) n'est pas toujours inversible (haute dimensionnalité; dummy variable trap).
+        \end{remarque}
+
+        Si les erreurs sont iid et distribués selon une normale, alors \(Y \sim \gaussian_n(X\beta, \sigma^2I)\). Alors la likelihood\index{Likelihood} est \(L = \frac{1}{\sigma^2 (2\pi)^{n/2}}e^{\frac{-1}{2\sigma^2}(Y - X\beta)^T(Y - X\beta)}\) qui est maximisé quand \((Y - X\beta)^T(Y - X\beta)\) est minimisé. Donc, MLE\index{MLE} est équivalent à OLS.
+
+        Pour savoir si au moins une variable est utile, on calcule une \textit{F-statistic}\index{F-statistic} \(F = \frac{(\TSS - \RSS)/p}{\RSS/(n-p-1)} \sim F_{p,n-p-1}\).
+
+        Pour trouver les variables utiles, il y a deux façons :
+        \begin{itemize}
+            \item \textit{Forward selection}\index{Forward selection} : on commence avec le modèle vide (sans aucune variable mais avec un intercept). On fait \(p\) régressions linéaires à une variable et on ajoute au modèle vide la variable qui a eu le plus petit RSS. Ensuite, on fait des régressions linéaires à deux variables (en gardant la variable trouvée précédemment) et on ajoute celle qui a provoqué le plus petit RSS, et ainsi de suite jusqu'à, par exemple, que toutes les variables ont une \textit{p-value}\index{p-value} supérieure à une certaine valeur.
+            \item \textit{Backward selection}\index{Backward selection} : on commence avec toutes les variables et on retire la variable avec la plus haute \textit{p-value}. On entraîne un modèle avec les \(p - 1\) variables et on recommence.
+        \end{itemize}
+
+        \paragraph{Variables qualitatives}
+        On veut transformer les variables qualitatives en variables quantitatives. Si la variable a \(p\) valeurs différentes, il faut créer \(p - 1\) variables. Par exemple, \(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\) devient \[y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \varepsilon_i \begin{cases}
+            \beta_0 + \beta_1 + \varepsilon_i\\
+            \beta_0 + \beta_2 + \varepsilon_i\\
+            \beta_0 + \varepsilon_i & \text{la \textit{baseline}\index{Baseline}}\\
+        \end{cases}\]
+
+        \paragraph{Interactions entre les variables}
+        Si on veut modéliser le fait que deux variables ont une interaction entre elles, il suffit de rajouter une nouvelle variable qui dépend des deux autres (typiquement, via une multiplication). Si la p-value est faible, alors il y a une forte probabilité que l'interaction existe vraiment.
+
+        \paragraph{Non-linéarité}
+        La régression linéaire est linéaire en ses variables. Donc, en appliquant des transformations non-linéaires sur les variables, on peut obtenir un régression non-linéaire.
+
+        Une autre façon de faire est de travailler par morceaux : on coupe l'espace en petits morceaux et on fait une régression sur chaque morceau. Cependant, ceci pose problème aux frontières (par manque de points) car la fonction obtenue n'est pas forcément continue. On peut corriger ça via des \textit{splines}\index{Splines}. Les splines ont un hyper-paramètre \(df\) (le \textit{degree of freedom}\index{Degree of freedom}) : si \(df = 0\), la courbe est une constante; si \(df = 1\), c'est une droite; etc. Les splines sont aussi capables de trouver les points où couper l'espace.

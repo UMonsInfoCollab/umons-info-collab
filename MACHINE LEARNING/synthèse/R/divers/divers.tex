@@ -1,0 +1,56 @@
+\subsection{Divers}
+    \subsubsection{Opérations matricielles}
+        Pour multiplier deux matrices \(A\) et \(B\), il faut écrire \lstinline{A %*% B}.
+
+    \subsubsection{Génération aléatoire}
+        \begin{lstlisting}
+            # Contrôle la graine
+            set.seed(1)
+            # Générer un vecteur de taille n
+            # selon une loi normale de moyenne m et d'écart-type s
+            rnorm(n, mean = m, sd = s)
+            # selon une loi uniforme entre a et b
+            runif(n, min = a, max = b)
+            # selon une loi de Poisson avec comme paramètre l
+            rpois(n, lambda = l)
+        \end{lstlisting}
+
+    \subsubsection{Tidyverse}
+        \begin{lstlisting}
+            dataset = dataset %>%
+                # Ajoute ou transforme une colonne
+                mutate(column = transformation(other.column)) %>%
+                # Filtre les données (par exemple, filter(!is.na(column)))
+                filter(condition(column)) %>%
+                # Retire les lignes dupliquées
+                distinct(column) %>%
+                # Sélectionne des colonnes
+                select(col1, col2, ...) %>%
+                # Groupe les données en ligne avec la même valeur pour column
+                group_by(column) %>%
+                # Retire les groupes
+                ungroup() %>%
+                # Rassemble plusieurs colonnes en une paires (clé, valeurs)
+                # Les autres colonnes sont dupliquées
+                gather(col1, col2, col3, ..., key = "keycolumn", value = "valuecolumn") %>%
+                # Opération inverse (découpe les paires en colonnes)
+                spread(key = "keycolumn", value = "valuecolumn")
+                # Summarise les données en une seule ligne avec les valeurs
+                summarise(new.column = summary.function(column))
+        \end{lstlisting}
+
+        Fonctions supportées par \lstinline{summarise} :
+        \begin{itemize}
+            \item \lstinline{first}, \lstinline{last}, \lstinline{nth} pour récupérer les valeurs
+            \item \lstinline{n} pour le nombre de valeurs, \lstinline{n_distinct} pour le nombre de valeurs différentes
+            \item \lstinline{min}, \lstinline{max}, \lstinline{mean}, \lstinline{median}, \lstinline{var}, \lstinline{var} pour récupérer les valeurs statistiques associées
+        \end{itemize}
+
+    \subsubsection{Couper un jeu de données}
+        On va couper aléatoirement un jeu de données en un ensemble d'entraînement (avec 2000 données) et un ensemble de test (avec toutes les autres données).
+
+        \begin{lstlisting}
+            train = sample(1:nrow(data), 2000)
+            data.train = data[train,]
+            data.test = data[-train,]
+        \end{lstlisting}
