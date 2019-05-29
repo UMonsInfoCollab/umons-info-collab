@@ -1,0 +1,7 @@
+\subsection{Réduction de dimensionnalité (PCA)}
+    \begin{lstlisting}
+        # PCA en scalant et centrant les données
+        PCA = prcomp(data, scale = TRUE, center = TRUE)
+        # Appliquer la transformation sur de nouvelles données
+        predict(PCA, newdata)
+    \end{lstlisting}

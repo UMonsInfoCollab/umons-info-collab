@@ -1,0 +1,64 @@
+\subsection{Quelques distributions}
+    \subsubsection{Distributions discrètes}
+        \paragraph{Distribution uniforme (discrète)}
+            Sur \(k\) catégories \(\{x_1, x_2, \dots, x_k\}\), la distribution uniforme discrète est :
+            \[
+                \forall x \in \{x_1, x_2, \dots, x_k\}, p_X(x) = \frac{1}{k}
+            \]
+
+        \paragraph{Distribution de Bernoulli}
+            Typiquement, la distribution d'un lancer de pièces, c'est-à-dire que \(x \in \{0, 1\}\). On a \(p\) qui donne la probabilité d'avoir \(1\). La pmf de Bernoulli est :
+            \[
+                \forall x \in \{0, 1\}, p_X(x) = p^x (1-p)^{1-x}
+            \]
+
+            Cette distribution est notée \(\bernoulli(p)\).
+
+            Pour \(X \sim \bernoulli(p), \expectation[X] = p * 1 + (1 - p) * 0 = p\) et \(\variance[X] = p (1 - p)\).
+
+        \paragraph{Distribution binomiale}
+            Typiquement, la distribution du nombre de heads dans \(n\) lancers de pièces :
+            \[
+                \forall x, p_X(x) = \begin{cases}
+                    \binom{n}{x} p^x (1 - p)^{n-x} & \text{si } x \in \{0, 1, \dots, n\}\\
+                    0 & \text{sinon}
+                \end{cases}
+            \]
+
+            Cette distribution est notée \(\binomial(n, p)\).
+
+        \paragraph{Distribution géométrique}
+            Typiquement, la distribution du nombre de lancers pour voir une face. Sa pmf :
+            \[
+                \forall x \in \{1, 2, \dots\}, p_X(x) = p(1-p)^{x_1}
+            \]
+
+            Cette distribution est notée \(\geometric(p)\).
+
+        \paragraph{Distribution de Poisson}
+            Une distribution de Poisson de moyenne \(\lambda\) a comme pmf :
+            \[
+                \forall x \in \{0, 1, \dots\}, p_X(x) = \frac{\lambda^x e^{-\lambda}}{x!}
+            \]
+
+            Cette distribution est notée \(\poisson(\lambda)\).
+
+    \subsubsection{Distributions continues}
+        \paragraph{Distribution uniforme (continue)}
+            Sur \([a, b]\), sa pdf est :
+            \[
+                \forall x, p_X(x) = \begin{cases}
+                    \frac{1}{b - a} & \text{si } x \in [a, b]\\
+                    0 & \text{sinon}
+                \end{cases}
+            \]
+
+            Cette distribution est notée \(\uniform[a, b]\).
+
+        \paragraph{Distribution gaussienne}
+            Cette distribution a une moyenne \(\mu\) et une variance \(\sigma^2\). Sa pdf est :
+            \[
+                \forall x, p_X(x) = \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{1}{2\sigma^2}(x - \mu)^2}
+            \]
+
+            Cette distribution est notée \(\gaussian(\mu, \sigma^2)\).

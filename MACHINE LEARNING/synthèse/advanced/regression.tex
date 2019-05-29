@@ -1,0 +1,151 @@
+\section{Régression avancée}
+    Rappel : solution optimale de la régression linéaire donnée par OLS : \(\betaLS = (X^TX)^{-1} X^Ty\)
+
+    Cette solution peut avoir des problèmes en haute dimension parce qu'il peut arriver que certaines colonnes de \(X\) ne sont pas linéairement indépendantes. Par conséquent, \(X\) n'est pas `full rank'. Dans ce cas, \(X^T X\) est singulière (non-inversible) et les coefficients OLS n'ont pas une unique valeur.
+
+    Pour rappel, le biais de \(\betaLS\) est \(\expectation[\betaLS] - \beta^* = 0\) et la variance est \(\variance[\betaLS] = \sigma^2 (X^T X)^{-1}\). Si \(X\) a des colonnes orthonormales :
+    \[
+        \trace(\variance[\betaLS]) = \sigma^2 p
+    \]
+
+    On peut réduire le nombre de dimensions en appliquant PCA (dans ce cas, on fait du \textit{principal components regression} ou PCR\index{PCR}). Ceci suppose que les directions dans lesquels \(X_1, \dots, X_p\) ont la plus grande variation ont une relation avec \(Y\).
+
+    Une autre solution est d'utiliser le \textit{best subset selection}\index{Best subset selection} :
+    \begin{align*}
+        &\min_{\beta} \left\{\sum_{i=1}^n \left(y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij}\right)^2\right\}\\
+        &\text{sous contrainte } \sum_{j=1}^p \identity(\beta_j \not= 0) \leq s
+    \end{align*}
+    avec \(s \geq 0\) un hyper-paramètre. Il faut considérer \(p \choose s\) modèles contenant \(s\) prédicteurs. Ceci est infaisable quand \(p\) et \(s\) sont grands. De plus, quand l'espace de recherche est grand, il y a de grands risques d'overfitting. On peut utiliser les stepwise procedures pour contrecarrer ça (mais ces méthodes ne garantissent pas d'obtenir l'optimal).
+
+    \subsection{Shrinkage}
+        Finalement, la dernière solution du cours est le \textit{shrinkage}\index{Shrinkage}.
+        \begin{definition}
+            Le \textit{shrinkage} (ou \textit{regularization}\index{Regularization|see {Shrinkage}}) consiste à fitter un modèle utilisant les \(p\) variables mais les coefficients estimés sont réduits vers zéro par rapport aux coefficients de OLS. Ceci a pour effet de réduire la variance et de faire de la sélection de variables.
+        \end{definition}
+
+        \subsubsection{Ridge regression}
+            \begin{definition}
+                La \textit{régression Ridge}\index{Ridge} est le problème d'optimisation suivant :
+                \begin{align*}
+                    &\min_{\beta} \left\{\sum_{i=1}^n \left(y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij}\right)^2\right\}\\
+                    &\text{sous contrainte } \sum_{j=1}^p \beta_j^2 \leq s
+                \end{align*}
+                avec \(s \leq 0\) un hyper-paramètre.
+
+                Si \(s = 0\), \(\betaRidge = (0, \dots, 0)\). Si \(s = +\infty, \betaRidge = \betaLS\). Si \(s \in ]0, +\infty[\), on fait du tradeoff.
+            \end{definition}
+
+            Géométriquement, la contrainte de régularisation est une sphère.
+
+            \begin{definition}
+                On peut formuler la régression ridge comme :
+                \[
+                    \min_{\beta} \sum_{i=1}^n \left(y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij}\right)^2 + \lambda \sum_{j=1}^p \beta_j^2
+                \]
+                avec \(\lambda \leq 0\) un hyper-paramètre.
+
+                Si \(\lambda = 0\), \(\betaRidge = \betaLS\). Si \(\lambda = \infty\), \(\betaRidge = (0, \dots, 0)\). Si \(\lambda \in (0, \infty)\), on fait du tradeoff.
+
+                On peut résoudre ce problème par augmentation des données :
+                \[
+                    \betaRidge = (X^T X + \lambda \identity_p)^{-1} X^T y
+                \]
+            \end{definition}
+
+            \paragraph{Un cas simple}
+                Supposons que \(n = p\) et que \(X = \identity_n = \identity_p\), alors :
+                \begin{align*}
+                    &\min_\beta \sum_{j=1}^p (y_j - \beta_j)^2 &\implies \betaLS &= y_j\\
+                    &\min_\beta \sum_{j=1}^p (y_j - \beta_j)^2 + \lambda\sum_{j=1}^p \beta_j^2 &\implies \betaRidge &= \frac{y_j}{1+\lambda} = \frac{\betaLS}{1 + \lambda}
+                \end{align*}
+
+            \paragraph{Scaling}
+                Les coefficients OLS sont `scale equivariant' (multiplier \(X_j\) par une constante \(c \implies\) les coefficients OLS sont divisés par \(c\); peu importe comment la \(j\)\ieme{} variable est scalée, \(X_j\betaEstimated{j}\) est toujours le même). En revanche, les coefficients Ridge peuvent changer drastiquement (à cause de la somme des coefficients au carré).
+
+            \paragraph{Biais et variance}
+                Posons \(R = X^T X\)
+                \begin{align*}
+                    \betaRidge &= (X^T X + \lambda \identity_p)^{-1} X^T y = (R + \lambda \identity_p)^{-1} R(R^{-1} X^T y)\\
+                    &= (R + \lambda \identity_p)^{-1} R \betaLS = \left[R(\identity_p + \lambda R^{-1})\right]^1 R \betaLS\\
+                    &= (\identity_p + \lambda R^{-1})^{-1} \betaLS
+                \end{align*}
+                
+                Posons \(W_\lambda = (\identity_p + \lambda R^{-1})^{-1}\)
+                \begin{align*}
+                    \expectation[\betaRidge] &= \expectation[W_\lambda \betaLS] = W_\lambda B \not= \beta & \text{Si \(\lambda \not= 0\)}\\
+                    \variance[\betaRidge] &= \variance[W_\lambda \betaLS] = W_\lambda \variance[\betaLS] W_\lambda^T \leq \variance[\betaLS]
+                \end{align*}
+                On a donc un biais mais un plus petite variance.
+
+            \paragraph{Décomposition en valeurs singulières}
+                On peut utiliser la décomposition en valeurs singulières\index{SVD}, c'est-à-dire \(X = U D V^T\). Donc,
+                \begin{align*}
+                    X^T X &= (UDV^T)^T UDV^T\\
+                    &= VD^TU^T UDV^T\\
+                    &= VD^T DV^T & \text{Car les colonnes de \(U\) sont orthonormales}\\
+                    &= V D^2 V^T & \text{Car \(D\) est diagonale}\\
+                    \\
+                    \betaLS &= (X^T X)^{-1} X^T y & \text{Définition}\\
+                    &= V D^{-1} U^T y & X = U D V^T \text{ et \(V^{-1} = V^T\) (car colonnes orthonormales)}\\
+                    &= V D^{-2} D U^T y\\
+                    \betaRidge &= (X^T X + \lambda \identity_p)^{-1} X^T y & \text{Définition}\\
+                    &= (V D^2 V^T + \lambda VV^T)^{-1} VDU^T y & VV^T = \identity_p \text{ car colonnes orthonormales}\\
+                    &= (V(D^2 + \lambda \identity_p) V^T)^{-1} V D U^T y\\
+                    &= V(D^2 + \lambda \identity_p)^{-1} V^T V D U^T y\\
+                    &= V(D^2 + \lambda \identity_p)^{-1} D U^T y
+                \end{align*}
+                Les deux expressions ont quasiment la même formulation à une différence près : \(+ \lambda\) pour Ridge. On peut aussi déterminer l'expression des \(\estimation{y}\) :
+
+                \begin{align*}
+                    \yLS &= X \betaLS\\
+                    &= U D V^T V D^{-2} D U^T y\\
+                    &= U D D^{-2} D U^T y\\
+                    &= U U^T y\\
+                    \yRidge &= X\betaRidge\\
+                    &= X V (D^2 + \lambda \identity_p)^{-1} D U^T y\\
+                    &= U D V^T V (D^2 + \lambda \identity_p)^{-1} D U^T y\\
+                    &= U D (D^2 + \lambda \identity_p)^{-1} D U^T y\\
+                    &= U \diagonal(\frac{d_j^2}{d_j^2 + \lambda}) U^T y & \text{\(D\) est diagonale}
+                \end{align*}
+
+                Comme \(\lambda \geq 0\), on a \(\frac{d_j^2}{d_j^2 + \lambda} \leq 1\). On a donc bien un effet de shrinkage. Quand \(d_j^2\) est petit, le shrinkage est plus important. La variable \(z_j = X v_j = u_j d_j\) est la \(j\)\ieme{} PC de \(X\).
+
+        \subsubsection{Lasso}
+            \begin{definition}
+                La \textit{régression Lasso}\index{Lasso}\nomenclature{Lasso}{Least absolute shrinkage and selection operator} est le problème d'optimisation :
+                \begin{align*}
+                    &\min_\beta \left\{\sum_{i=1}^n \left(y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij}\right)^2\right\}\\
+                    &\text{sous contrainte} \sum_{j=1}^p |\beta_j| \leq s
+                \end{align*}
+                avec \(s \geq 0\) un hyper-paramètre.
+
+                Notons \(\betaLasso\) l'estimation des coefficients pour la régression Lasso.
+
+                Si \(s = 0, \betaLasso = (0, \dots, 0)\). Si \(s = \infty, \betaLasso = \betaLS\). Si \(s \in ]0, \infty[\), on fait du tradeoff.
+            \end{definition}
+
+            \begin{definition}
+                De manière équivalente, on peut exprimer la régression Lasso comme :
+                \[
+                    \min_\beta \sum_{i=1}^n \left(y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij}\right)^2 + \lambda \sum_{j=1}^p |\beta_j|
+                \]
+                où \(\lambda \geq 0\) est un hyper-paramètre.
+
+                Si \(s = 0, \betaLasso = \betaLasso\). Si \(s = \infty, \betaLasso = (0, \dots, 0)\). Si \(s \in ]0, \infty[\), on fait du tradeoff.
+            \end{definition}
+
+            \paragraph{Un cas simple}
+                Supposons que \(n = p\) et que \(X = \identity_p = \identity_n\). Dans ce cas, la régression Lasso est 
+                \[
+                     \min_\beta \sum_{j=1}^p (y_j - \beta_j)^2 + \lambda \sum_{j=1}^p |\beta_j|
+                \]
+                Alors, on a :
+                \[
+                    \betaLasso_j = \begin{cases}
+                        y_j - \frac{\lambda}{2} & \text{si } y_j > \frac{\lambda}{2}\\
+                        y_j + \frac{\lambda}{2} & \text{si } y_j < \frac{-\lambda}{2}\\
+                        0                       & \text{si } |y_j| \leq \frac{\lambda}{2}
+                    \end{cases}
+                \]
+
+                La régression Lasso shrink les coefficients OLS vers zéro par la même constante \(\frac{\lambda}{2}\) et entièrement vers zéro quand ces coefficients sont plus petits que \(\frac{\lambda}{2}\) en valeur absolue.

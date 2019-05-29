@@ -1,0 +1,18 @@
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\algblockdefx[doWhile]{DoWhile}{EndDoWhile}{\algorithmicdo}[1]{\algorithmicwhile~#1}
+\algblockdefx[doUntil]{DoUntil}{EndDoUntil}{\algorithmicdo}[1]{\algorithmicuntil~#1}
+
+\addto\captionsfrench{
+    \floatname{algorithm}{Algorithme}
+    \algrenewcommand\algorithmicrequire{\textbf{Entrée(s)} :}
+    \algrenewcommand\algorithmicensure{\textbf{Sortie(s)} :}
+    \algrenewcommand\algorithmicdo{\textbf{faire}}
+    \algrenewcommand\algorithmicwhile{\textbf{tant que}}
+    \algrenewcommand\algorithmicuntil{\textbf{jusqu'à ce que}}
+    \algrenewcommand\algorithmicforall{\textbf{pour chaque}}
+    \algrenewcommand\algorithmicfor{\textbf{pour}}
+    \algrenewcommand\algorithmicend{\textbf{fin}}
+    \algrenewcommand\algorithmicreturn{\textbf{retourner}}
+}

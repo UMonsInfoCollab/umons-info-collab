@@ -1,0 +1,70 @@
+\section{Apprentissage supervisé}
+    \subsection{Éléments communs}
+        \begin{definition}
+            Les \textit{variables d'entrée}\index{Variable!d'entrée} (\textit{input variables}\index{Input variable|see {Variable, d'entrée}}), aussi appelées \textit{predictors}\index{Predictor|see {Variable, d'entrée}}, \textit{variables indépendantes}\index{Variable!indépendante|see {Variable, d'entrée}}, \textit{features}\index{Feature|see {Variable, d'entrée}} ou simplement \textit{variables}, sont représentées par le symbole \(X\). S'il y a \(p\) variables différentes, on écrit :
+            \[X = (X_1, X_2, \dots, X_p)\]
+        \end{definition}
+
+        \begin{remarque}
+            \(X\) est une variable aléatoire. Une réalisation de cette variable (comme, par exemple, une instance dans un jeu de données) est notée \(x\).
+        \end{remarque}
+
+        \begin{definition}
+            La \textit{variable de sortie}\index{Variable!de sortie} (\textit{output variable}\index{Output variable|see {Variable, de sortie}}), aussi appelée \textit{réponse}\index{Réponse|see {Variable, de sortie}} ou \textit{variable dépendante}\index{Variable!dépendante|see {Variable, de sortie}} est souvent notée \(Y\).
+        \end{definition}
+
+        On suppose qu'il existe une relation aléatoire entre \(X\) et \(Y\), c'est-à-dire :
+        \[\distribution(X, Y) = \distribution(X)\distribution(Y|X) \not= \distribution(X)\distribution(Y)\]
+
+        \begin{definition}
+            Les \textit{données}\index{Données} :
+            \[
+                \data = \{(x_1, y_1), (x_2, y_2), \dots, (x_n, y_n)\} = \{(x_i, y_i\}^n_{i=1}
+            \]
+            où \(x_i = (x_{i,1}, \dots, x_{i,p})\), c'est-à-dire que \(x_i\) est le tuple des variables pour la i\ieme{} instance (ligne) dans les données.
+
+            On peut voir les données comme un échantillon i.i.d. de la véritable distribution, c'est-à-dire :
+            \[(x_i, y_i) \stackrel{i.i.d.}{\sim} \distribution(X, Y)\]
+            \nomenclature{i.i.d.}{Indépendant et identiquement distribué}
+        \end{definition}
+
+        On peut décrire tous les problèmes d'apprentissage supervisé avec les éléments suivants :
+        \begin{itemize}
+            \item Les \textit{variables d'entrée}\index{Variable!d'entrée} \(X\) et la \textit{variable de sortie}\index{Variable!de sortie} \(Y\);
+            \item Les \textit{données}\index{Données} \(\data = \{(x_i, y_i)_{i=1}^n\}\);
+            \item La \textit{fonction cible}\index{Fonction!cible}. Par exemple, la distribution jointe \(\distribution(X, Y)\), l'espérance conditionnelle \(\expectation[Y|X]\), la distribution conditionnelle \(\distribution(Y|X)\), etc.;
+            \item L'\textit{ensemble d'hypothèses}\index{Ensembles d'hypothèses} \(\hypo\) contient toutes les hypothèses à considérer (les fonctions à tester). Souvent, cet ensemble est défini implicitement; et
+            \item La \textit{fonction de perte}\index{Fonction!de perte} (ou \textit{fonction de coût}\index{Fonction!de coût|see {Fonction, de perte}}) \(L(y, \estimation{y})\) est une fonction \(\R \times \R \to \R^+\). Par exemple, \(L(y, \estimation{y}) = (y - \estimation{y})^2\).
+        \end{itemize}
+        L'\textit{algorithme d'apprentissage}\index{Algorithme!d'apprentissage} choisi la meilleure hypothèse de \(\hypo\) en utilisant les données \(\data\) et la fonction de perte \(L\).
+
+        \subsubsection{Erreurs}
+            \begin{definition}
+                L'\textit{erreur de test}\index{Erreur!de test} (ou \textit{erreur out-of-sample}\index{Erreur!out-of-sample|see {Erreur, de test}}) de l'hypothèse \(\fEstimated\) permet de tester la performance de l'hypothèse sur de nouvelles données et est défini par :
+                \[
+                    \errorOut(\fEstimated) = \expectation[L(Y, \fEstimated(X))]
+                \]
+            \end{definition}
+
+            On veut sélectionner la meilleure hypothèse :
+            \[
+                \fEstimated = \argmin_{h \in \hypo} \errorOut(\widehat{h}_\data)
+            \]
+
+            Cependant, on ne sait pas calculer \(\errorOut(\fEstimated)\) car on ne connait pas \(\distribution(Y, X)\).
+
+        \subsubsection{Biais et variance}
+            \begin{definition}
+                Le \textit{biais}\index{Biais} est l'erreur introduite en modélisant un problème compliqué par un problème plus simple.
+
+                La \textit{variance}\index{Variance} permet de mesurer à quel point le modèle construit serait différent si les données d'entraînement étaient différentes.
+            \end{definition}
+
+            En général, une méthode plus flexible implique un biais plus petit et une variance plus grande (car la méthode colle mieux aux données d'entraînement).
+
+            \begin{remarque}
+                La taille de l'ensemble d'entraînement a un impact sur la variance. Un plus grand ensemble réduit la variance !
+            \end{remarque}
+
+    \input{supervised/regression/regression.tex}
+    \input{supervised/classifcation/classification.tex}

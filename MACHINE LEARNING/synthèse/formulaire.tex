@@ -1,0 +1,71 @@
+\documentclass[usenames,dvipsnames]{article}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{french}
+
+\input{preambule/math.tex}
+\input{preambule/algo.tex}
+
+\input{preambule/biblio.tex}
+
+% Pour l'index
+\usepackage{makeidx}
+\makeindex{}
+% Pour la liste des abbréviations
+\usepackage[intoc]{nomencl}
+\makenomenclature
+\addto\captionsfrench{
+    \renewcommand{\nomname}{Liste des abbréviations}
+}
+
+\usepackage{xspace}
+\usepackage{fullpage}
+
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{lstautogobble}
+\lstset {
+    language=R,
+    commentstyle=\color{Green},
+    stringstyle=\color{Orange},
+    autogobble = true
+}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink]{cleveref}
+
+\input{preambule/commandes.tex}
+
+\title{Formulaire/Synthèse de \textit{Big Data Analytics I}}
+\author{Gaëtan Staquet}
+\date{Année académique 2018--2019}
+
+\begin{document}
+    \maketitle
+
+    \begin{abstract}
+        Sauf mentions contraires, toutes les informations données dans ce document proviennent des slides du cours de \textit{Big Data Analytics I} donné par M. Souhaib Ben Taieb en l'année académique 2018-2019.
+    \end{abstract}
+
+    \tableofcontents
+
+    \clearpage
+    \input{algebre/algebre.tex}
+    \input{stats/stats.tex}
+    \input{supervised/supervised.tex}
+    \input{selection/model_selection.tex}
+    \input{resampling/resampling.tex}
+    \input{reduction/reduction.tex}
+    \input{advanced/regression.tex}
+    \input{advanced/classification.tex}
+    \input{R/R.tex}
+
+    \clearpage
+    \addcontentsline{toc}{section}{Index}
+    \printindex{}
+    \clearpage
+    \printnomenclature
+
+    \clearpage
+    \printbibliography{}
+\end{document}
