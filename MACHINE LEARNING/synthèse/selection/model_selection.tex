@@ -26,7 +26,7 @@
         \begin{proof}
             On a que \(\expectation\left[\frac{1}{m} \sum_{i=1}^m \left(\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i}\right)^2\right] = \expectation\left[\frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i}\right)^2\right]\) car le nombre de points ne change pas l'espérance.
 
-            Par facilité, notons \(A = \frac{1}{n}\sum_{i=1}^n \left(y_i - \betaEstimated{}^T\right)^2\) et \(B = \frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \widetilde{\beta}^T \widetilde{x_i}\right)^2\) (attention au fait que le ème \(\beta\) de \(B\) a un tilde et non un chapeau !).
+            Par facilité, notons \(A = \frac{1}{n}\sum_{i=1}^n \left(y_i - \betaEstimated{}^T\right)^2\) et \(B = \frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \widetilde{\beta}^T \widetilde{x_i}\right)^2\) (attention au fait que le \(\beta\) de \(B\) a un tilde et non un chapeau !).
 
             \(A\) et \(B\) ont la même distribution (vu que \(\{(y_i, x_i)\}_{i=1}^n\) et \(\{(\widetilde{y_i}, \widetilde{x_i})\}_{i=1}^n\) suivent la même distribution). Donc, \(\expectation[A] = \expectation[B]\).
 
@@ -117,7 +117,7 @@
 
         Même dans les cas où \(\MSE\) est un estimateur `consistent' de \(\sigma^2\), la pénalité est la moitié de ce qu'elle devrait être\footnote{Je ne sais pas d'où ça sort} : \(\MSE + 2\sigma^2 \frac{p+1}{n}\).
 
-        La R-squared statistic\index{R-squared} donne la proportion de la variance expliquée et est indépendante de l'échelle de \(y\). Cependant, R-squared ne permet de `degrée de liberté' et ajouter une variable (n'importe laquelle) a tendance à augmenter R-squared (même si cette variable est inutile). Pour résoudre ça, on utilise l'adjusted R-squared.
+        La R-squared statistic\index{R-squared} donne la proportion de la variance expliquée et est indépendante de l'échelle de \(y\). Cependant, R-squared ne permet de `degré de liberté' et ajouter une variable (n'importe laquelle) a tendance à augmenter R-squared (même si cette variable est inutile). Pour résoudre ça, on utilise l'adjusted R-squared.
 
         \begin{definition}
             L'\textit{adjusted R-squared}\index{Adjusted R-squared} :
@@ -141,7 +141,7 @@
 
             Minimiser AIC est asymptotiquement équivalent à minimiser MSE via du leave-one-out cross-validation.
 
-            Pour des petites valeurs de \(n\), l'AIC a tendance à sélectionner trop de variables. Pour contrer ça, une version qui corrige le biais de l'AIC à été développé\index{Corrected AIC} (notée \(\AIC_C\)\index{AICC@\(\AIC_C\)}) :
+            Pour des petites valeurs de \(n\), l'AIC a tendance à sélectionner trop de variables. Pour contrer ça, une version qui corrige le biais de l'AIC a été développée\index{Corrected AIC} (notée \(\AIC_C\)\index{AICC@\(\AIC_C\)}) :
             \[
                 \AIC_C = \AIC + \frac{2(p + 2)(p + 3)}{n - p - 1}
             \]

@@ -53,7 +53,7 @@
                 \State Trouver une bonne estimation \(\estimation{P}\) de \(P\) (la distribution originale)
                 \State Tirer \(B\) échantillons bootstrap indépendants \(Z^{*(1)}, \dots, Z^{*(B)}\) de \(\estimation{P}\) : \(\forall b \in \{1, \dots, B\}, Z_1^{*(b)}, \dots, Z_n^{*(b)} \sim \estimation{P}\)
                 \State Evaluer : \(\forall b \in \{1, \dots, B\}, \estimation{\theta}^{*(b)} = s(Z^{*(b)})\)
-                \State Estimater la mesure qui nous intéresse depuis la distribution des \(\estimation{\theta}^{*(b)}\)
+                \State Estimer la mesure qui nous intéresse depuis la distribution des \(\estimation{\theta}^{*(b)}\)
             \end{algorithmic}
         \end{algorithm}
 
@@ -67,7 +67,7 @@
                 \errorBoot = \frac{1}{B}\frac{1}{N} \sum_{b=1}^B \sum_{i=1}^N L(y_i, \estimation{f}^{*b}(x_i))
             \]
 
-            Comme on tire avec remise et que chaque échantillon a la même taille que le jeu de base, il y a des observations qui peut peuvent apparaître plus qu'une fois dans les échantillons et d'autres qui n'apparaissent jamais. Donc, on a que nos ensembles d'entraînement et de validation ont des observations en commun (ce qui nous donne une estimation erronée de l'erreur de validation). Nous allons calculer la probabilité qu'un observation \(i\) donnée soit dans l'échantillon bootstrap \(b\) :
+            Comme on tire avec remise et que chaque échantillon a la même taille que le jeu de base, il y a des observations qui peut peuvent apparaître plus qu'une fois dans les échantillons et d'autres qui n'apparaissent jamais. Donc, on a que nos ensembles d'entraînement et de validation ont des observations en commun (ce qui nous donne une estimation erronée de l'erreur de validation). Nous allons calculer la probabilité qu'une observation \(i\) donnée soit dans l'échantillon bootstrap \(b\) :
             \begin{align*}
                 P(\text{observation \(i\) soit tirée}) &= \frac{1}{n} & \text{Distribution uniforme}\\
                 P(\text{observation \(i\) ne soit pas tirée}) &= 1 - \frac{1}{n}\\

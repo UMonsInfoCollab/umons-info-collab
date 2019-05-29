@@ -9,10 +9,47 @@
 
         Etant donné une partition \(R_1, R_2, \dots, R_J\), la valeur optimale des \(c_j\) si on veut minimiser \(\sum_i (y_i - f(x_i))^2\) est donnée par :
         \[
-            \estimation{c_j} = \expectation[y_i | x_i \in R_j]
+            \estimation{c_j} = \average[y_i | x_i \in R_j] = \frac{1}{N_j} \sum_i y_i \identity(x_i \in R_j)
         \]
+        avec \(N_j\) le nombre d'instances dans la région \(R_j\).
+
         On peut facilement calculer l'espérance empirique (moyenne numérique).
     \end{definition}
+
+    \begin{proof}
+        Prouvons que la valeur optimale de \(c_j\) est \(\expectation[y_i | x_i \in R_j]\).
+
+        On veut minimiser \(\sum_i (y_i - f(x_i))^2 = \sum_i (y_i - \sum_{j=1}^J c_j \identity(x_i \in R_j))^2\).
+
+        Soit \(c_k\) (avec \(k \in \{1, \dots, J\}\)). Dérivons la somme précédente en fonction de \(c_k\).
+
+        \begin{align*}
+            \frac{\partial}{\partial c_k} \sum_{i} \left(y_i - \sum_{j=1}^J c_j \identity(x_i \in R_j)\right)^2 &= \sum_i 2 \left(y_i - \sum_{j=1}^J c_j \identity(x_i \in R_j)\right) \frac{\partial}{\partial c_k} \left(y_i - \sum_{j=1}^j c_j \identity(x_i \in R_j)\right)\\
+            &= 2 \sum_i \left(y_i - \sum_{j=1}^J c_j \identity(x_i \in R_j)\right) \left(0 - \sum_{j=1}^J \frac{\partial c_j \identity(x_i \in R_j)}{\partial c_j}\right)\\
+            &= 2 \sum_i \left(y_i - \sum_{j=1}^J c_j \identity(x_i \in R_j)\right) \left(- \identity(x_i \in R_k)\right)\\
+            &= 2 \sum_i \left(-y_i \identity(x_i \in R_k) + \sum_{j=1}^J c_j \identity(x_i \in R_j) \identity(x_i \in R_k)\right)\\
+            &= 2 \sum_i \left(-y_i \identity(x_i \in R_k) + c_k \identity(x_i \in R_k)\right)
+        \end{align*}
+
+        Trouvons les racines de cette expression :
+        \begin{align*}
+            2 \sum_i (-y_i \identity(x_i \in R_k) + c_k \identity(x_i \in R_k)) &= 0\\
+            \sum_i c_k \identity(x_i \in R_k) &= \sum_i y_i \identity(x_i \in R_k)\\
+            c_k \sum_i \identity(x_i \in R_k) &= \sum_i y_i \identity(x_i \in R_k)\\
+            c_k N_k &= \sum_i y_i \identity(x_i \in R_k)\\
+            \estimation{c_k} &= \frac{1}{N_k} \sum_i y_i \identity(x_i \in R_k) = \average[y_i | x_i \in R_k]
+        \end{align*}
+
+        Il reste à prouver que \(\estimation{c_k}\) est un minimum. Pour ça, dérivons la dérivée calculée plus haut :
+        \begin{align*}
+            \frac{\partial}{\partial c_k} 2 \sum_{i} (-y_i \identity(x_i \in R_j) + c_k \identity(x_i \in R_k)) &= 2 \sum_i (0 + \identity(x_i \in R_k))\\
+            &= 2 \sum_i \identity(x_i \in R_k)\\
+            &= 2 N_k\\
+            &> 0
+        \end{align*}
+
+        On a donc bien un miminum. Par conséquent, on a bien montré que \(\estimation{c_k} = \average[y_i | x_i \in R_k]\).
+    \end{proof}
 
     Il n'est pas faisable de tester toutes les combinaisons de conditions binaires possibles. Donc, on va utiliser une approche greedy et top-down : \textit{recursive binary splitting}. L'\cref{alg:arbre:regression} donne un pseudo-code pour cette approche.
 

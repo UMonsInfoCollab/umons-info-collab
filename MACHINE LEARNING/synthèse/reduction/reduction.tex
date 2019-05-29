@@ -40,7 +40,7 @@
         \end{definition}
 
         \subsubsection{Calculs}
-            Soit un data set \(X = \{x_ij\}\) avec \(n\) observations et \(p\) variables. Dans un premier temps, il \textbf{faut centrer chaque variable pour avoir un moyenne de zéro} (la moyenne de la colonne doit être 0). Comme la variance empirique de \(z_{i1}\) est \(\frac{1}{n} \sum_{i=1}^n s_{i1}^2\), on a le problème d'optimisation pour la première composante :
+            Soit un data set \(X = \{x_{ij}\}\) avec \(n\) observations et \(p\) variables. Dans un premier temps, il \textbf{faut centrer chaque variable pour avoir une moyenne de zéro} (la moyenne de la colonne doit être 0). Comme la variance empirique de \(z_{i1}\) est \(\frac{1}{n} \sum_{i=1}^n s_{i1}^2\), on a le problème d'optimisation pour la première composante :
             \begin{align*}
                 &\max_{\phi_{11}, \dots, \phi_{p1}} \frac{1}{n} \sum_{i=1}^n \left(\sum_{j=1}^p \phi_{j1} x_{ij}\right)^2 & \text{sous la contrainte } &\sum_{j=1}^p \phi_{j1}^2 = 1
             \end{align*}

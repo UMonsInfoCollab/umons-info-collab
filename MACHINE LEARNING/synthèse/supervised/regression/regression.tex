@@ -108,7 +108,7 @@
 
             \begin{align*}
                 \expectation[(Y - \fEstimated(x_0))^2] &= \expectation[(Y - f(x_0) + f(x_0) - \fEstimated(x_0))^2]\\
-                &= \expectation[(Y - f(x_0))^2 + (f(x_0) - \fEstimated(x_0))^2 + 2(Y - f(x_0)(f(x_0) - \fEstimated(x_0)))]\\
+                &= \expectation[(Y - f(x_0))^2 + (f(x_0) - \fEstimated(x_0))^2 + 2(Y - f(x_0))(f(x_0) - \fEstimated(x_0))]\\
                 &= \sigma^2 + \expectation[(\fEstimated(x_0) - f(x_0))^2] + 2\expectation[(Y - f(x_0))(f(x_0) - \fEstimated(x_0))]
             \end{align*}
 
@@ -117,7 +117,7 @@
                 \expectation[(Y - f(x_0)(f(x_0) - \fEstimated(x_0)] &= \expectation[Yf(x_0) - f^2(x_0) - Y\fEstimated(x_0) + f(x_0)\fEstimated(x_0)]\\
                 &= \expectation[f^2(x_0) + \varepsilon f(x_0)] - \expectation[f^2(x_0)] - \expectation[f(x_0)\fEstimated(x_0) + \varepsilon \fEstimated(x_0)] + \expectation[f(x_0)\fEstimated(x_0)]\\
                 &= f^2(x_0) - f^2(x_0) - f(x_0)\expectation[\fEstimated(x_0)] - \expectation[\varepsilon \fEstimated(x_0)] + f(x_0)\expectation[\fEstimated(x_0)]\\
-                &= \expectation[\varepsilon \fEstimated(x_0)]\\
+                &= -\expectation[\varepsilon \fEstimated(x_0)]\\
                 &= 0 &\text{???}
             \end{align*}
 
@@ -130,11 +130,9 @@
 
             Montrons d'abord que \(\expectation[(\expectation[\fEstimated(x_0)] - f(x_0))^2] = \bias^2[\fEstimated(x_0)]\)
             \begin{align*}
-                \expectation[(\expectation[\fEstimated(x_0)] - f(x_0))^2] &= \expectation\left[(\expectation[\fEstimated(x_0)])^2 + f^2(x_0) - 2f(x_0)\expectation[\fEstimated(x_0)]\right]\\
-                &= \expectation\left[(\expectation[\fEstimated(x_0)])^2\right] + \expectation[f^2(x_0)] - 2f(x_0)\expectation[\expectation[\fEstimated(x_0)]] & \text{Par linéarité}\\
-                &= (\expectation[\fEstimated(x_0)])^2 + f^2(x_0) - 2f(x_0)\expectation[\fEstimated(x_0)] & \text{Car } \expectation[\fEstimated(x_0)] \text{ est constant}\\
-                &= (\expectation[\fEstimated(x_0)] - f(x_0))^2\\
-                &= \bias^2[\fEstimated(x_0)]
+                \expectation[(\expectation[\fEstimated(x_0)] - f(x_0))^2] &= 
+                (\expectation[\fEstimated(x_0)] - f(x_0))^2 & \text{Car constante}\\
+                &= (\bias[\fEstimated(x_0)])^2 & \text{Par définition}
             \end{align*}
 
             Montrons finalement que \(\expectation[(\fEstimated(x_0) - \expectation[\fEstimated(x_0)])(\expectation[\fEstimated(x_0)] - f(x_0))] = 0\) :
@@ -263,7 +261,7 @@
             \(X^TX\) n'est pas toujours inversible (haute dimensionnalité; dummy variable trap).
         \end{remarque}
 
-        Si les erreurs sont iid et distribués selon une normale, alors \(Y \sim \gaussian_n(X\beta, \sigma^2I)\). Alors la likelihood\index{Likelihood} est \(L = \frac{1}{\sigma^2 (2\pi)^{n/2}}e^{\frac{-1}{2\sigma^2}(Y - X\beta)^T(Y - X\beta)}\) qui est maximisé quand \((Y - X\beta)^T(Y - X\beta)\) est minimisé. Donc, MLE\index{MLE} est équivalent à OLS.
+        Si les erreurs sont iid et distribuées selon une normale, alors \(Y \sim \gaussian_n(X\beta, \sigma^2I)\). Alors la likelihood\index{Likelihood} est \(L = \frac{1}{\sigma^2 (2\pi)^{n/2}}e^{\frac{-1}{2\sigma^2}(Y - X\beta)^T(Y - X\beta)}\) qui est maximisé quand \((Y - X\beta)^T(Y - X\beta)\) est minimisé. Donc, MLE\index{MLE} est équivalent à OLS.
 
         Pour savoir si au moins une variable est utile, on calcule une \textit{F-statistic}\index{F-statistic} \(F = \frac{(\TSS - \RSS)/p}{\RSS/(n-p-1)} \sim F_{p,n-p-1}\).
 

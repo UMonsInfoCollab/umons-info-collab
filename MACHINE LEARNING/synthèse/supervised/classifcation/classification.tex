@@ -16,9 +16,9 @@
             C^*(x) = \argmin_{c \in \class} \sum_{k=1}^K L(\class_k, c)P(\class_k|X = x)
         \]
 
-        Supposons qu'on utilise la \textit{zero-one loss}\index{Zero-one loss}, c'est-à-dire \(L(y, \estimation{y}) = \identity(y \not= \estimation{y})\) :
+        Supposons qu'on utilise la \textit{zero-one loss}\index{Zero-one loss}, c'est-à-dire \(L(y, \estimation{y}) = \identity(y \not= \estimation{y})\). Soit \(c \in \class\)
         \begin{align*}
-            \sum_{k=1}^K L(\class_k, c)\distribution(\class_k|X = x) &= \sum_{k:\class_k \not=} 1P(\class_k|X = x) + 0P(c | X = x) & \text{Par la fonction de perte}\\
+            \sum_{k=1}^K L(\class_k, c)\distribution(\class_k|X = x) &= \sum_{k:\class_k \not= c} 1P(\class_k|X = x) + \sum_{k: \class_k=c} 0P(c | X = x) & \text{Par la fonction de perte}\\
             &= \sum_{k=1}^K P(\class_k | X = x) - P(c | X = x)\\
             &= 1 - P(c | X = x) & \text{Car somme des proba = 1}
         \end{align*}
@@ -79,7 +79,7 @@
             \end{cases}
         \]
 
-        On obtient un classificateur équivalent au LDA\index{LDA} et, intuitivement, la régression va donner les probabilités d'avoir \(P(Y = 1)\). Cependant, la régression ne garantit de donner des nombres entre 0 et 1. Il faut donc utiliser la \textit{régression logistique}\index{Régression!Logistique}. De plus, la régression logistique (multiclasse) est capable de gérer les cas où il y a plus que deux classes.
+        On obtient un classificateur équivalent au LDA\index{LDA} et, intuitivement, la régression va donner les probabilités d'avoir \(P(Y = 1)\). Cependant, la régression ne garantit pas de donner des nombres entre 0 et 1. Il faut donc utiliser la \textit{régression logistique}\index{Régression!Logistique}. De plus, la régression logistique (multiclasse) est capable de gérer les cas où il y a plus que deux classes.
 
         \begin{definition}
             La \textit{régression logistique} (pour deux classes) est de la forme :
@@ -135,7 +135,7 @@
         \end{itemize}
 
         \paragraph{Plus que deux classes}
-        Si on a \(K\) classes, il suffit de créer \(K\) classifications binaires et de choisir la classe avec la plus haute probabilité \(P(Y = k | X\) :
+        Si on a \(K\) classes, il suffit de créer \(K\) classifications binaires et de choisir la classe avec la plus haute probabilité \(P(Y = k | X)\) :
         \[
             P(Y = k | X) = \frac{e^{\beta_{0k} + \beta_{1k}X_1 + \dots + \beta_{pk}X-p}}{\sum_{l=1}^K}
         \]
@@ -144,9 +144,9 @@
 
     \subsubsection{Linear Discriminant Analysis}
         \begin{definition}
-            Pour la \textit{Discriminant Analysis}, on va modéliser la distribution de \(X\) dans chaque classe (\(P(X | Y\)) séparément et utiliser le théorème de Bayes pour obtenir \(P(Y | X)\).
+            Pour la \textit{Discriminant Analysis}, on va modéliser la distribution de \(X\) dans chaque classe \(P(X | Y\)) séparément et utiliser le théorème de Bayes pour obtenir \(P(Y | X)\).
 
-            Si on utilise des distributions normales pour chaque classe, on obtient la \textit{Linear Discriminant Analysis}\index{Linear Discriminant Analysis|see {LDA}} (noté \textit{LDA}\index{LDA}) ou \textit{quadratic}.
+            Si on utilise des distributions normales pour chaque classe, on obtient la \textit{Linear Discriminant Analysis}\index{Linear Discriminant Analysis|see {LDA}} (notée \textit{LDA}\index{LDA}) ou \textit{quadratic}.
         \end{definition}
 
         \begin{definition}[Théorème de Bayes]
@@ -185,9 +185,14 @@
             \]
 
             Pour trouver la classe, il faut trouver le \(k\) qui maximise \(p_k(x)\) :
-            \[
-                \max_k p_k(x) \equiv \max_k \log(p_k(x)) \equiv \max_k \log\left(\frac{\pi_k}{\sqrt{2\pi}\sigma} e^{-\frac{1}{2\sigma^2}(x - \mu_k)^2}\right) \equiv \max_k \delta_k(x)
-            \]
+            \begin{align*}
+                \max_k p_k(x) &\equiv \max_k \log(p_k(x))\\
+                &\equiv \max_k \log\left(\frac{\pi_k}{\sqrt{2\pi}\sigma} e^{-\frac{1}{2\sigma^2}(x - \mu_k)^2}\right)\\
+                &\equiv \max_k \log\left(\frac{\pi_k}{\sqrt{2\pi}\sigma}\right) + \log\left(e^{-\frac{1}{2\sigma^2} (x - \mu_k)^2}\right)\\
+                &\equiv \max_k \log(\pi_k) - \log(\sqrt{2\pi}\sigma) - \frac{1}{2\sigma^2} (x^2 + \mu_k^2 - 2x\mu_k) & \text{Propriétés de \(\log\)}\\
+                &\equiv \max_k \log(\pi_k) - \frac{\mu_k^2}{2\sigma^2} + \frac{x \mu_k}{\sigma^2} & \text{On retire les termes indépendants de \(k\)}\\
+                &\equiv \max_k \delta_k(x)
+            \end{align*}
             avec \[\delta_k(x) = \frac{x \mu_k}{\sigma^2} - \frac{\mu_k^2}{2\sigma^2} + \log(\pi_k)\]
 
             Les \textit{fonctions discriminantes}\index{Fonctions discriminantes} \(\delta_k(x)\) sont des fonctions linéaires en \(x\). La frontière de décision entre chaque paire de classes \(k\) et \(l\) est décrite par \(\{x : \delta_k(x) = \delta_l(x)\}\).
@@ -213,13 +218,39 @@
             \end{align*}
             avec \(\estimation{\sigma}_k^2 = \frac{1}{n_k - 1}\sum_{i:y_i = k} (x_i - \estimation{\mu}_k)^2\).
 
+        \paragraph{Des \(\sigma_k\) différents}
+            Supposons toujours qu'on a qu'une seule variable mais des \(\sigma_k\) différents. Dans ce cas, on a :
+            \[
+                p_k(x) = \frac
+                    {
+                        \frac{\pi_k}{\sqrt{2\pi} \sigma_k} e^{-\frac{1}{2} (\frac{x - \mu_k}{\sigma_k})^2}
+                    }
+                    {
+                        \sum_{l=1}^K \frac{\pi_l}{\sqrt{2\pi}\sigma_l} e^{-\frac{1}{2} (\frac{x - \mu_l}{\sigma_l})^2}
+                    }
+            \]
+
+            A nouveau, on applique MLE :
+            \begin{align*}
+                \max_k \log(p_k(x)) &\equiv \max_k \log(\pi_k) - \log(\sqrt{2\pi}\sigma_k) - \frac{1}{2 \sigma_k^2} (x^2 + \mu_k^2 - 2x\mu_k)\\
+                &\equiv \max_k \log(\pi_k) - \log(\sqrt{2\pi}) - \log(\sigma_k) - \frac{x^2}{2\sigma_k^2} - \frac{\mu_k^2}{2 \sigma_k^2} + \frac{x \mu_k}{\sigma_k^2}\\
+                &\equiv \delta_k(x)
+            \end{align*}
+            avec 
+            \[
+                \delta_k(x) = -\frac{x^2}{2\sigma_k^2} + \frac{x \mu_k}{\sigma_k^2} - \frac{\mu_k^2}{2\sigma_k^2} + \log\left(\frac{\pi_k}{\sigma_k}\right)
+            \]
+            
+            Dans ce cas, on voit bien que les fonctions discriminantes sont quadratiques en \(x\).
+
         \paragraph{Plus qu'une variable}
             Dans le cas où \(p > 1\), la fonction de densité est de la forme :
             \[
                 f(x) = \frac{1}{\sqrt{(2\pi)^p} |\Sigma|^{1/2}} e^{-\frac{1}{2}(x - \mu)^T \Sigma^{-1}(x-\mu)}
             \]
 
-            Les fonctions discriminantes sont :
+            Si les variances sont identiques pour toutes les classes,
+            les fonctions discriminantes sont :
             \[
                 \delta_k(x) = x^T \Sigma^{-1} \mu_k - \frac{1}{2}\mu_k^T \Sigma^{-1} \mu_k + \log(\pi_k)
             \]
