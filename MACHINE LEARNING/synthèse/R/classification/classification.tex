@@ -1,0 +1,18 @@
+\subsection{Classification}
+    \begin{lstlisting}
+        # Régression logistique
+        glm(formule, data = data, family = binomial)
+        # LDA
+        lda(formule, data = data)
+        # QDA
+        qda(formule, data = data)
+        # k-NN (attention, il faut avoir train.X, train.y et test.X)
+        knn(train.X, test.X, train.y, k = 1)
+        # Arbres
+        tree(formule, data = data)
+        # Forêts aléatoires en utilisant m variables et n arbres
+        randomForest(formule, data = data, mtry = m, ntrees = n)
+    \end{lstlisting}
+
+    \subsubsection{Récupérer probabilités}
+        \lstinline{predict} supporte le paramètre \lstinline{type = "prob"} pour récupérer les probabilités pour certains modèles. Pour d'autres (comme \lstinline{glm}), il faut \lstinline{type = "response"}.

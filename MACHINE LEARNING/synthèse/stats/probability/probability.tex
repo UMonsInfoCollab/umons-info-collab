@@ -1,0 +1,70 @@
+\subsection{Probabilités}
+    \begin{definition}[Événement]
+        Le \textit{sample space} \(\Omega\) est l'ensemble des valeurs élémentaires possibles. Par exemple, pour un lancer de pièces, les valeurs possibles sont \(\{heads, tails\}\).
+
+        Un \textit{événement} est un sous-ensemble \(A \subseteq \Omega\). On dit qu'un événement \(A\) a lieu si le résultat d'une expérience est dans \(A\).
+    \end{definition}
+
+    \begin{definition}[Distributions]
+        Une \textit{distribution de probabilités} est une fonction \(\distribution : A \to \R\). Cette fonction doit satisfaire certains axiomes :
+        \begin{enumerate}
+            \item Non-négative : \(\forall A \subseteq \Omega, \distribution(A) \geq 0\).
+            \item Unité de \(\Omega\) : \(\distribution(\Omega) = 1\).
+            \item Countable additivity : Pour une suite \(A_1, A_2, \dots\) d'ensembles disjoints, on a :
+            \[
+                \distribution(\bigcup_{i = 1}^\infty A_i) = \sum_{i=1}^\infty \distribution(A_i)
+            \]
+        \end{enumerate}
+
+        Avec ces axiomes, il est possible de montrer les propriétés suivantes :
+        \begin{itemize}
+            \item \(\distribution(\emptyset) = 0\)
+            \item \(\forall A, B \subseteq \Omega, A \subset B \implies \distribution(A) \leq \distribution(B)\)
+            \item \(\forall A \subseteq \Omega, 0 \leq \distribution(A) \leq 1\)
+            \item \(\forall A \subseteq \Omega, \distribution(\complementary{A}) = 1 - \distribution(A)\)
+            \item \(\forall A, B \subseteq \Omega, \distribution(A \cup B) = \distribution(A) + \distribution(B) - \distribution(A \cap B) \Leftrightarrow \distribution(A \cap B) = \distribution (A) + \distribution(B) - \distribution(A \cup B)\)
+            \item \(\implies \distribution(A \cap B) \geq \distribution(A) + \distribution(B) - 1\) car \(\distribution(A \cup B) \leq 1\)
+        \end{itemize}
+    \end{definition}
+
+    \subsubsection{Probabilités conditionnelles et événéments indépendants}
+        \begin{definition}
+            Soient \(A, B \subseteq \Omega\), si \(\distribution(B) > 0\), alors la \textit{probabilité conditionnelle} de \(A\) étant donnée \(B\) est :
+            \[
+                \distribution(A | B) = \frac{\distribution(A \cup B)}{\distribution(B)}
+            \]
+        \end{definition}
+
+        \begin{definition}
+            Soient \(A, B \subseteq \Omega\), \(A\) et \(B\) sont dits \textit{indépendants} si 
+            \[
+                \distribution(A \cap B) = \distribution(A)\distribution(B)
+            \]
+            ou si
+            \[
+                \distribution(A | B) = \distribution(A)   
+            \]
+
+            Un ensemble d'événéments \(A_j (j \in I)\) sont dits \textit{mutuellement indépendants} si
+            \[
+                \forall J \subseteq I, \distribution\left(\bigcap_{j\in J}\right) = \prod_{j\in J} \distribution(A_j)
+            \]
+        \end{definition}
+
+    \subsubsection{Règle de Bayes}
+        \begin{theorem}[Loi de la probabilité totale]
+            Soit \(A_1, \dots, A_k\) une partition de \(\Omega\). Alors,
+            \[
+                \forall B \subseteq \Omega, \distribution(B) = \sum_{i=1}^k \distribution(B | A_i) \distribution(A_i)
+            \]
+        \end{theorem}
+        \begin{proof}
+            On a que \(A_i \cap B (i = 1, \dots, k)\) forme une partition de \(B\) et \(\distribution(A_i \cap B) = \distribution(B | A_i) \distribution(A_i)\).
+        \end{proof}
+
+        \begin{theorem}[Bayes]
+            Soit \(A_1, \dots, A_k\) une partition de \(\Omega\). Alors,
+            \[
+                \distribution(A_i | B) = \frac{\distribution(B | A_i) \distribution(A_i)}{\sum_{i=1}^k \distribution(B | A_i)\distribution(A_i)}
+            \]
+        \end{theorem}

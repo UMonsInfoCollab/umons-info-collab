@@ -1,0 +1,171 @@
+\section{Sélection de modèle}
+    \begin{definition}
+        La \textit{procédure de sélection de modèle} :
+        \begin{enumerate}
+            \item Génération des modèles : on génère un ensemble des modèles à essayer.
+            \item Validation des modèles : on évalue la performance des modèles en calculant l'erreur de validation, c'est-à-dire une estimation de l'erreur de test.
+            \item Sélection d'un modèle : on choisit un modèle. Typiquement, on prend celui qui minimise l'erreur de validation.
+        \end{enumerate}
+    \end{definition}
+
+    \subsection{Erreurs de training vs de test pour la régression}
+        Prenons la régression linéaire. Les paramètres sont estimés par \(\betaEstimated{} = (X^TX)^{-1}X^Ty\), c'est-à-dire la solution OLS\index{OLS}. Les réponses de la régression sont données par :
+        \[\estimation{y} = X\betaEstimated{} = X(X^TX)^{-1} X^T y = Hy\]
+        avec \(H = X(X^T X)^{-1} X^T\) la \textit{matrice hat}\index{Hat matrix}.
+
+        Pour la régression, \(\betaEstimated{}\) est calculé en minimisant le training MSE\index{MSE}. Notons aussi \(\widetilde{\beta}\) l'estimation obtenue avec le test MSE.
+        
+        \begin{theorem}[Espérances et MSE]
+            On a que :
+                \[
+                    \expectation\left[\frac{1}{n}\sum_{i=1}^n \left(y_i - \betaEstimated{}^T x_i\right)^2\right] \leq \expectation\left[\frac{1}{m} \sum_{i=1}^m \left(\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i}\right)^2\right]
+                \]
+
+            En d'autres termes, l'espérance du training MSE est inférieure ou égale à l'espérance du test MSE.
+        \end{theorem}
+        \begin{proof}
+            On a que \(\expectation\left[\frac{1}{m} \sum_{i=1}^m \left(\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i}\right)^2\right] = \expectation\left[\frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i}\right)^2\right]\) car le nombre de points ne change pas l'espérance.
+
+            Par facilité, notons \(A = \frac{1}{n}\sum_{i=1}^n \left(y_i - \betaEstimated{}^T\right)^2\) et \(B = \frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \widetilde{\beta}^T \widetilde{x_i}\right)^2\) (attention au fait que le \(\beta\) de \(B\) a un tilde et non un chapeau !).
+
+            \(A\) et \(B\) ont la même distribution (vu que \(\{(y_i, x_i)\}_{i=1}^n\) et \(\{(\widetilde{y_i}, \widetilde{x_i})\}_{i=1}^n\) suivent la même distribution). Donc, \(\expectation[A] = \expectation[B]\).
+
+            \(B = \frac{1}{n}\sum_{i=1}^n \left(\widetilde{y_i} - \widetilde{\beta}^T \widetilde{x_i}\right)^2 \leq \frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i}\right)^2\) par optimalité de l'estimation OLS.
+
+            Donc, \(\expectation[B] \leq \expectation\left[\frac{1}{n} \sum_{i=1}^n (\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i})^2\right]\).
+
+            Finalement, on a \(\expectation[A] = \expectation[B]\) et \(\expectation[B] \leq \expectation\left[\frac{1}{n} \sum_{i=1}^n (\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i})^2\right]\). Donc :
+            \[
+                \expectation\left[\frac{1}{n} \sum_{i=1}^n (y_i - \betaEstimated{}^T x_i)^2\right] = \expectation\left[\frac{1}{m} \sum_{i=1}^m (\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i})^2\right]
+            \]
+        \end{proof}
+
+        On veut avoir la plus petite erreur de test pour un nouveau point aléatoire \((x_0, y_0)\) où \(x_0\) et \(y_0\) sont aléatoires. On peut simplifier ce problème. On va garder les mêmes \(x\) mais générer de nouveaux \(y\) bruités. Donc, on fit le modèle sur \(y_i = x_i^T\beta + \varepsilon_i\) mais on prédit sur des échantillons générés comme \(y_i' = x_i^T\beta + \varepsilon_i'\) où \(\varepsilon_i\) et \(\varepsilon_i'\) sont iid. On va tester si le modèle entraîné sur \((x_i, y_i)\) donne des bonnes prédictions pour \((x_i, y_i')\).
+
+        Soit \(\estimation{m_i} = x_i \betaEstimated{}\). On veut comparer \(\expectation\left[\frac{1}{n} \sum_{i=1}^n (y_i' - \estimation{m_i})^2\right]\) avec \(\expectation\left[\frac{1}{n} \sum_{i=1}^n (y_i - \estimation{m_i})^2\right]\). Remarquons que \(y_i\) et \(\estimation{m_i}\) sont des variables aléatoires dépendantes (pas indépendantes) puisque \(\estimation{m_i}\) dépend de \(y_i\) (à travers \(\betaEstimated{}\)). En revanche, \(y_i'\) et \(\estimation{m_i}\) sont indépendants.
+
+        On a :
+        \begin{align*}
+            \expectation\left[(y_i - \estimation{m_i})^2\right] &= \variance[y_i - \estimation{m_i}] + (\expectation[y_i - \estimation{m_i}])^2 & \text{Car } \variance^2[X] = \expectation[X^2] - \expectation^2[X]\\
+            &= \variance[y_i] + \variance[\estimation{m_i}] - 2\covariance[y_i, \estimation{m_i}] + (\expectation[y_i] - \expectation[\estimation{m_i}])^2 & \text{Propriétés variance et espérance}\\
+            \expectation\left[(y_i' - \estimation{m_i})^2\right] &= \variance[y_i' - \estimation{m_i}] + (\expectation[y_i' - \estimation{m_i}])^2\\
+            &= \variance[y_i'] + \variance[\estimation{m_i}] - 2\covariance[y_i', \estimation{m_i}] + (\expectation[y_i'] - \expectation[\estimation{m_i}])^2
+        \end{align*}
+
+        \(y_i\) et \(y_i'\) sont indépendants mais ont la même distribution. Donc, \(\expectation[y_i] = \expectation[y_i']\) et \(\variance[y_i] = \variance[y_i']\). On a aussi que \(\covariance[y_i', \estimation{m_i}] = 0\) (car variables indépendantes).
+
+        Donc :
+        \begin{align*}
+            \expectation\left[(y_i' - \estimation{m_i})^2\right] &= \variance[y_i] + \variance[\estimation{m_i}] + (\expectation[y_i] - \expectation[\estimation{m_i}])^2 = \expectation\left[(y_i - \estimation{m_i})^2\right] + 2\covariance[y_i, \estimation{m_i}]\\
+            \expectation\left[\frac{1}{n} \sum_{i=1}^n (y_i' - \estimation{m_i})^2\right] &= \expectation\left[\frac{1}{n} \sum_{i=1}^n (y_i - \estimation{m_i})^2\right] + \frac{2}{n} \sum_{i=1}^n \covariance[y_i, \estimation{m_i}]\\
+            &\approx \frac{1}{n} \sum_{i=1}^n (y_i - \estimation{m_i})^2 + \frac{2}{n} \sum_{i=1}^n \covariance[y_i, \estimation{m_i}]
+        \end{align*}
+
+        \begin{definition}
+            Le training error sous-estime systématiquement le test error. L'\textit{optimisme}\index{Optimisme} est la mesure de ce qui est sous-estimé.
+
+            Une façon d'estimer le test error est d'estimer l'optimisme et de l'ajouter au training error (voir AIC et BIC)\index{AIC}\index{BIC}.
+
+            Une autre façon est de directement estimer le test error via des méthodes de resampling\index{Resampling} (voir validation set, cross-validation et bootstrap).
+        \end{definition}
+
+        \begin{exemple}
+            Pour la régression linéaire, supposons que \(X \in \R^{n \times (p+1)}\) (en rajoutant une colonne pour \(\beta_0\) dans la matrice). On suppose aussi que \(X\) et \(\beta\) ne sont pas aléatoires. Par conséquent, \(H\) n'est pas aléatoire non plus. Commençons par montrer que \(\covariance[y_i, \estimation{m_i}] = \sigma^2 H_{ii}\). Pour ça, montrons que \(\covariance[y, \estimation{m}] = \sigma^2 H\) (on passe à la forme matricielle; l'espérance d'un vecteur est le vecteur des espérances) :
+            \begin{align*}
+                \covariance[y, \estimation{m}] &= \covariance[y, X\betaEstimated{}] & \text{Définition de \(m\)}\\
+                &= \covariance[y, Hy] & \text{Définition de \(H\)}\\
+                &= \expectation[(y - \expectation[y])(Hy - \expectation[Hy])] & \text{Définition de \(\covariance\)}\\
+                &= \expectation[(f(X) + \varepsilon - \expectation[f(X) + \varepsilon]) (Hy - \expectation[Hy])] & \text{Régression linéaire}\\
+                &= \expectation[(\varepsilon)(H (y - \expectation[y]))] & \text{Linéarité de l'espérance et \(X\) pas aléatoire}\\
+                &= \expectation[\varepsilon^2 H] = H \expectation[\varepsilon^2] = H \sigma^2 & \expectation[\varepsilon^2] = \expectation[\varepsilon]^2 + \variance[\varepsilon] = \variance[\varepsilon]
+            \end{align*}
+
+            Donc, \(\covariance[y_i, \estimation{m_i}] = \sigma^2 H_{ii}\) en prenant l'élément \(i, i\) dans les deux matrices. A partir de là, on a :
+
+            \begin{align*}
+                \frac{2}{n} \sum_{i=1}^n \covariance[y_i, \estimation{m_i}] &= \frac{2}{n} \sum_{i=1}^n \sigma^2 H_{ii} & \text{Voir au-dessus}\\
+                &= \frac{2\sigma^2}{n} \sum_{i=1}^n H_{ii}\\
+                &= \frac{2}{n} \sigma^2 \trace(H) & \text{Définition trace}\\
+                &= \frac{2}{n} \sigma^2 \trace(X (X^T X)^{-1} X^T) & \text{Definition \(H\)}\\
+                &= \frac{2}{n} \sigma^2 \trace(X^T X (X^T X)^{-1}) & \trace(AB) = \trace(BA)\\
+                &= \frac{2}{n} \sigma^2 \trace(I_{p+1}) & X \in \R^{n \times (p + 1)}\\
+                &= \frac{2}{n} \sigma^2 (p + 1)
+            \end{align*}
+            et :
+            \[
+                \expectation\left[\frac{1}{n} \sum_{i=1}^n (y_i' - \estimation{m_i})^2\right] \approx \frac{1}{n} \sum_{i=1}^n (y_i - \estimation{m_i})^2 + \frac{2}{n} \sigma^2 (p + 1)
+            \]
+
+            L'optimisme est donc \(\frac{2}{n} \sigma^2 (p + 1)\), croît avec \(\sigma^2\) et \(p\) et décroît avec \(n\).
+        \end{exemple}
+
+    \subsection{Mesures et méthodes}
+        Minimiser le RSS\index{RSS} va toujours choisir le modèle avec le plus de variables possibles.
+
+        \begin{definition}
+            L'\textit{Estimated Residual Variance}\index{Estimated Residual Variance} :
+            \[
+                \estimation{\sigma}^2 = \frac{\RSS}{n - p -1}
+            \]
+            avec \(p\) le nombre de variables.
+        \end{definition}
+
+        Minimiser \(\estimation{\sigma}^2\) marche plutôt bien pour choisir les variables (mais on privilégie de meilleurs méthodes; voir plus loin). Pour rappel, \(\estimation{\sigma}^2 = \MSE \frac{1}{1 - (p + 1)/n}\). Par le développement de Taylor, on a que \((1 - x)^{-1} = 1 + x + x^2 + \dots\). On tronque la série à \(1 + x\). Pour un \(p\) fixé, l'approximation devient exacte quand \(n \to \infty\) :
+        \[
+            \estimation{\sigma}^2 \approx \MSE (1 + \frac{p + 1}{n}) = \MSE + \MSE\frac{p + 1}{n}
+        \]
+
+        Même dans les cas où \(\MSE\) est un estimateur `consistent' de \(\sigma^2\), la pénalité est la moitié de ce qu'elle devrait être\footnote{Je ne sais pas d'où ça sort} : \(\MSE + 2\sigma^2 \frac{p+1}{n}\).
+
+        La R-squared statistic\index{R-squared} donne la proportion de la variance expliquée et est indépendante de l'échelle de \(y\). Cependant, R-squared ne permet de `degré de liberté' et ajouter une variable (n'importe laquelle) a tendance à augmenter R-squared (même si cette variable est inutile). Pour résoudre ça, on utilise l'adjusted R-squared.
+
+        \begin{definition}
+            L'\textit{adjusted R-squared}\index{Adjusted R-squared} :
+            \[
+                \adjustedRSquared = 1 - (1 - R^2) \frac{n-1}{n - p - 1}
+            \]
+        \end{definition}
+
+        Maximiser \(\adjustedRSquared\) est équivalent à minimiser \(\estimation{\sigma}^2\). \(\adjustedRSquared\) est meilleur de que \(R^2\) mais ne va pas marcher très bien.
+
+        \begin{definition}[\(\AIC\) et \(AIC_C\)]
+            Le \textit{Akaike's Information Criterion}\index{Akaike's Information Criterion|see {AIC}} (noté \textit{AIC}) :
+            \[
+                \AIC = -2 \log(L) + 2(p+1)
+            \]
+            avec \(L\) la likelihood et \(p\) le nombre de variables dans le modèle.
+
+            Il s'agit d'une approche \textit{penalized likelihood}. Minimiser le AIC donne le meilleur modèle pour la prédiction.
+
+            AIC pénalise plus que \(\adjustedRSquared\).
+
+            Minimiser AIC est asymptotiquement équivalent à minimiser MSE via du leave-one-out cross-validation.
+
+            Pour des petites valeurs de \(n\), l'AIC a tendance à sélectionner trop de variables. Pour contrer ça, une version qui corrige le biais de l'AIC a été développée\index{Corrected AIC} (notée \(\AIC_C\)\index{AICC@\(\AIC_C\)}) :
+            \[
+                \AIC_C = \AIC + \frac{2(p + 2)(p + 3)}{n - p - 1}
+            \]
+            Comme pour l'\(\AIC\), le \(\AIC_C\) doit être minimisé.
+        \end{definition}
+
+        \begin{definition}
+            Le \textit{Schwartz Bayesian Information Criterion}\index{Schwartz Bayesian Information Criterion|see {BIC}} (noté \textit{BIC}\index{BIC} ou \textit{SBIC}\index{SBIC|see {BIC}} ou \textit{SC}\index{SC|see {BIC}}) :
+            \[
+                \BIC = -2\log(L) + (p + 1)\log(n)
+            \]
+            avec \(L\) la likelihood et \(p\) le nombre de variables dans le modèle.
+
+            \(\BIC\) pénalise plus que \(\AIC\).
+
+            Minimiser \(\BIC\) est asymptotiquement équivalent à faire du leave-\(v\)-out cross-validation quand \[v = n\left(1 - \frac{1}{\log(n) - 1}\right)\]
+        \end{definition}
+
+        Plusieurs méthodes pour trouver les meilleures variables pour une régression :
+        \begin{itemize}
+            \item \textit{Best subsets regression}\index{Best subsets regression} : fit tous les modèles de régression avec au moins une variable et choisir le meilleur modèle (basé sur CV, \(\AIC\) ou \(\AIC_C\)). Impossible s'il y a beaucoup de variables.
+            \item \textit{Backwards stepwise}\index{Backwards stepwise} : commencer avec un modèle contenant toutes les variables, en retirer une et garder le modèle qui a la plus petite valeur (pour CV, \(\AIC\) ou \(\AIC_C\)). Recommencer jusqu'à satisfaction.
+            \item \textit{Forward stepwise} : commencer avec aucune variable, ajouter celle qui donne le meilleur CV, \(\AIC\) ou \(\AIC_C\).
+        \end{itemize}
+        \begin{remarque}
+            Les stepwise ne garantissent pas de trouver le meilleur modèle possible.
+        \end{remarque}

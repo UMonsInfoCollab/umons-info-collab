@@ -38,6 +38,8 @@
 
         On peut reconstruire le signal d'origine en faisant une convolution dans le temps entre $f^*(t)$ et $sinc(\frac{t}{T_e})$ (une fonction pieuvre qui est considérée comme la \textit{fonction d'interpolation idéale}\index{Fonction d'interpolation idéale}). En fréquence, ceci nous donne un produit entre $F$ et $T_e rect(\frac{f}{T_e})$\footnote{On peut calculer cette transformée de Fourier en utilisant le fait que $sinc(t) \fourier rect(f)$ et la propriété de changement d'échelle qui est $f(at) \fourier \frac{1}{|a|}F(\frac{f}{a})$.}. Ceci est illustré (avec une erreur dans la fonction $sinc$) à la page 109.
 
+        La fréquence $\frac{f_e}{2}$ est appelée la \textit{fréquence de Nyquist}\index{Fréquence!De Nyquist}.
+
     \section{Reconstruction du signal à temps continu}
         A partir des échantillons, on veut reconstruire le signal d'origine $f(t)$. Il faut procéder en deux étapes :
         \begin{enumerate}
@@ -76,7 +78,7 @@
                 \end{cases}
             $$
 
-            Comme on rajouté uniquement des zéros, ceci ne modifie pas la TFTD, qui reste périodique de période $f_e$. Par contre, le spectre utile de $x_2(n)$ s'étend maintenant de 0 à $\frac{kf_e}{2}$. Ceci fait donc apparaître de nouvelles composantes de $x_1(n)$ (qu'on ne veut pas). On peut les éliminer en faisant suivre le sur-échantillonnage par un filtre passe-bas \textit{numérique} de fréquence de coupure égale à $\frac{f_e'}{2k}$. Le résultat est appelé \textit{interpolation}\index{Interpolation} du signal et est illustré à la page 114.
+            Comme on a rajouté uniquement des zéros, ceci ne modifie pas la TFTD, qui reste périodique de période $f_e$. Par contre, le spectre utile de $x_2(n)$ s'étend maintenant de 0 à $\frac{kf_e}{2}$. Ceci fait donc apparaître de nouvelles composantes de $x_1(n)$ (qu'on ne veut pas). On peut les éliminer en faisant suivre le sur-échantillonnage par un filtre passe-bas \textit{numérique} de fréquence de coupure égale à $\frac{f_e'}{2k}$. Le résultat est appelé \textit{interpolation}\index{Interpolation} du signal et est illustré à la page 114.
 
     \section{Filtre de garde réel et sur-échantillonnage (oversampling)}
         Le filtre de garde idéal est impossible à réaliser en pratique. On prendra donc un filtre de garde qui modifie légérement le spectre original autour de $f_M$ (à cause du repliement de composantes résiduelles supérieures à $\frac{f_e}{2}$).

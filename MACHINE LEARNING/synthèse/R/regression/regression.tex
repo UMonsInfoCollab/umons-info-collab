@@ -1,0 +1,58 @@
+\subsection{Régression}
+    \begin{remarque}
+        \lstinline{lm} (et ses dérivées) créent directement les variables dummies. Il ne faut pas les faire manuellement.
+    \end{remarque}
+
+    \begin{lstlisting}
+        # Régression linéaire
+        lm.fit = lm(target ~ ., data = data)
+        # Récupérer les coefficients
+        coef(lm.fit)
+        # Intervalle de confiance sur les coefficients
+        confint(lm.fit)
+        # Prédire pour de nouvelles entrées
+        predict(lm.fit, newdata)
+
+        # Ridge
+        # Valeurs pour lambda
+        grid = 10^seq(10, -2, length  100)
+        glmnet(train.X, train.y, alpha = 0, lambda = grid)
+        # Lasso
+        glmnet(train.X, train.y, alpha = 1, lambda = grid)
+
+        # Arbres
+        tree(target ~ ., data = data)
+    \end{lstlisting}
+
+    \subsubsection{Formules}
+        \begin{remarque}
+            Ceci s'applique également pour la classification.
+        \end{remarque}
+
+        \begin{lstlisting}
+            # On prédit target en fonction de toutes les autres variables
+            target ~ .
+            # Tout sauf une variable
+            target ~ . -var
+            # On prédit target en fonction d'un sous-ensemble des variables
+            target ~ var1 + var2 + var3
+            # Terme d'interaction
+            target ~ var1:var2
+            # Raccourci pour target ~ var1 + var2 + var1:var2
+            target ~ var1*var2
+            # Prendre une variable au carrée
+            target ~ I(var^2)
+            # Pour créer tous les termes du polynôme de degré 2
+            target ~ poly(var, 2)
+        \end{lstlisting}
+
+    \subsubsection{Dummy variables}
+        \begin{lstlisting}
+            # Donne une table qui permet de savoir comment sont encodés les valeurs discrètes
+            contrasts(data$var)
+            # Exemple de sortie:
+                    Good    Medium
+            Bad        0         0
+            Good       1         0
+            Medium     0         1
+        \end{lstlisting}

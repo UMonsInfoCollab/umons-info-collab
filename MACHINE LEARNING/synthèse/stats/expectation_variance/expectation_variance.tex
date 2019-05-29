@@ -1,0 +1,154 @@
+\subsection{Moments, Espérance, Variance et Covariance}
+    \begin{definition}
+        L'\textit{espérance} ou \textit{moyenne} ou \textit{premier moment} d'une variable aléatoire \(X\) est définie par :
+        \[
+            \expectation[X] = \int x\,dF_X(x) = \int xf_X(x)\,dx \text{\hspace{1em}ou\hspace{1em}}  \sum_x xf_X(x)
+        \]
+
+        Si \(\expectation[X] = \infty\), on dit que l'espérance n'existe pas. % il n'y a pas d'espoir dans ce monde
+
+        Quand le nombre d'expériences \(n\) est très grand, \(\expectation[n] \approx \frac{1}{n} \sum_{i=1}^n X_i\).
+    \end{definition}
+
+    Pour une variable aléatoire \(Y = r(X)\) (donc une transformation de \(X\)), l'espérance est donnée par la \textit{règle du statisticien fainéant} :
+    \[
+        \expectation[Y] = \expectation[r(X)] = \int_x r(x)\,dF_X(x)
+    \]
+
+    \begin{theorem}
+        L'espérance est linéaire. En d'autres termes, pour une collection de variables aléatoires \(X_1, \dots, X_n\) et des constantes \(a_1, \dots, a_N\) :
+        \[
+            \expectation\left[\sum_i a_iX_i\right] = \sum_i a_i \expectation[X_i]
+        \]
+    \end{theorem}
+
+    \begin{definition}
+        Pour une variable aléatoire \(X\), son \textit{\(k\ieme{}\) moment} est :
+        \[
+            \mu_k = \expectation[X^k]
+        \]
+
+        On note généralement la moyenne par \(\mu\) au lieu de \(\mu_1\).
+
+        Les \textit{moments centrés} sont définis par :
+        \[
+            \alpha_k = \expectation\left[(X - \mu)^k\right]    
+        \]
+    \end{definition}
+
+    \begin{definition}
+        Le second moment centré d'une variable aléatoire \(X\) est appelée sa \textit{variance}. On la note \(\sigma_X^2\). Sa racine carrée est l'\textit{écart-type}.
+
+        On a que :
+        \[
+            \sigma^2_X = \expectation\left[(X - \mu)^2\right] = \expectation[X^2 + \mu^2 - 2\mu X] = \expectation[X^2] - \mu^2 \text{\hspace{2em} Par déf des moments et linéarité de \(\expectation\)}
+        \]
+
+        Pour des constantes \(a, b\), on a que :
+        \[
+            \sigma_{aX+b}^2 = a^2\sigma_X^2
+        \]
+    \end{definition}
+
+    \begin{definition}
+        La \textit{covariance} entre deux variables aléatoires \(X\) et \(Y\) est définie par :
+        \[
+            \covariance[X, Y] = \expectation[(X - \mu_X)(Y - \mu_Y)] = \expectation[XY] - \expectation[X]\expectation[Y]
+        \]
+
+        La covariance de deux variables aléatoires indépendantes est nulle.
+
+        La \textit{corrélation} entre deux variables aléatoires \(X\) et \(Y\) est la forme standardisée de la covariance :
+        \[
+            \correlation[X, Y] = \frac{\covariance[X, Y]}{\sigma_X \sigma_Y}
+        \]
+
+        On a que \(-1 \leq \correlation[X, Y] \leq 1\).
+    \end{definition}
+
+    \begin{theorem}
+        Pour des variables aléatoires \(X_1, \dots, X_n\) et des constantes \(a_1, \dots, a_n\), on a :
+        \[
+            \variance\left[\sum_{i=1}^n a_i X_i\right] = \sum_{i=1}^n \sum_{j=1}^n a_i a_j \covariance[X_i, X_j]
+        \]
+    \end{theorem}
+    \begin{proof}
+        On peut utiliser le résultat suivant :
+        \[
+            \left(\sum_{i=1}^n x_i\right)^2 = \sum_{i=1}^n \sum_{j=1}^n x_i x_j
+        \]
+
+        On a :
+        \begin{align*}
+            \variance\left[\sum_{i=1}^n a_i X_i\right] &= \expectation\left[\left(\sum_{i=1}^n a_i X_i - \expectation\left[\sum_{i=1}^n a_i X_i\right]\right)^2\right] & \text{Par définition de \(\variance\)}\\
+            &= \expectation\left[\left(\sum_{i=1}^n a_i X_i - \sum_{i=1}^n a_i \expectation[X_i]\right)^2\right] & \text{Par linéarité de \(\expectation\)}\\
+            &= \expectation\left[\left(\sum_{i=1}^n \left(a_i (X_i - \expectation[X_i])\right)\right)^2\right]\\
+            &= \expectation\left[\sum_{i=1}^n \sum_{j=1}^n \left(a_i (X_i - \expectation[X_i])\right)\left(a_j \left(X_j - \expectation[X_j]\right)\right)\right] & \text{Par le résultat donné}\\
+            &= \expectation\left[\sum_{i=1}^n \sum_{j=1}^n a_ia_j (X_i - \expectation[X_i])(X_j - \expectation[X_j])\right]\\
+            &= \sum_{i=1}^n \sum_{j=1}^n a_i a_j \expectation\left[(X_i - \expectation[X_i])(X_j - \expectation[X_j])\right] & \text{Par linéarité de \(\expectation\)}\\
+            &= \sum_{i=1}^n \sum_{j=1}^n a_i a_j \covariance[X_i, X_j] & \text{Par définition de \(\covariance\)}
+        \end{align*}
+    \end{proof}
+
+    \begin{remarque}
+        On peut encore simplifier cette expression. En effet, par le fait que \(\covariance[X_i, X_j] = \covariance[X_j, X_i]\) et que \(\covariance[X_i, X_i] = \variance[X_i]\), on obtient :
+        \[
+            \variance\left[\sum_{i=1}^n X_i\right] = \sum_{i=1}^n \variance[X_i] + 2\sum_{i=1}^n \sum_{j=i+1}^n \covariance[X_i, X_j]
+        \]
+    \end{remarque}
+
+    \begin{theorem}
+        Pour \(n\) variables aléatoires iid \(X_1, \dots, X_n\) :
+        \[
+            \variance\left[\frac{1}{n} \sum_{i=1}^n X_i\right] = \frac{1}{n^2} \sum_{i=1}^n \variance[X_i] = \frac{\sigma_X^2}{n}
+        \]
+    \end{theorem}
+    \begin{proof}
+        \begin{align*}
+            \variance\left[\frac{1}{n} \sum_{i=1}^n X_i\right] &= \sum_{i=1}^n \sum_{j=1}^n \frac{1}{n^2} \covariance[X_i, X_j] & \text{Théorème précédent}\\
+            &= \frac{1}{n^2} \sum_{i=1}^n \sum_{j=1}^n \covariance[X_i, X_j]\\
+            &= \frac{1}{n^2} \left(\sum_{i=1}^n \variance[X_i] + 2\sum_{i=i+1}^n\sum_{j=1}^n \covariance[X_i, X_j]\right) & \text{Par la remarque précédente}\\
+            &= \frac{1}{n^2} \sum_{i=1}^n \variance[X_i] & \text{Car \(X_i\) et \(X_j\) sont indépendants}
+        \end{align*}
+    \end{proof}
+
+    \subsubsection{Espérance conditionnelle}
+        \begin{definition}
+            Soient deux variables aléatoires \(X\) et \(Y\). On veut calculer la valeur moyenne de \(Y\) quand \(X = x\). L'\textit{espérance conditionnelle} est :
+            \[
+                \expectation[Y | X = x] = \sum_y y f_{Y|X}(y | x) \text{\hspace{2em}ou\hspace{2em}} \expectation[Y | X = x] = \int_y y f_{Y|X}(y|x)\,dy
+            \]
+
+            L'espérance conditionnelle est une fonction en \(X\) (contrairement à l'espérance d'une variable aléatoire).
+        \end{definition}
+
+        \begin{theorem}[Indépendance]
+            Si deux variables aléatoires \(X\) et \(Y\) sont indépendantes alors
+            \[
+                \expectation[Y | X = x] = \expectation[Y]
+            \]
+
+            En général, l'implication dans l'autre sens est fausse (des variables aléatoires dépendantes peuvent satisfaire l'expression).
+        \end{theorem}
+
+        \begin{definition}[Loi de l'espérance totale]
+            Aussi appelée la \textit{tower property}, la \textit{loi de l'espérance totale} :
+            \[
+                \expectation_X[\expectation_{Y|X}[Y|X]] = \expectation_Y[Y]
+            \]
+        \end{definition}
+
+    \subsubsection{Variance conditionnelle}
+        \begin{definition}
+            La \textit{variance conditionnelle} est :
+            \[
+                \variance[Y | X = x] = \expectation[(Y - \expectation[Y | X = x])^2 | X = x]
+            \]
+        \end{definition}
+
+        \begin{definition}[Loi de la variance totale]
+            La \textit{loi de la variance totale} est :
+            \[
+                \variance[Y] = \expectation[\variance[Y | X]] + \variance[\expectation[Y | X]]
+            \]
+        \end{definition}

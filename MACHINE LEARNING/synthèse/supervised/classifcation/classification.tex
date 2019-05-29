@@ -1,0 +1,288 @@
+\subsection{Classification}
+    \begin{definition}
+        Pour la \textit{classification}\index{Classification}, on a que la variable de sortie \(Y\) est discrète (ou qualitative) et \(Y \in \class\) où \(\class = \{\class_1, \dots, \class_K\}\) est l'ensemble des classes possibles.
+
+        On veut construire un \textit{classificateur}\index{Classificateur} \(C(X)\) qui assigne une classe de \(\class\) à une observation \(x\). En faisant ça, le classificateur découpe l'espace en \textit{régions de décision}\index{Région de décision} \(\region_k\) tels que tous les points dans \(\region_k\) sont assignés à la classe \(\class_k\). On veut aussi pouvoir mesurer l'incertitude des classifications (les probabilités) et comprendre le rôle des différentes variables.
+    \end{definition}
+    
+    \subsubsection{Classificateur optimal}
+        On veut minimiser l'erreur de prédiction :
+        \[
+            \expectation_{Y,X}[L(Y, C(X))] = \expectation_X\left[\sum_{i=1}^K L(\class_k, C(X))\distribution(\class_k|X)\right]
+        \]
+
+        Comme pour la régression, on laisse tomber le \(\expectation_X\) :
+        \[
+            C^*(x) = \argmin_{c \in \class} \sum_{k=1}^K L(\class_k, c)P(\class_k|X = x)
+        \]
+
+        Supposons qu'on utilise la \textit{zero-one loss}\index{Zero-one loss}, c'est-à-dire \(L(y, \estimation{y}) = \identity(y \not= \estimation{y})\). Soit \(c \in \class\)
+        \begin{align*}
+            \sum_{k=1}^K L(\class_k, c)\distribution(\class_k|X = x) &= \sum_{k:\class_k \not= c} 1P(\class_k|X = x) + \sum_{k: \class_k=c} 0P(c | X = x) & \text{Par la fonction de perte}\\
+            &= \sum_{k=1}^K P(\class_k | X = x) - P(c | X = x)\\
+            &= 1 - P(c | X = x) & \text{Car somme des proba = 1}
+        \end{align*}
+
+        Donc :
+        \[
+            C^*(x) = \argmin_{c\in\class} (1 - P(c | X = x)) = \argmax_{c\in\class} P(c | X = x)
+        \]
+
+        En d'autres termes, \(C^*(x) = \class_k\) si \(P(\class_k | X = x) = \max_{c\in\class} P(c|X=x)\).
+
+        \begin{definition}[Classificateur de Bayes]
+            Les \textit{probabilités conditionnelles de classe}\index{Probabilités conditionnelles de classe} sont :
+            \[
+                p_k(x) = P(Y = \class_k | X = x)
+            \]
+
+            Le \textit{classificateur de Bayes}\index{Classificateur!de Bayes} pour une observation \(x\) est :
+            \begin{align*}
+                C(x) &= \class_j & \text{si } p_j(x) = \max\{p_1(x), p_2(x), \dots, p_K(x)\}
+            \end{align*}
+        \end{definition}
+
+        Ce classificateur donne la plus petite erreur moyenne. Cependant, comme on ne connait pas \(p_k(x)\), on ne sait pas le construire en pratique.
+
+        \begin{definition}
+            Le \textit{Bayes error rate}\index{Bayes error rate} est la plus petite erreur possible pour un classificateur :
+            \[
+                1 - \expectation[\max_j \distribution(Y = \class_j | X)]
+            \]
+        \end{definition}
+
+    \subsubsection{Erreurs}
+        \begin{definition}
+            Au lieu du MSE, on utilise l'\textit{error rate}\index{Error rate} (la fraction de données mal classées) :
+            \[
+                \frac{1}{n}\sum_{i=1}^n \identity(y_i \not= C(x_i))
+            \]
+        \end{definition}
+
+    \subsubsection{k-Nearest Neighbours}
+        \begin{definition}
+            Le \textit{k-Nearest Neighbours}\index{k-Nearest Neighbours|see {k-NN}} (ou \textit{k-NN}\index{k-NN})\nomenclature{k-NN}{k-Nearest Neighbours} est une méthode de classification. Soit une observation \(x_0\) :
+            \begin{itemize}
+                \item Trouver les \(k\) points les plus proches de \(x_0\) dans l'ensemble d'entraînement. Notons-les \(\neighbours_0\).
+                \item Estimer les probabilités conditionnelle \(P(Y = \class_j | X = x_0) = \frac{1}{k} \sum_{i\in\neighbours_0}\identity(y_i = \class_j)\).
+                \item Classer \(x_0\) dans la classe avec la plus haute probabilité.
+            \end{itemize}
+        \end{definition}
+
+    \subsubsection{Régression linéaire et logistique}
+        \paragraph{Deux classes}
+        Dans les cas où \(\class = \{\class_1, \class_2\}\), on peut utiliser la régression logistique en rajoutant une variable \(Y\) :
+        \[
+            Y = \begin{cases}
+                0 & \text{si } \class_1\\
+                1 & \text{si } \class_2
+            \end{cases}
+        \]
+
+        On obtient un classificateur équivalent au LDA\index{LDA} et, intuitivement, la régression va donner les probabilités d'avoir \(P(Y = 1)\). Cependant, la régression ne garantit pas de donner des nombres entre 0 et 1. Il faut donc utiliser la \textit{régression logistique}\index{Régression!Logistique}. De plus, la régression logistique (multiclasse) est capable de gérer les cas où il y a plus que deux classes.
+
+        \begin{definition}
+            La \textit{régression logistique} (pour deux classes) est de la forme :
+            \[
+                p(X) = \frac{e^{\beta_0 + \beta_1 X_1 + \dots + \beta_pX_p}}{1 + e^{\beta_0 + \beta_1X_1 + \dots + \beta_pX_p}} = \frac{e^{\beta^TX}}{1 + e^{\beta^TX}} = \sigma(\beta^TX)
+            \] 
+            avec \[\sigma(s) = \frac{e^s}{1+e^s} = \frac{1}{1 + e^{-s}}\]
+
+            On a que la transformation \textit{log odds}\index{Log odds} ou \textit{logit}\index{Logit} de \(p(X)\) est :
+            \[
+                \log\left(\frac{p(X)}{1 - p(X)}\right) = \beta_0 + \beta_1X
+            \]
+        \end{definition}
+
+        Utilisons le MLE\index{MLE} pour trouver les valeurs des paramètres :
+        \begin{align*}
+            L(\beta, \{y_i, x_i\}_{i=1}^n) &= \prod_{i=1}^n p(y_i | X = x_i)\\
+            &= \prod_{i:y_i = 1} p(Y = 1|X = x_i) \prod_{i:y_i=0} p(Y = 0 | X = x_i)\\
+            &= \prod_{i:y_i = 1} p(x_i) \prod_{i:y_i = 0} (1 - p(x_i)) & \text{Par les probabilités}\\
+            &= \prod_{i:y_i = 1} \sigma(\beta^T x_i) \prod_{i:y_i=0} (1 - \sigma(\beta^T x_i)) & \text{Par définition de } p(x_i)\\
+            &= \prod_{i:y_i = 1} \sigma(\beta^T x_i) \prod_{i:y_i=0} (-\beta^T x_i)
+        \end{align*}
+
+        En passant au log :
+        \begin{align*}
+            l(\beta, \{y_i, x_i\}_{i=1}^n) &= \sum_{i:y_i=1} \log(\sigma(\beta^T x_i)) \sum_{i:y_i=0} \log(\sigma(-\beta^T x_i))\\
+            &= \sum_{i=1}^n \left(y_i \log(\sigma(\beta^T x_i)) + (1 - y_i) \log(\sigma(-\beta^T x_i))\right) & \text{Pour avoir une seule somme}
+        \end{align*}
+
+        Maximiser ça équivaut à minimiser :
+        \begin{align*}
+            \frac{-1}{N} \sum_{i=1}^n \left(y_i \log(\sigma(\beta^T x_i)) + (1 - y_i)\log(\sigma(-\beta^T x_i)\right) = \frac{1}{N}\sum_{i=1}^n\left(y_i \log\left(\frac{1}{\sigma(\beta^T x_i)}\right) + (1 - y_i) \log\left(\frac{1}{\sigma(-\beta^T x_i)}\right)\right)
+        \end{align*}
+
+        Au lieu d'avoir \(y_i \in \{0, 1\}\), on va supposer que \(y_i \in \{-1, +1\}\) :
+        \begin{align*}
+            \frac{1}{N}\sum_{i=1}^n \left(\identity\{y_i = +1\}\log\left(\frac{1}{\sigma(\beta^T x_i)}\right) + \identity\{y_i=-1\} \log\left(\frac{1}{\sigma(-\beta^T x_i)}\right)\right) &= \frac{1}{N} \sum_{i=1}^n \left(\log\left(\frac{1}{\sigma(y_i \beta^T x_i)}\right)\right)\\
+            &= \frac{1}{N} \sum_{i=1}^n \log\left(1 + e^{-y_i \beta^T x_i}\right)
+        \end{align*}
+
+        Donc, maximer MLE revient à minimiser la \textit{logistic loss}\index{Logistic loss} :
+        \[
+            L(y, s) = \log(1 + e^{-ys})
+        \]
+        avec \(s = \beta^T x\).
+
+        Il existe d'autres fonctions de coût pour la classification binaire :
+        \begin{itemize}
+            \item \textit{zero-one loss}\index{Zero-one loss} : \(L(y, s) = L(ys) = \identity\{ys < 0\}\); pas utilisable en pratique car non-convexe et non-smooth;
+            \item \textit{squared loss}\index{Squared loss} : \(L(y, s) = L(ys) = (1 - ys)^2\);
+            \item \textit{hinge loss}\index{Hinge loss} : \(L(y, s) = L(ys) = \max\{0, 1 - ys\}\);
+            \item \dots
+        \end{itemize}
+
+        \paragraph{Plus que deux classes}
+        Si on a \(K\) classes, il suffit de créer \(K\) classifications binaires et de choisir la classe avec la plus haute probabilité \(P(Y = k | X)\) :
+        \[
+            P(Y = k | X) = \frac{e^{\beta_{0k} + \beta_{1k}X_1 + \dots + \beta_{pk}X-p}}{\sum_{l=1}^K}
+        \]
+
+        On appelle ça \textit{multiclass logistic regression}\index{Multiclass Logistic Regression} ou \textit{Multinomial Regression}\index{Multinomial Regression}.
+
+    \subsubsection{Linear Discriminant Analysis}
+        \begin{definition}
+            Pour la \textit{Discriminant Analysis}, on va modéliser la distribution de \(X\) dans chaque classe \(P(X | Y\)) séparément et utiliser le théorème de Bayes pour obtenir \(P(Y | X)\).
+
+            Si on utilise des distributions normales pour chaque classe, on obtient la \textit{Linear Discriminant Analysis}\index{Linear Discriminant Analysis|see {LDA}} (notée \textit{LDA}\index{LDA}) ou \textit{quadratic}.
+        \end{definition}
+
+        \begin{definition}[Théorème de Bayes]
+            Le \textit{théorème de Bayes}\index{Théorème de Bayes} appliqué à la classification :
+            \[
+                P(Y = k | X = x) = \frac{P(X = x | Y = k)P(Y = k)}{P(X = x)}
+            \]
+        \end{definition}
+
+        Pour la discriminant analysis, on écrit :
+        \[
+            P(Y = k | X = x) = \frac{\pi_k f_k(x)}{\sum_{l=1}^K \pi_l f_l(x)}
+        \]
+        avec \(f_k(x) = P(X = x | Y = k)\) la \textit{densité} pour \(X\) dans la classe \(k\) et \(\pi_k = P(Y = k)\) la \textit{probabilité a priori} pour la classe \(k\).
+
+        Ici, on suppose que la densité suit une loi normale (une par classe).
+
+        Pour classer un point, on regarde quelle est la classe avec la plus haute densité pour ce point.
+
+        Avantages sur la régression logistique :
+        \begin{itemize}
+            \item Quand les classes sont bien séparées, la régression logistique est instable pour les valeurs des paramètres. LDA ne subit pas ça.
+            \item Si on a peu de données et que la distribution des variables est approximativement normale dans chaque classe, LDA est plus stable que la régression logistique.
+            \item LDA est plus sympa à utiliser quand on a plus que deux classes (parce que `provides low-dimensional views of the data').
+        \end{itemize}
+
+        \paragraph{Une seule variable}
+            La densité gaussienne a, dans le cas où \(p = 1\), la forme :
+            \[
+                f_k(x) = \frac{1}{\sqrt{2\pi}\sigma_k} e^{-\frac{1}{2}\left(\frac{x - \mu_k}{\sigma_k}\right)^2}
+            \]
+            
+            Supposons que \(\forall k, \sigma_k = \sigma\) (même variance quelque soit la classe). On obtient, via le théorème de Bayes :
+            \[
+                p_k(x) = \frac{\frac{\pi_k}{\sqrt{2\pi}\sigma} e^{-\frac{1}{2}\left(\frac{x - \mu_k}{\sigma}\right)^2}}{\sum_{l=1}^K \frac{\pi_l}{\sqrt{2\pi}\sigma} e^{-\frac{1}{2}\left(\frac{x - \mu_l}{\sigma}\right)^2}}
+            \]
+
+            Pour trouver la classe, il faut trouver le \(k\) qui maximise \(p_k(x)\) :
+            \begin{align*}
+                \max_k p_k(x) &\equiv \max_k \log(p_k(x))\\
+                &\equiv \max_k \log\left(\frac{\pi_k}{\sqrt{2\pi}\sigma} e^{-\frac{1}{2\sigma^2}(x - \mu_k)^2}\right)\\
+                &\equiv \max_k \log\left(\frac{\pi_k}{\sqrt{2\pi}\sigma}\right) + \log\left(e^{-\frac{1}{2\sigma^2} (x - \mu_k)^2}\right)\\
+                &\equiv \max_k \log(\pi_k) - \log(\sqrt{2\pi}\sigma) - \frac{1}{2\sigma^2} (x^2 + \mu_k^2 - 2x\mu_k) & \text{Propriétés de \(\log\)}\\
+                &\equiv \max_k \log(\pi_k) - \frac{\mu_k^2}{2\sigma^2} + \frac{x \mu_k}{\sigma^2} & \text{On retire les termes indépendants de \(k\)}\\
+                &\equiv \max_k \delta_k(x)
+            \end{align*}
+            avec \[\delta_k(x) = \frac{x \mu_k}{\sigma^2} - \frac{\mu_k^2}{2\sigma^2} + \log(\pi_k)\]
+
+            Les \textit{fonctions discriminantes}\index{Fonctions discriminantes} \(\delta_k(x)\) sont des fonctions linéaires en \(x\). La frontière de décision entre chaque paire de classes \(k\) et \(l\) est décrite par \(\{x : \delta_k(x) = \delta_l(x)\}\).
+
+            \begin{theorem}
+                Si \(K = 2\) et \(\pi_1 = \pi_2 = 0.5\), alors la frontière de décision est à \(x = \frac{\mu_1 + \mu_2}{2}\).
+            \end{theorem}
+            \begin{proof}
+                Il faut avoir :
+                \begin{align*}
+                    \delta_1(x) &= \delta_2(x)\\
+                    \Rightarrow \frac{x\mu_1}{\sigma^2} - \frac{\mu_1^2}{2\sigma^2} &= \frac{x\mu_2}{\sigma^2} - \frac{\mu_2^2}{2\sigma^2} & \text{Car } \log(\pi_1) = \log(\pi_2) \text{ car } \pi_1 = \pi_2\\
+                    \Rightarrow 2x(\mu_1 - \mu_2) &= \mu_1^2 - \mu_2^2\\
+                    \Rightarrow x &= \frac{\mu_1 + \mu_2}{2}
+                \end{align*}
+            \end{proof}
+
+            Il reste à être capable d'estimer les paramètres :
+            \begin{align*}
+                \estimation{\pi}_k &= \frac{n_k}{n}\\
+                \estimation{\mu}_k &= \frac{1}{n_k} \sum_{i:y_i = k} x_i\\
+                \estimation{\sigma}^2 &= \frac{1}{n - K} \sum_{k=1}^K \sum_{i:y_i = k} (x_i - \estimation{\mu}_k)^2 = \sum_{k=1}^K \frac{n_k - 1}{n - K} \estimation{\sigma}_k^2
+            \end{align*}
+            avec \(\estimation{\sigma}_k^2 = \frac{1}{n_k - 1}\sum_{i:y_i = k} (x_i - \estimation{\mu}_k)^2\).
+
+        \paragraph{Des \(\sigma_k\) différents}
+            Supposons toujours qu'on a qu'une seule variable mais des \(\sigma_k\) différents. Dans ce cas, on a :
+            \[
+                p_k(x) = \frac
+                    {
+                        \frac{\pi_k}{\sqrt{2\pi} \sigma_k} e^{-\frac{1}{2} (\frac{x - \mu_k}{\sigma_k})^2}
+                    }
+                    {
+                        \sum_{l=1}^K \frac{\pi_l}{\sqrt{2\pi}\sigma_l} e^{-\frac{1}{2} (\frac{x - \mu_l}{\sigma_l})^2}
+                    }
+            \]
+
+            A nouveau, on applique MLE :
+            \begin{align*}
+                \max_k \log(p_k(x)) &\equiv \max_k \log(\pi_k) - \log(\sqrt{2\pi}\sigma_k) - \frac{1}{2 \sigma_k^2} (x^2 + \mu_k^2 - 2x\mu_k)\\
+                &\equiv \max_k \log(\pi_k) - \log(\sqrt{2\pi}) - \log(\sigma_k) - \frac{x^2}{2\sigma_k^2} - \frac{\mu_k^2}{2 \sigma_k^2} + \frac{x \mu_k}{\sigma_k^2}\\
+                &\equiv \delta_k(x)
+            \end{align*}
+            avec 
+            \[
+                \delta_k(x) = -\frac{x^2}{2\sigma_k^2} + \frac{x \mu_k}{\sigma_k^2} - \frac{\mu_k^2}{2\sigma_k^2} + \log\left(\frac{\pi_k}{\sigma_k}\right)
+            \]
+            
+            Dans ce cas, on voit bien que les fonctions discriminantes sont quadratiques en \(x\).
+
+        \paragraph{Plus qu'une variable}
+            Dans le cas où \(p > 1\), la fonction de densité est de la forme :
+            \[
+                f(x) = \frac{1}{\sqrt{(2\pi)^p} |\Sigma|^{1/2}} e^{-\frac{1}{2}(x - \mu)^T \Sigma^{-1}(x-\mu)}
+            \]
+
+            Si les variances sont identiques pour toutes les classes,
+            les fonctions discriminantes sont :
+            \[
+                \delta_k(x) = x^T \Sigma^{-1} \mu_k - \frac{1}{2}\mu_k^T \Sigma^{-1} \mu_k + \log(\pi_k)
+            \]
+            \(\delta_k(x)\) est toujours une fonction linéaire en \(x\).
+
+        \paragraph{Autres formes de Discriminant Analysis}
+            \begin{itemize}
+                \item Avec des gaussiennes mais différents \(\Sigma_k\) pour chaque classe, on obtient \textit{Quadratic Discriminant Analysis}\index{Quadratic Discriminant Analysis}.
+                \item Avec \(f_k(x) = \prod_{j=1}^p f_{jk}(x_j)\) pour chaque classe, on obtient le classificateur \textit{Naive Bayes}\index{Naive Bayes}. Pour les gaussiennes, ceci équivaut à avoir des \(\Sigma_k\) diagonales.
+                \item En changeant le \(f_k(x)\), on peut donc avoir plein d'autres formes, y compris des non-paramétriques.
+            \end{itemize}
+
+        \paragraph{Logistic Regression vs LDA}
+            Pour un problème à deux classes, on peut montrer que pour LDA
+            \[
+                \log\left(\frac{p_1(x)}{1 - p_1(x)}\right) = \log\left(\frac{p_1(x)}{p_2(x)}\right) = c_0 + c_1 x_1 + \dots + c_p x_p
+            \]
+
+            Donc, dans ce cas, LDA a la même forme que la régression logistique. La différence vient de comment les paramètres sont estimés :
+            \begin{itemize}
+                \item La régression logistique utilise la conditional likelihood basée sur \(P(Y | X)\) (cette méthode est appelée \textit{discriminative learning}\index{Discriminative Learning});
+                \item LDA utilise la likelihood complète basée sur \(P(X, Y)\) (appelée \textit{generative learning}\index{Generative Learning}).
+            \end{itemize}
+            Malgré ça, les résultats sont souvent similaires.
+
+    \subsubsection{Naive Bayes}
+        \begin{definition}
+            Pour le \textit{Naive Bayes}\index{Naive Bayes}, on suppose que les variables sont indépendantes dans chaque classe. Ceci est pratique quand \(p\) est très grand.
+
+            Le \textit{Gaussian naive Bayes} suppose que chaque \(\Sigma^k\) est diagonale :
+            \[
+                \delta_k(x) \propto \log\left(\pi_k \prod_{j=1}^p f_{kj}(x_j)\right) = - \frac{1}{2} \sum_{j=1}^p \frac{(x_j - \mu{kj})^2}{\sigma_{kj}^2} + \log(\pi_k)
+            \]
+            et peut être utilisé pour mixer des vecteurs de variables (qualitatives et quantitatives). Si \(X_j\) est qualitative, il suffit de remplacer \(f_{kj}(x_j)\) par une function de probabilité de masse (PMF).
+        \end{definition}

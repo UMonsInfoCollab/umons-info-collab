@@ -1,0 +1,62 @@
+\subsection{Variables aléatoires et distributions}
+    \begin{definition}
+        Une \textit{variable aléatoire} est une fonction \(\Omega \to \R\). 
+        
+        Une façon de voir une variable aléatoire est de penser à un mapping entre une distribution sur \(\Omega\) et une distribution sur les réels (c'est-à-dire l'ensemble des valeurs de la variable aléatoire).
+        Formellement, pour une variable \(X\) et un sous-ensemble \(A \in \R\) :
+        \[
+            \distribution_X (X \in A) = \distribution(\{\omega \in \Omega : X(\omega) \in A\})
+        \]
+    \end{definition}
+
+    \begin{definition}
+        Chaque variable aléatoire est associée à une \textit{fonction de distribution cumulative} (notée CDF) :
+        \[
+            \forall x, F_X(x) = \distribution_X(X \leq x)
+        \]
+
+        Une fonction \(F\) est une CDF si et seulement si :
+        \begin{enumerate}
+            \item \(\lim_{x \to -\infty} F(x) = 0\) et \(\lim_{x \to +\infty} F(x) = 1\)
+            \item La fonction n'est pas décroissante en \(x\)
+            \item La CDF est continue à droite, c'est-à-dire, \(\forall x_0 \in \R, \lim_{x \to x_0^+} F(x) = F(x_0)\)
+        \end{enumerate}
+
+        \(X\) est une variable continue si sa CDF est une fonction continue et est une variables discrète si sa CDF est une fonction discrète.
+
+        Deux variables aléatoires \(X\) et \(Y\) sont identiquement distribués si \(\forall A, \distribution_X(X \in A) = \distribution_Y(Y \in A)\) (ne veut pas dire que \(X\) et \(Y\) sont égaux).
+
+        Deux variables \(X\) et \(Y\) sont identiquement distribués si et seulement si leur CDF sont égaux, c'est-à-dire, \(\forall x, F_x(x) = F_y(x)\)
+    \end{definition}
+
+    \begin{remarque}[Notations]
+        \(F_x(x)\) indique une CDF tandis que \(f_X(x)\) indique une pdf/pmf.
+    \end{remarque}
+
+    \begin{definition}
+        Pour une variable discrète, sa \textit{fonction de masse} (notée \textit{PMF}) :
+        \[
+            f_X(x) = P_X(X = x)
+        \]
+
+        Pour une variable continue, sa \textit{densité de probabilité} (notée \textit{PDF}) \(f_X\) est la fonction qui satisfait :
+        \[
+            \forall x, F_X(x) = \int_{-\infty}^{x} f_X(t)\,dt
+        \]
+
+        Une fonction \(f_X(x)\) est une pdf/pmf si et seulement si :
+        \begin{enumerate}
+            \item \(\forall x, f_X(x) \geq 0\)
+            \item \(\sum_x f_X(x) = 1\) (pour une pmf) ou \(\int_{-\infty}^{+\infty} f_X(x)\,dx = 1\) (pour une pdf)
+        \end{enumerate}
+    \end{definition}
+
+    Pour trouver la probabilité qu'une variable aléatoire atterrisse dans un intervalle, il y a deux façons :
+    \begin{itemize}
+        \item Via les fonctions de distribution : \(\distribution(a < X \leq b) = F_X(b) - F_X(a)\)
+        \item Via les fonctions de densité/de masse :
+        \begin{itemize}
+            \item Pour des variables continues : \(\distribution(a < X \leq b) = \int_{a}^b f_X(x)\,dx\)
+            \item Pour des variables discrètes : \(\distribution(a < X \leq b) = \sum_{x > a}^{x = b} \distribution(X = x)\)
+        \end{itemize}
+    \end{itemize}
