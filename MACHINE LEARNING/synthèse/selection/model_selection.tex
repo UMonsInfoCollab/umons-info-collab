@@ -26,7 +26,7 @@
         \begin{proof}
             On a que \(\expectation\left[\frac{1}{m} \sum_{i=1}^m \left(\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i}\right)^2\right] = \expectation\left[\frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i}\right)^2\right]\) car le nombre de points ne change pas l'espérance.
 
-            Par facilité, notons \(A = \frac{1}{n}\sum_{i=1}^n \left(y_i - \betaEstimated{}^T\right)^2\) et \(B = \frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \widetilde{\beta}^T \widetilde{x_i}\right)^2\) (attention au fait que le \(\beta\) de \(B\) a un tilde et non un chapeau !).
+            Par facilité, notons \(A = \frac{1}{n}\sum_{i=1}^n \left(y_i - \betaEstimated{}^T x_i\right)^2\) et \(B = \frac{1}{n} \sum_{i=1}^n \left(\widetilde{y_i} - \widetilde{\beta}^T \widetilde{x_i}\right)^2\) (attention au fait que le \(\beta\) de \(B\) a un tilde et non un chapeau !).
 
             \(A\) et \(B\) ont la même distribution (vu que \(\{(y_i, x_i)\}_{i=1}^n\) et \(\{(\widetilde{y_i}, \widetilde{x_i})\}_{i=1}^n\) suivent la même distribution). Donc, \(\expectation[A] = \expectation[B]\).
 
@@ -36,7 +36,7 @@
 
             Finalement, on a \(\expectation[A] = \expectation[B]\) et \(\expectation[B] \leq \expectation\left[\frac{1}{n} \sum_{i=1}^n (\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i})^2\right]\). Donc :
             \[
-                \expectation\left[\frac{1}{n} \sum_{i=1}^n (y_i - \betaEstimated{}^T x_i)^2\right] = \expectation\left[\frac{1}{m} \sum_{i=1}^m (\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i})^2\right]
+                \expectation\left[\frac{1}{n} \sum_{i=1}^n (y_i - \betaEstimated{}^T x_i)^2\right] \leq \expectation\left[\frac{1}{m} \sum_{i=1}^m (\widetilde{y_i} - \betaEstimated{}^T \widetilde{x_i})^2\right]
             \]
         \end{proof}
 
