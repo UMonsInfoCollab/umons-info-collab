@@ -1,0 +1,481 @@
+\documentclass[fleqn,letterpaper, 12pt]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%   PACKAGES   %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[top = 1.6cm, left = 2cm, right = 2cm ]{geometry}
+\usepackage[pdftex]{graphicx}
+\usepackage[numbers]{natbib}
+\usepackage[french]{babel}
+\usepackage{soulutf8}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage{longtable}
+\usepackage[T1]{fontenc}
+\usepackage{epigraph}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{xcolor}
+\usepackage{eurosym}
+\usepackage{calc}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage[Algorithme]{algorithm}
+\usepackage{algorithmic}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%   TEMPLATE   %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
+\newcommand{\newlinealinea}{
+	~\\ \hspace*{0.5cm}}
+\newcommand{\alinea}{
+	\hspace*{0.5cm}}
+\newcommand{\alinealong}{
+	\hspace*{1.1cm}}
+\newcommand{\alignparagraph}{
+	\hspace*{0.6cm}}
+\newcommand{\red}[1]{
+	\textcolor{red}{#1}}
+\newcommand{\green}[1]{
+	\textcolor{green}{#1}}
+\newcommand{\point}{$\bullet\ $}
+\makeatletter
+\newcommand*{\whiten}[1]{\llap{\textcolor{white}{{\the\SOUL@token}}\hspace{#1pt}}}
+\newcommand{\myul}[1]{
+	\underline{\smash{#1}}
+}
+\makeatother
+\setlength{\fboxsep}{2pt}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+\makeatletter
+\@addtoreset{section}{part}
+\makeatother  
+\renewcommand*\sfdefault{phv}
+\renewcommand*\rmdefault{ppl}
+\renewcommand\epigraphflush{flushright}
+\renewcommand\epigraphsize{\normalsize}
+\setlength\epigraphwidth{0.7\textwidth}
+\definecolor{titlepagecolor}{cmyk}{0.24,0.92,0.78,0.25}
+\definecolor{red}{cmyk}{0, 0.91, 0.91, 0.20}
+\DeclareFixedFont{\titlefont}{T1}{phv}{\seriesdefault}{n}{0.375in}
+\DeclareFixedFont{\subtitlefont}{T1}{phv}{\seriesdefault}{n}{0.25in}
+\cfoot{\thepage}
+\pagestyle{fancy}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%  TITLE PAGE %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand\titlepagedecoration{%
+	\begin{tikzpicture}[remember picture,overlay,shorten >= -10pt]
+	
+	\coordinate (aux1) at ([yshift=-70pt]current page.north east);
+	\coordinate (aux2) at ([yshift=-460pt]current page.north east);
+	\coordinate (aux3) at ([xshift=-6cm]current page.north east);
+	\coordinate (aux4) at ([yshift=-150pt]current page.north east);
+	
+	\begin{scope}[titlepagecolor!40,line width=12pt,rounded corners=12pt]
+	\draw
+	(aux1) -- coordinate (a)
+	++(225:5) --
+	++(-45:5.1) coordinate (b);
+	\draw[shorten <= -10pt]
+	(aux3) --
+	(a) --
+	(aux1);
+	\draw[opacity=0.6,titlepagecolor,shorten <= -10pt]
+	(b) --
+	++(225:2.2) --
+	++(-45:2.2);
+	\end{scope}
+	\draw[titlepagecolor,line width=8pt,rounded corners=8pt,shorten <= -10pt]
+	(aux4) --
+	++(225:0.8) --
+	++(-45:0.8);
+	\begin{scope}[titlepagecolor!70,line width=6pt,rounded corners=8pt]
+	\draw[shorten <= -10pt]
+	(aux2) --
+	++(225:3) coordinate[pos=0.45] (c) --
+	++(-45:3.1);
+	\draw
+	(aux2) --
+	(c) --
+	++(135:2.5) --
+	++(45:2.5) --
+	++(-45:2.5) coordinate[pos=0.3] (d);   
+	\draw 
+	(d) -- +(45:1);
+	\end{scope}
+	\end{tikzpicture}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%  ALGORITHM  %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\algorithmicrequire}{\textbf{Requis:}}
+\renewcommand{\algorithmicensure}{\textbf{Promet:}}
+\renewcommand{\algorithmicend}{\textbf{fin}}
+\renewcommand{\algorithmicif}{\textbf{si}}
+\renewcommand{\algorithmicthen}{\textbf{alors}}
+\renewcommand{\algorithmicelse}{\textbf{sinon}}
+\renewcommand{\algorithmicelsif}{\algorithmicelse\ \algorithmicif}
+\renewcommand{\algorithmicendif}{\algorithmicend\ \algorithmicif}
+\renewcommand{\algorithmicfor}{\textbf{pour}}
+\renewcommand{\algorithmicforall}{\textbf{pour chaque}}
+\renewcommand{\algorithmicdo}{\textbf{faire}}
+\renewcommand{\algorithmicendfor}{\algorithmicend\ \algorithmicfor}
+\renewcommand{\algorithmicwhile}{\textbf{tant que}}
+\renewcommand{\algorithmicendwhile}{\algorithmicend\ \algorithmicwhile}
+\renewcommand{\algorithmicloop}{\textbf{boucle}}
+\renewcommand{\algorithmicendloop}{\algorithmicend\ \algorithmicloop}
+\renewcommand{\algorithmicrepeat}{\textbf{répéter}}
+\renewcommand{\algorithmicuntil}{\textbf{jusqu'à}}
+\renewcommand{\algorithmicprint}{\textbf{afficher}}
+\renewcommand{\algorithmicreturn}{\textbf{retourner}}
+\renewcommand{\algorithmictrue}{\textbf{vrai}}
+\renewcommand{\algorithmicfalse}{\textbf{faux}}
+
+\renewcommand{\algorithmicand}{\textbf{et}}
+\renewcommand{\algorithmicor}{\textbf{ou}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%   CUSTOM TIKZ    %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\tikzmultiline}[6]{
+	% {from}{to}{arrows}{offset from}{offset to}{arrow angle}
+	\pgfmathsetmacro{\pgfminus}{#3-1}%
+	\foreach \i in {0,...,\pgfminus}{
+		 \pgfmathsetmacro{\pgfresult}{\i*100/\pgfminus}%
+		\draw[-] (#1.{(\i)*#6+#4 - \pgfminus*#6/2}) -- (#2.{-(\i)*#6+#5  + \pgfminus*#6/2});}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%   NOTATIONS    %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%   INFORMATIONS  %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\title}{\titlefont Ethique et droit de l'informatique \\ \subtitlefont Synthèse \par}
+\newcommand{\subject}{Ethique et droit de l'informatique}
+\newcommand{\prof}{Pol Glineur}
+\newcommand{\student}{Benjamin André}
+\renewcommand{\date}{\today}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+	\lhead{\student}
+	\rhead{\subject}
+	\pagenumbering{gobble}
+	\begin{titlepage}
+		%
+		\noindent
+		%
+		\newgeometry{bottom = 2cm, top = 2.5cm}
+		\begin{center}
+			\includegraphics[scale=1.2]{Images/UMONS}\\
+			\vspace*{0.3cm}
+			\includegraphics[scale=0.23]{Images/FS_Logo}\\
+			\vspace*{2.5cm}
+			%
+			\title
+			\vspace*{2.5cm}
+			\date
+			%
+		\end{center}
+		\vspace*{3cm}
+		\hfill
+		%
+		\begin{minipage}{0.18\linewidth}
+			\begin{flushright}
+				\rule{0.5pt}{50pt}
+			\end{flushright}
+		\end{minipage}
+		%
+		\begin{minipage}{0.8\linewidth}
+			\begin{flushleft}
+				\textsf{\textbf{Sujet :}} \subject\\
+				\textsf{\textbf{Professeur :}} \prof\\
+				\textsf{\textbf{Étudiant:}} \student
+			\end{flushleft}
+		\end{minipage}
+		%
+		\vspace*{\fill}                                                             
+		%
+		\begin{center}
+			Faculté des Sciences $\bullet$ Université de Mons $\bullet$ 
+			Place du Parc 20 $\bullet$ B-7000 Mons
+		\end{center}
+		\titlepagedecoration
+	\end{titlepage}
+	\newgeometry{top = 3cm, left = 2cm, right = 2cm, bottom=2.5cm}
+	\setcounter{tocdepth}{3}\tableofcontents\newpage
+	\pagenumbering{arabic}\setcounter{page}{1}
+	
+	
+	
+	
+	
+	
+	
+	\section{Remarques et conseils (N.D.L.R)}
+	
+	Cette synthèse porte sur le support écrit du professeur Pol Glineur, fourni en 2019 pour le cours d'éthique et droit de l'informatique, donné à Charleroi le samedi. Ce support fait 91 pages, et comporte plusieurs sections vide car non vues et n'étant pas matière d'examens. Ces sections ne sont pas représentées dans cette synthèse. De plus, le cours est présenté avec les habitudes d'un homme de droit, c'est donc très complet et tout autant structuré. Un niveau de structure a été retiré (sous-sous-sous-section) car n'apportant à mon avis que peu d'information supplémentaire. Le cours est composé de 163 points dont je ne penses pas qu'il faille retenir les numéros où l'ordre, je me suis donc permis de les omettre.
+	
+	
+	Une complétion par des notes manuscrites est à venir.
+	
+	
+	
+	
+	
+	\section{Avant-propos}
+	
+	Les faits \emph{bruts} imposent l'intervention du législateur. L'école sociologique va plus loin en proposant que les faits imposent aussi les solutions à apporter, selon un méthode scientifique. Ce n'est pas le cas car il peut y avoir indécision et les valeurs, l'idéologie et l'éthique restent prédominantes dans le choix de la solution à apporter. Cela marche aussi dans l'autre sens. La loi peut booster une technique (~fait brut) en le reconnaissant comme légal, favorisant son développement (i.e. remboursement imagerie médicale par l'INAMI).
+	
+	Ce n'est pas aisé de légiférer, mais pour chaque nouvelle technique, il y aura des règles nouvelles ou une adaptation des normes existantes \textbf{en rapport direct avec le phénomène ou ses conséquences}. Lorsqu'un technique entraine des changements sur la vie quotidienne, la façon de penser, \textbf{des nouvelles normes s'imposent}. De plus, une nouvelle technique a aussi des conséquences positives que la loi peut encourager.
+	
+	Le champ du droit de l'informatique (computing law) est indiscutable. Mais la question se pose de notre système politique et social, dont la séparation des pouvoirs de notre démocratie. La relation entre l'administration et l'administré est chamboulée quand un processus informatique peut prendre une décision selon une codification. Heureusement, depuis 1991, une loi belge oblige à donner une motivation formelle d'un choix administratif. (L'IA peut proposer un tracé d'autoroute mais le cabinet doit pouvoir motiver ses choix)
+	
+	La concentration des moyens informatiques dans les mains des exécutifs crée des glissements institutionnels à leur profits, ce qui devrait conduire à repenser la répartition des pouvoirs. Comme l'a exprimé le Professeur Maisl, "l'informatique obligera à redéfinir la place de l'Etat-Nation par le bas et par le haut et à trouver l'unité sociale appropriée. Par le bas : quels rapports l'Etat-Nation nouera-t-il grâce à la télématique avec les communautés de base ? Par le haut : quelles relations les Etats-Nations entretiendront-ils dans une société internationale automatisée, quel nouvel ordre de l'information se mettra en place ?".
+	
+	
+	\section{Introduction Générale}
+	
+	\subsection{Existence du droit de l'informatique}
+	
+	L'existence du droit de l'informatique est incontestée. Le premier colloque belge qui lui fût consacré remonte à 1971 : "Les aspects institutionnels, juridiques et déontologiques de l'informatique". Ce colloque fut suivit d'une loi de 27 article s'intitulant \emph{loi relative à la protection de la vie privée et de la personnalité}. Plusieurs lois ont suivit jusqu'à la loi de 1992 \emph{sur la protection de la vie privée à l'égard des traitements de donnes à caractère personnel}. Plus récemment, il y a la loi de 2017 \emph{portant création de l'Autorité de protection des données}, motivée par la directive européenne \textbf{GDPR} de 2016,la directive police et justice et la directive vie privée et communications électroniques.
+	
+	En plus du plan national, certains organismes internationaux ont \oe uvré : le conseil de l'europe, l'OCDE, l'Union Européenne, l'ONU-CEE, l'OMPI et l'UNESCO. L'importance des textes normatifs est telle que l'existence du droit de l'informatique ne peut être niée. Le tout sans compter les arbitrages en tribunaux, travaux universitaires et colloques.
+	
+	\subsection{Tentative de définition du droit de l'informatique par son objet}
+	
+	Il existe des droits normatifs qui sont propres au droit de l'informatique (banque de données, droit intellectuels, délits avec outils informatique,...). Cependant, l'informatique touche à de nombreux aspects de la vie quotidienne et peut aussi être considéré comme un \emph{droit carrefour}. De plus, des règles de droit commun peuvent être modifiées et fusionnées avec des nouvelles règles comme dans le cas du registre national des personnes physiques et de l'échange des données y étant liées.
+	
+	\subsection{Caractères du droit de l'informatique}
+	
+	Doit hétérogène par les disciplines concernées, par les sources nationales et internationales et les autorités qui sont chargées de l'appliquer. En Belgique, il y a notamment la Commission de la protection de la vie privée. De plus, le droit de l'informatique est très évolutif ce qui cadre avec une technologie en évolution permanente.
+	
+	
+	
+	\section{Informatique et droit au respect de la vie privée - Protection de l'individu contre les traitements de données à caractère personnel}
+	
+	\subsection{Notion et fondement du droit à la vie privée}
+	
+	La Constitution belge de 1831 a conçu les droits de l'homme comme barricade face aux entreprises abusives. L'obsession historique du libéralisme face au royalisme absolu s'y ressent. Droit à la sécurité, à l'inviolabilité du domicile, au secret des lettres. Liberté de la presse, de réunion , de penser et d'association. Ces règles formelles sont pourtant artificielles, vu la montée du prolétariat.
+	
+	Fin du XXe siècle, il est reconnu que l'état doit intervenir pour garantir ces droits, les \emph{droits économiques et sociaux}. Droit à la sécurité d'existence, à la sécurité sociale, au travail, à la santé, à l'éducation et la culture. Mais aussi, droit au respect de la vie privée et familiale. La vie privée n'est pas définie formellement, mais différentes valeurs lui sont rattachées telles que la collecte, le traitement, ..., de celles-ci est susceptible d'être considéré comme un immixtion intolérable dans la vie privée .
+	\subsection{Dangers de l'informatique}
+	
+	Banque de données à caractère personnel donnant des informations factuelles mais parfois qualitatives sur notre personnes, de façon présumée. Les méthodes de collecte sont nombreuses, ce qui représente un risque, mais en plus elles engendrent des erreurs (questionnaire mal compris,...). Tout cela sans compter les données collectées \textbf{à notre insu}, les analyses automatisées et intrusions informatiques. Il peut également y avoir une erreur lors de la transcription/copie/relais. S'en suit les erreurs de l'application. Erreurs humaines, fraudes, mais aussi pannes informatiques, dérèglements. Le danger réside aussi dans l'interprétation des données, trop souvent considérée comme absolue après informatisation.
+	
+	De plus, la diffusion d'information, volontaire ou involontaire est elle même dangereuse. Vente de DB de solvabilité, cheval de Troie, vol par les américains et chinois. Finalement, la capacité d'enregistrement sans limite de temps va à l'encontre du principe selon lequel l'eau peut couler sous les ponts, un individu peut se racheter. Ceci correspondait à la limite du stockage papier et de la mémoire.
+	
+	
+	
+	\subsection{Relativité du concept du droit au respect de la vie privée et relativité des dangers de l'informatique}
+	
+	Le droit au respect de la vie privée n'est pas un droit absolu. Certaines ingérences de l'autorité publique sont possible tant que prévues par la loi. Surtout en question de sécurité publique et prévention d'infraction pénales, de santé et de sécurité. Ces ingérences ne sont pas liées à l'informatique, mais voulues par le législateur.
+	
+	La limite des banques de données avant d'enfreindre la vie privée est qualitatif et non quantitatif. Un banque de donnée doit toujours contenir des données que l'Administration a le droit de recueillir, traiter et conserver, être obtenue par des moyens licites, et être utilisées conformément à la mission de l'Administration (définie par le législateur).
+	
+	
+	\subsection{Problématique d'ue réglementation de l'informatique - aspects internationaux et nationaux}
+	
+	Un état seul ne peut lutter contre les flux transfrontaliers de données, la fraude internationale. La tendance actuelle est d'autoriser la libre circulation à condition de respecter certaines normes en matière de vie privée. Divers traités existent au sein du Conseil de l'Europe, de l'OCDE et de la commission européenne. Ils mettent plus où moins longtemps à être mis en place dans les pays signataires. Pas l'ONU car le tiers-monde ne se soucie pas de ce sujet.
+	
+	Les buts des dernières directives, suivies par le GDPR ? Une directive cadre qualifiant les données, les conditions de récolte et de traitement ainsi que la création de comités. A cela s'ajoute une recommandation d'ouverture aux pays tiers, une résolution visant à étendre le principe au secteur publique, aux institutions et organismes. Il y a aussi un mention visant la protection de donnes sur les réseaux mobiles et RNIS et finalement un plan d'action de deux ans en matière de sécurité des systèmes d'information.
+	
+	\subsection{Aperçu du droit positif belge en matière de banques de données}
+	\subsubsection{Existence des banques de données administratives}
+	Impossible de dresser une liste exhaustive mais en voici les principales, chacune gérée par un service défini par le législateur avec des buts et conditions données.
+	
+	Registre National des Personnes Physiques, Banque Carrefour des Entreprises, Centrale des risque, centrale des crédits aux particuliers, l'institut national de statistique, le secteur social (ONSS, ONEM, INAMI, INASTI,...), la police, TVA, cadastre, véhicules immatriculée, Banque publique de données sociales, ...
+	
+	
+	\subsubsection{Registre national des personnes physiques}
+	
+	A l'origine un service payant pour les communes, dans le but de faciliter les changements de domiciliation avec un identifiant fonctionnant dans plusieurs de celles-ci. Il a ensuite été officialisé et rendu obligatoire. Cela a permis de faciliter les échanges de données horizontaux et garantir son exhaustivité. Le tout se traduit par une simplification des formalités administrative, une aide à la lutte contre la fraude et une base pour émettre des documents d'identité. 
+	
+	Tous les belges et personnes vivant sur le territoire belge sont concernées de même que les immigrants.
+	
+	On y retrouve les nom et prénoms, lieu et date de naissance, sexe, nationalité, résidence pricipale, lieu et date du décès/déclaration d'absence (+ date de transcription), l'état civil, la composition du ménage, les assistants d'un mineur, le registre communal, situation administrative, certificat d'identité et de signature, la cohabitation légale, situation de séjour, ascendants au premier degré, descendants en ligne directe, coordonnées sur base volontaire.
+	
+	A tout ceci s'ajoute un numéro composé comme suit : Date de naissance + ordre, paire pour les femmes, impair pour les hommes. René, né le 12 juin 1997 pourrait avoir le numéro 97.06.12-125.XX. Les deux derniers numéros sont donnés par $97 - 970612125\%97$.
+	
+	Si les numéros du jour sont épuisés, on utilise le lendemain. De plus, pour ceux nés après 2000, on met un 2 au début. Ce numéro figure sur la carte d'identité et peut être demandé pour certains services tels que les impôts ou la santé. C'est dangereux car déshumanisant.
+	
+	La loi fixes la circulation des données de ce registre. Les communes doivent impérativement communiquer les informations de base. Les corps de métiers concernés (police, médecine, avocat) peuvent demander les informations par leur ordre ou service administratif. Certaines autorisations sont aussi issues pour des organismes privés \emph{de bien public} tel que celui fabriquant les cartes d'identité. La façon dont certaines informations locales (donneur d'organes) est retrouvée grâce au RNPP est aussi décrite.
+	
+	Toutes ces données sont conservées 30 ans après le décès de la personne.
+	
+	
+	\subsubsection{Banque-carrefour de la sécurité sociale}
+	
+	Loi de 1990 visant à sa création. La sécurité sociale est plutôt morcelée pour des raisons historiques et la solution retenue a été d'avoir un organisme supplémentaire permettant d'aiguiller les requêtes d'informations entre les différents services, sans en stocker (ou du moins une faible portion). Pour limiter le nombre de formulaires à remplir au citoyen, un organisme est obligé de passer par la BCSS avant toute chose.
+	
+	La Banque Carrefour tient donc un dossier contenant la localisation de chaque information pour les assurés sociaux, mais aussi les qualifications des organismes et les droits de données dont elles sont munies. De plus, elle est chargée de transformer les données disponibles en statistiques anonymisées pouvant servir à améliorer les services et la gestion de la sécurité sociale.
+	
+	La Banque-Carrefour utilise un numéro unique servant d'identifiant pour chaque inscrit. Le cas échéant, c'est le numéro de registre national.
+	
+	Il y a une différentiation entre le réseau primaire (toutes les institutions directement reliées à la BCSS) et les réseaux secondaires qui sont plutôt de coopérantes de sécurité sociales (caisses d'allocation familiales, d'assurances sociales pour indépendants,...). Aucun organisme n'a accès au RNPP, mais peut passer par la Banque Carrefour.
+	
+	Pour finir, la banque possède plusieurs mesures pour protéger la vie privée, telles que des mesures d'autocontrôle (délégué à la protection des données), devoir de secret professionnel, le contrôle individuel et le contrôle institutionnel, garanti par un Comité de sécurité de l'information depuis 2018.
+	
+	
+	\section{Evolution du droit sous l'influence de l'informatique}
+	
+	Le droit du travail est impacté par la présence de l'informatique dans celui-ci. Le droit privé est impacté par l'importance économique de l'informatique. Les contrats informatiques sont particulièrement difficiles à écrire, de part la complexité et multiplicité des besoins à satisfaire mais aussi par la multitude d'intervenants. 
+	
+	Aussi, ce qui faisait office de preuve (paiement) est maintenant informatisé, tout comme les communications. Heureusement, les règles sont plastiques car s'appuyant sur la bonne foi, les m\oe urs et l'ordre public. Par exemple, l'utilisation de clefs contrefaites était une circonstance aggravante de vol, ce qui s'est traduit naturellement pour les badges magnétiques.
+	
+	Cependant, sous prétexte d'évolution d'une loi, elle ne peut être ni dénaturée ni violée. Un juge le faisant dépasserait ses fonctions. C'est une affaire du législateur, élu par le peuple.
+	
+	
+	
+	\section{Informatique et propriété industrielle}
+	\subsection{Généralités}
+	
+	L'expression \emph{propriété industrielle} englobe les droits d'usage de signes distinctifs de 'entreprise ou de produit. Rien de particulier en informatique, donc hors de propos ici. Il y a aussi les droits à un certain monopole d'exploitation. Application industrielle, dessins et modèles industriels, hors de propos aussi. Il y a aussi le droit de tirer profit d'une \oe uvre de l'esprit, le droit d'auteur.
+	
+	
+	\subsection{Brevets d'invention}
+	
+	Un logiciel n'est pas brevetable car n'étant pas directement une action de l'homme sur la nature, relevant plus des mathématiques et idées pures. De plus, c'est mal adapté à la façon dont les brevets sont délivrés. Par contre un produit complet peut recevoir un brevet protégeant sa partie logicielle. Pareil si il permet de résoudre un problème technique de manière nouvelle et non évidente, ce qui permet de contourner l'exclusion de brevetabilité des logiciels en tant que tels.
+	
+	
+	
+	\subsection{Droits d'auteur}
+	
+	Loi de 1886 portant sur les droits d'auteurs et droits voisins. Le droit d'auteur existe dès que l'\oe uvre est mise en forme ou ébauchée, contrairement aux brevets nécessitant des formalités administratives. Ces droits durent 70 ans après la mort de l'auteur et garantissent un droit patrimonial (monopole d'exploitation), un droit de représentation, un droit de reproduction (qui est toutefois tolérée à caractère privé, dans les citations), et un droit moral (intégrité de l'\oe uvre) qui ne disparaît jamais. De plus, le droit d'auteur ne suppose pas la nouveauté mais seulement l'originalité.
+	
+	L'originalité d'un logiciel est un paramètre relativement flou, mais certaines jurisprudence considère qu'il faut \emph{un travail personnel et non quelque chose de généralement connu}. Les copies de programmes illicites sont considérées comme du vol aux yeux de la loi. Toutes ces règles sont dans le \textbf{Code de droit économique}. Lorsqu'un employé code au boulot, il est considéré \emph{juristantum} que l'employeur possède les droits patrimoniaux. L'employé pourra cependant, si il y a atteinte à son honneur ou à sa réputation, faire appel de ses droits moraux. Ceux-ci semblent cependant cessibles à l'employeur.
+	
+	Le monopole d'exploitation comporte les reproductions, traduction, adaptation, distribution. Il existe aussi la loi "First Sale" disant que dès qu'une copie est vendue dans l'Union Européenne, le droit de distribution cesse : il n'est plus possible d'interdire l'exploitation du programme. Pour finir, il y a des exceptions : reproduction/traduction autorisée si nécessaire pour utiliser conformé le programme, copie de sauvegarde, pas besoin d'autorisation pour observer et comprendre le comportement du programme acheté, décompilation à fin d'interopérabilité sans préjudice.
+	
+	
+	
+	\subsection{Œuvres fabriquées ou produites par ordinateur}
+	
+	Si l’œuvre créée ne contient rien d'autre que ce qui a été programmé par le concepteur de logiciels, il faut admettre que le droit d'auteur repose sur le concepteur. Au contraire, si l’œuvre créée peut être considérée comme indépendante du logiciel, ce dernier n'ayant joué que le simple rôle d'outil au service de l'originalité de l'utilisateur, il faut admettre que la paternité de l'œuvre repose dans le chef de l'utilisateur.
+	
+	Une copropriété intellectuelle permettant au créateur du logiciel d'interdire l'exploitation des œuvre dérivées est possible.
+	
+	
+	\subsection{Banques de données}
+	
+	Le stockage dans une banque de données est assimilable à une reproduction, qui nécessite donc l'approbation du propriétaire des droits des données. Par contre, l'indexation de mot-clefs avec de brèves citations n'est pas illégal tant qu'elle ne dispense pas le lecteur de lire l'œuvre elle-même.
+	
+	
+	La loi belge, cependant, protège un BDD, \emph{protégée ou non par le droit d'auteur, quelle que soit leur forme} qui ont nécessité un investissement substantiel pour l'obtention, la vérification ou la présentation, pendant 15 ans. Celle-ci porte sur l'extraction d'une partie substantielle du contenu et sur les extractions non-substantielles répétées et systématiques quand elles portent préjudice au gérant de la BDD.
+	
+	\subsection{Protection de la propriété industrielle par les contrats}
+	
+	Le droit des brevets et le droit d'auteur apportent peu de protection aux firmes informatiques. C'est pourquoi elles se protègent souvent avec des moyens techniques. De plus, les conventions de logiciels ne s'appellent pas \emph{vente} mais plutôt \emph{licence d'utilisation}, évitant de transférer un droit privatif sur le logiciel.
+	
+	
+	\subsection{Protection des topographies des produits semi-conducteurs}
+	\subsubsection{Directive communautaire du 16 décembre 1986}
+	
+	Les semi-conducteurs, chips ou puces, sont à mi-chemin entre la matériel et le logiciel. Une loi spécifique a été dédiée à leur topographie (schéma de couches). Celle-ci confère des droits de distribution et de monopole et de reproduction au constructeur. Trois limitations : \emph{reverse engineering}, \emph{innocent infringement}, \emph{first sale}. La directive prévoit une durée de droits exclusifs de maximum 10 ans à partir de la première commercialisation ou formalité administrative.
+	
+	\subsubsection{La loi belge du 10 janvier 1990}
+	
+	La loi belge a mis en place la directive communautaire. Pour que celle-ci soit protégée, il faut qu'elle soit le produit d'un travail intellectuel du constructeur. L'originalité n'est donc plus un critère essentiel, comme le préconisait la CEE. Lorsqu'une topographie est crée dans une relation de travail, c'est l'employeur qui est titulaire, sauf mention contraire. Lors d'une commande, c'est le commanditaire qui est propriétaire. Soit des personnes physiques ou morales dans un état membre ou pays à l'annexe des décisions (en général des pays de la future union européenne, ou une grande puissance économique).
+	
+	Le reverse engineering n'est autorisée qu'à des fins d'apprentissage. L'apprentissage acquis peut permettre, avec effort intellectuel, la conception d'une nouvelle topographie qui n'est pas contestable par la propriétaire de la première. Le droit exclusif permet de réclamer des royalties mais pas d'interdire la commercialisation après le first sale. La loi belge a exclu toute formalité, ce qui rapproche le droit des topographies du droit d'auteur.
+	
+	Le tribunal peut réclamer des dommages et la cessation de la part du contrefacteur, ainsi qu'une publication du jugement. En cas de mauvaise foi, le tribunal peut prononcer confiscation au profit du titulaire. Dans ce cas, on est plus proches de la propriété industrielle.
+	
+	
+	\section{Contrats informatiques}
+	\subsection{Généralités}
+	
+	Les services spécialisés en informatique peuvent être vu comme une série de prestations. Ici, dans un ordre chronologique, 
+	\begin{itemize}
+		\item Le travail préliminaire de conception ou d'étude. Définir les besoins et attentes.
+		\item Fourniture de biens (hardware et logiciels de base)
+		\item Conception et réalisation du logiciel d'application
+		\item Transfert de certains droits intellectuels.
+		\item Formation du personnel de l'entreprise
+		\item Connexion entre différents systèmes de banques de données
+		\item Assistance technique ou maintenant du système
+	\end{itemize}
+	
+	Ces diverses prestations peuvent faire l'objet de contrats séparés ou d'un contrat unique, du à la multitude d'intervenant. Cependant, certains fournisseurs ont tendance à pousser pour des contrats séparés. En effet, un manquement menant à l'invalidité d'un contrat n'affecte pas les autres. En tant que client il faut donc se méfier de ce genre de situations.
+	
+	Les contrats informatiques relèvent du droit commun des contrats, mais la spécificité est que les firmes utilisent beaucoup de contrats standardisés. Ces standards, pour la plupart issus des pratiques anglo-saxonnes, est souvent inégal envers le client, tant au niveau des clauses contenues que celles absentes (garantie de disponibilité par exemple).
+	
+	\subsection{Qualification des contrats informatiques}
+	
+	De part la multiplicité des intervenants et le mélange entre matériaux et prestation, les contrats informatiques se rapprochent de ceux de la construction. Une question est de savoir si on a affaire à un contrat de vente ou d'entreprise (qui lui ne garanti pas les vices cachés). Le contrat sera plutôt de vente si le sujet principal est du matériel, d'entreprise sur l'objet est une prestation, même si elle nécessite du matériel. En pratique, on peut finir avec des contrats complexes, mixtes.
+	
+	Dans le cas d'un contrat de vente (i.e. fourniture de matériel informatique), le vendeur est tenu de fournir tous les accessoires nécessaires à l'utilisation du bien vendu. Un OS est considéré comme tel pour un ordinateur.
+	
+	Le logiciel spécifique serait plutôt un contrat d'entreprise alors qu'un progiciel (logiciel généraliste) garde une part de juristes défendant qu'il s'agit plutôt de la vente/location. Une des raisons est ce fameux "vice caché" qu'il serait malaisé juridiquement d'appliquer aux logiciels.
+	
+	Dans le cas d'un système clé en main, ce qui est important, c'est de répondre aux besoins de l'entreprise via étude et conseils. Dès lors, c'est un contrat d'entreprise même si les parties décident de l'appeler contrat de vente.
+	
+	
+	\subsection{Négociation et exécution des contrats informatiques}
+	
+	\subsubsection{Actes préparatoires au contrat ou "période précontractuelle"}
+	
+	Lors des pourparlers, il y a obligation d'information et de renseignement pour les deux parties. L'utilisateur doit donc être proactif en listant ses besoins et souhaits, s'informer sur le sujet. L'obligation d'information ne s'arrête pas pour le fournisseur même après rédaction du cahier des charges. Un fournisseur engagerait sa responsabilité en proposant un matériel inadapté car trop puissant ou trop coûteux. Évidemment, la décision finale revient au client, maître de son entreprise. C'est ici que peuvent être commis les dols, c'est-à-dire mentir ou présenter les informations de façon trompeuse dans un but financier.
+	
+	\subsubsection{Exécution du contrat ou "période contractuelle"}
+	
+	Les pourparlers se finissent par une rupture des contacts ou l'émission d'une offre. Cette offre existe dès que les parties essentielles sont proposées. L'acceptation de l'offre entraînera la formation du contrat avant même écrit ou signature.
+	
+	Deux obligations principales : fournir un objet ou prestation conforme au contrat dans des délais convenus, et de garantir le bon fonctionnement du système. Si il y a des spécifications techniques, elles serviront à apprécier la conformité du système. Si pas, ce sera évalué en fonction des besoins fonctionnels de l'utilisateur. Cependant, les fournisseurs se gardent souvent de rendre compte de certains besoins fonctionnels.
+	
+	Il faut donc se méfier d'une clause formelle \emph{excluant toute garantie implicite d'aptitude à l'exécution d'un travail donné}. Celle-ci écarte donc les appréciations fonctionnelles. Elle est souvent combinée avec la \textbf{clause des quatre coins} : "Le client reconnaît avoir pris connaissance du présent contrat et de toute annexe y relative en toutes leurs dispositions écrites et imprimées et déclare en accepter les termes et conditions. Il reconnaît, en outre, que ces documents constituent l'intégralité de l'accord intervenu entre les parties, remplaçant ou annulant toutes propositions ou engagements écrits ou verbaux les précédant et toutes autres communications entre les parties ayant trait au présent contrat." L'idée est de se débarrasser de toute responsabilité sur des engagements non présents dans le contrat.
+	
+	Le fournisseur doit aussi garantir les vices cachés mais en pratique, on a des garanties de bon fonctionnement, voire à limite de responsabilité. Ces limitations sont souvent valables entre professionnels de la même spécialité.
+	
+	L'obligation de conseil du fournisseur ne cesse pas après la livraison. Souvent, celui-ci reprend cette obligation (avec l'entretien) dans un contrat séparé. En cas de manquement, le juge sera bien plus sévère dans ce cas que pour le conseil implicite.
+	
+	L'utilisateur, lui, doit collaborer pour permettre la livraison (local, dialogue, pas de comportement négatif). Ce, même si les débuts sont frustrants. De plus, il doit payer le prix convenu dans les délais fixés. Les clauses d'indexations sont strictement réglementées.
+	
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+\end{document}
